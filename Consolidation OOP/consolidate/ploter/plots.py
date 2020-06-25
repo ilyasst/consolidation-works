@@ -4,7 +4,7 @@ Created on Wed Jun 10 15:00:34 2020
 
 @author: andre
 """
-import numpy as np
+
 import matplotlib.pyplot as plt
 
 
