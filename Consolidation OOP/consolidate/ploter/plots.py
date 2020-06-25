@@ -38,7 +38,7 @@ class Plots():
                 plt.pcolormesh(self.meshes.Y, self.meshes.X, self.T,vmin=0, vmax=100,cmap=self.deck.doc["Plot"]["Color Map"])
                 plt.colorbar()
                 self.fig.suptitle('time: {:.2f}'.format( m*float(self.deck.doc["Simulation"]["Time Step"])), fontsize=16)
-                plt.savefig('./output/temperature' + str("%03d" %self.fignum) + '.jpg')
+                plt.savefig(self.deck.plot_dir+self.deck.doc["Plot"]["figure name"]+ str("%03d" %self.fignum) + '.jpg')
         
         
         
