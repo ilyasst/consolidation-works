@@ -17,6 +17,11 @@ Simulation:
   dy: 0.1
 
 Plot:
+  folder: "./output/"
+  figure name: temperatue
   Color Interpolation: 50
   Color Map: "inferno"
   plot interval: 500
+  
+Animation:
+    name: temperature
