@@ -7,7 +7,7 @@ from PIL import Image
 
 
 cwd = os.getcwd()
-#All the data from deck.yaml is now in the following deck variable
+# All the data from deck.yaml is now in the following deck variable
 deck = Deck( cwd + "/deck.yaml" )
 
 meshes = Meshes( deck )
@@ -18,5 +18,4 @@ plots=Plots(deck,meshes,meshes.T)
 
 solves = Solves( deck,model,meshes,plots)
 
-animates=Animates()
-
+animates=Animates(deck)
