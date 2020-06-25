@@ -14,8 +14,8 @@ class Deck():
                 self.doc = yaml.load(f, Loader=yaml.BaseLoader)
         self.create_folder_structure()
 
-    def create_folder_structure(self):
-        plot_dir = "./output/"
-        check_folder = os.path.isdir(plot_dir)
+    def create_folder_structure(self):        
+        self.plot_dir = self.doc["Plot"]["folder"]
+        check_folder = os.path.isdir(self.plot_dir)
         if not check_folder:
-              os.makedirs(plot_dir)
+              os.makedirs(self.plot_dir)
