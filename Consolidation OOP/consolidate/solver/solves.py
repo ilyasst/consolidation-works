@@ -2,7 +2,7 @@
 import numpy as np
 
 
-class Solves:
+class SolvesTwoPlates:
     
     def __init__(self, deck,model,meshes,plots):
         self.deck = deck
@@ -24,7 +24,7 @@ class Solves:
             if m in self.plots.mfig:
                 self.plots.update_T(self.meshes.T)
                 self.plots.do_plots(m)    
-            
+        self.plots.do_animation()
             
             
      
