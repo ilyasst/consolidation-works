@@ -6,9 +6,10 @@ Created on Wed Jun 10 15:00:34 2020
 """
 
 import matplotlib.pyplot as plt
+from PIL import Image
+import glob
 
-
-class Plots():
+class PlotsTwoPlates():
     
     def __init__(self, deck,meshes,T):
         self.deck = deck
@@ -41,5 +42,21 @@ class Plots():
                 plt.savefig(self.deck.plot_dir+self.deck.doc["Plot"]["figure name"]+ str("%03d" %self.fignum) + '.jpg')
         
         
+    def do_animation(self):   
+        frames = []
+        # imgs = glob.glob("./output/*.jpg")
+        imgs = glob.glob(self.deck.plot_dir + '*.jpg')
+        for i in imgs:
+            new_frame = Image.open(i)
+            frames.append(new_frame)
+            print(i)
+            
         
+         
+        # Save into a GIF file that loops forever
+        direction=(self.deck.plot_dir+self.deck.doc["Animation"]["name"]+'.gif')
+        frames[0].save(direction, format='GIF',
+                        append_images=frames[1:],
+                        save_all=True,
+                        duration=200, loop=0)       
     
