@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-class Meshes():
+class MeshTwoPlates():
 
     def __init__(self, deck):
         self.deck = deck
-        self.set_mesh_grid()
-        self.init_mesh()
+        self.set_mesh_grid() 
+        self. init_mesh() 
+     
     
     def set_mesh_grid(self):
         self.nx = int(float(self.deck.doc["Simulation"]["lenX"])/float(self.deck.doc["Simulation"]["dx"]))
@@ -18,6 +19,7 @@ class Meshes():
         self.Y = Y
 
     def init_mesh(self):
+
         self.nx1, self.nx2 = self.nx, self.nx
         self.ny1, self.ny2 = int(self.ny/2), self.ny
         
