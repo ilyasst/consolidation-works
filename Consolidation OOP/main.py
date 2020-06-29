@@ -5,14 +5,14 @@ from consolidate import *
 
 cwd = os.getcwd()
 # All the data from deck.yaml is now in the following deck variable
-deck = Deck( cwd + "/deck.yaml" )
 
-meshes = Meshes( deck )
+deck = Deck( cwd + "/TwoPlates.yaml" )
+
+
+meshes = MeshTwoPlates( deck )
 
 model = HeatTransfer(deck)
 
-plots=Plots(deck,meshes,meshes.T)
+plots=PlotsTwoPlates(deck,meshes,meshes.T)
 
-solves = Solves( deck,model,meshes,plots)
-
-animates=Animates(deck)
+solves = SolvesTwoPlates( deck,model,meshes,plots)
