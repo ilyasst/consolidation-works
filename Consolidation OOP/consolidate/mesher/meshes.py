@@ -6,9 +6,8 @@ class MeshTwoPlates():
     def __init__(self, deck):
         self.deck = deck
         self.set_mesh_grid() 
-        self. init_mesh() 
+        self.init_mesh() 
      
-    
     def set_mesh_grid(self):
         self.nx = int(float(self.deck.doc["Simulation"]["lenX"])/float(self.deck.doc["Simulation"]["dx"]))
         self.ny = int(float(self.deck.doc["Simulation"]["lenY"])/float(self.deck.doc["Simulation"]["dy"]))
@@ -26,8 +25,8 @@ class MeshTwoPlates():
         T = np.zeros((self.ny, self.nx))        
         T[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Domain Initial Temperature"] # Set array size and set the interior value with Tini
         T[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Domain Initial Temperature"] # Set array size and set the interior value with Tini
-        T[int(self.ny/2), int(0.2*self.nx):int(0.8*self.nx+1)] = 100
-        T[int(self.ny/2-1), int(0.2*self.nx):int(0.8*self.nx+1)] = 100
+        T[int(self.ny/2), int(0.2*self.nx):int(0.8*self.nx+1)] = self.deck.doc["Processing Parameters"]["Temperature"]
+        T[int(self.ny/2-1), int(0.2*self.nx):int(0.8*self.nx+1)] = self.deck.doc["Processing Parameters"]["Temperature"]
         self.T = T.copy()
         self.T0=T.copy()
         
@@ -39,5 +38,9 @@ class MeshTwoPlates():
         DiffTotalY = np.zeros((self.ny, self.nx)) 
         DiffTotalY[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Thermal Diffusivity Y"]
         DiffTotalY[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Thermal Diffusivity Y"]
-        self.DiffTotalX = DiffTotalX
-        self.DiffTotalY = DiffTotalY
+        self.DiffTotalX = DiffTotalX.copy()
+        self.DiffTotalY = DiffTotalY.copy()
+        
+        Visc=np.zeros((self.ny, self.nx))
+        Visc[1:-1, 1:-1]=1.14*10**(-12)*np.exp(20000/T[1:-1, 1:-1])
+        self.Visc=Visc.copy()
