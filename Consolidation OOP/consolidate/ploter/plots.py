@@ -36,7 +36,7 @@ class PlotsTwoPlates():
                 plt.clf()
                 self.fignum += 1
                 print(m, self.fignum)
-                plt.pcolormesh(self.meshes.Y, self.meshes.X, self.T,vmin=0, vmax=100,cmap=self.deck.doc["Plot"]["Color Map"])
+                plt.pcolormesh(self.meshes.Y, self.meshes.X, self.T,vmin=290, vmax=800,cmap=self.deck.doc["Plot"]["Color Map"])
                 plt.colorbar()
                 self.fig.suptitle('time: {:.2f}'.format( m*float(self.deck.doc["Simulation"]["Time Step"])), fontsize=16)
                 plt.savefig(self.deck.plot_dir+self.deck.doc["Plot"]["figure name"]+ str("%03d" %self.fignum) + '.jpg')
