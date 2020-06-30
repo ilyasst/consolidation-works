@@ -1,14 +1,16 @@
 Problem Type:
     Type: TwoPlates
+Processing Parameters:
+    Temperature: 655
 Materials:
   Material1:
     Thermal Diffusivity X: 10.
     Thermal Diffusivity Y: 10.
-    Domain Initial Temperature: 10.
+    Domain Initial Temperature: 293.
   Material2:
     Thermal Diffusivity X: 10.
     Thermal Diffusivity Y: 10.
-    Domain Initial Temperature: 30.
+    Domain Initial Temperature: 293.
 
 Simulation:
   Time Step: 0.0002
