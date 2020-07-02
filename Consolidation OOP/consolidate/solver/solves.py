@@ -24,6 +24,7 @@ class SolvesTwoPlates:
             self.meshes.T[int(self.meshes.ny/2-1), int(0.2*self.meshes.nx):int(0.8*self.meshes.nx+1)] = self.deck.doc["Processing Parameters"]["Temperature"]
             self.meshes.T0=self.meshes.T.copy()
             self.meshes.Visc=self.model_IC.viscosity_timestep(self.meshes.Visc, self.meshes.T)
+            self.meshes.Dic=self.model_IC.dic_timestep(self.meshes.Dic, self.meshes.Dic0, self.meshes.Visc, m*float(self.deck.doc["Simulation"]["Time Step"]))
             if m in self.plots.mfig:
                 self.plots.update_T(self.meshes.T)
                 self.plots.do_plots(m)    
