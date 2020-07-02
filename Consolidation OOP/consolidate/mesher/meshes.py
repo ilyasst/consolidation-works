@@ -45,8 +45,8 @@ class MeshTwoPlates():
         Visc[0:, 0:]=1.14*10**(-12)*np.exp(26300/T[0:, 0:])
         self.Visc=Visc.copy()
         
-        Dic=np.zeros((self.ny, self.nx))
-        Dic[0:,0:]=1/(1+0.45)
+        Dic=np.ones((self.ny, self.nx))
+        Dic[self.ny1-1:self.ny1+1,0:]=1/(1+0.45)
         self.Dic0=Dic.copy()
         self.Dic=Dic.copy()   
         
