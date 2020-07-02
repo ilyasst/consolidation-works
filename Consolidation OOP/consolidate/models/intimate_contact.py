@@ -9,8 +9,8 @@ import numpy as np
 
 class IntimateContact():
     
-    # def __init__(self, deck):
-    #         self.deck=deck
+    def __init__(self, meshes):
+            self.meshes=meshes
         
     def viscosity_timestep(self,v,u):
              
@@ -20,8 +20,6 @@ class IntimateContact():
         
     def dic_timestep(self, dic, dic0, v, t):
         C1=5*(1+0.45)*(0.85)**2
-        dic[0:,0:]=dic0[0:,0:]*((1+(C1-0.65)*(5*10**5/v[0:,0:])*t)**(1/5))
+        dic[(self.meshes.ny1 -1):(self.meshes.ny1 +1),0:]=dic0[(self.meshes.ny1 -1):(self.meshes.ny1 +1),0:]*((1+(C1-0.65)*(5*10**5/v[(self.meshes.ny1 -1):(self.meshes.ny1 +1),0:])*t)**(1/5))
         
         return dic
-        
-
