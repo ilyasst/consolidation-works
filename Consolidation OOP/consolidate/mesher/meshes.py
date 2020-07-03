@@ -46,7 +46,8 @@ class MeshTwoPlates():
         self.Visc=Visc.copy()
         
         Dic=np.ones((self.ny, self.nx))
-        Dic[self.ny1-1:self.ny1+1,0:]=1/(1+0.45)
+        self.dic=1/(1+0.45)
+        Dic[self.ny1-1:self.ny1+1,0:]=self.dic
         self.Dic0=Dic.copy()
         self.Dic=Dic.copy()   
         
