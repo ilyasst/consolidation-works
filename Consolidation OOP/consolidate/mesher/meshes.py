@@ -25,8 +25,8 @@ class MeshTwoPlates():
         T = np.zeros((self.ny, self.nx))        
         T[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Domain Initial Temperature"] # Set array size and set the interior value with Tini
         T[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Domain Initial Temperature"] # Set array size and set the interior value with Tini
-        T[int(self.ny/2), int(0.2*self.nx):int(0.8*self.nx+1)] = self.deck.doc["Processing Parameters"]["Temperature"]
-        T[int(self.ny/2-1), int(0.2*self.nx):int(0.8*self.nx+1)] = self.deck.doc["Processing Parameters"]["Temperature"]
+        T[int(self.ny/2), 0:] = self.deck.doc["Processing Parameters"]["Temperature"]
+        T[int(self.ny/2-1), 0:] = self.deck.doc["Processing Parameters"]["Temperature"]
         self.T = T.copy()
         self.T0=T.copy()
         
