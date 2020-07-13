@@ -13,7 +13,7 @@ meshes = MeshTwoPlates( deck )
 
 model_HT= HeatTransfer(deck)
 
-model_IC = IntimateContact()
+model_IC = IntimateContact(meshes,deck)
 
 plots=PlotsTwoPlates(deck,meshes,meshes.T)
 

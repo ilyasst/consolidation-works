@@ -2,6 +2,7 @@ Problem Type:
     Type: TwoPlates
 Processing Parameters:
     Temperature: 655
+    Pressure: 0.5
 Materials:
   Material1:
     Thermal Diffusivity X: 10.
