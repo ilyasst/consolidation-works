@@ -1,0 +1,39 @@
+Problem Type:
+    Type: TwoPlates
+Processing Parameters:
+    Temperature: 648
+    Pressure: 0.1
+    Power Density: 2613203000
+Materials:
+  Material1:
+    Thermal Conductivity X: 0.65
+    Thermal Conductivity Y: 0.65
+    Density: 1598
+    Cp: 930
+    Domain Initial Temperature: 293.
+  Material2:
+    Thermal Conductivity X: 0.65
+    Thermal Conductivity Y: 0.65
+    Density: 1598
+    Cp: 930
+    Domain Initial Temperature: 293.
+
+Simulation:
+  Time Step: 0.0001
+  Number Time Steps: 10001
+  lenX: 0.2
+  lenY: 0.005248
+  Number of Elements X: 200
+  Number of Elements Y: 128
+
+Plot:
+  folder1: "./output/Temperature/"
+  folder2: "./output/Dic/"
+  figure temperature name: Temperature
+  figure dic name: Dic
+  Color Interpolation: 50
+  Color Map: "inferno"
+  plot interval: 500
+  
+Animation:
+    name: temperature
