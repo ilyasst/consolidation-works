@@ -3,12 +3,19 @@
 
 
 Two adherents with equal length X and Y, defined by the user in ["simulation"]["lenX"] and ["simulation"]["lenY"] respectivelly, being welded in through-the-thickness direction.
+
 Their initial temperature is defined by the user in ["Materials"]["Material1"]["Domain Initial Temperature"] and ["Materials"]["Material2"]["Domain Initial Temperature"] respectivelly.
+
 In case of isothermal simulation, i.e forcing thier interface to be at constant temperature, the user defines the interface temperature in ["Processing Parameters"]["Temperature"].
+
 In case of anisothermal simulation with constant power density, the used define the value (W/m^3) in ["Processing Parameters"]["Temperature"].
+
 At this point, thermal conductivity (W/(mºC)), Specific Heat (J/(J/KgºC)) and density (Kg/m^3) do not change with temperature nor time. The user define those values in ["Materials"].
+
 The user also define the number of elements in X and Y in ["simulation"]["Number of Elements X"] and ["simulation"]["Number of Elements Y"] respectivelly.
+
 The number of steps and step time are defined in ["simulation"]["Step Time"] and ["simulation"]["Number Time Steps"] respectivelly. Notice that large step time may not converge and an error message will popup.
+
 Finally, the code generates Dic and T plots at every interval, defined in ["Plot"]["plot interval"].
 
 
