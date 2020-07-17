@@ -60,8 +60,7 @@ Plot:
   
 Animation:
     name: temperature
-	
-```yaml
+```
 
 
 # Getting Started
