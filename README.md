@@ -60,7 +60,6 @@ Plot:
   
 Animation:
     name: temperature
-	
 ```
 
 
