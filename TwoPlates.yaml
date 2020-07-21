@@ -27,8 +27,8 @@ Simulation:
   Number of Elements Y: 128
 
 Plot:
-  folder1: "./output/Temperature/"
-  folder2: "./output/Dic/"
+  Temp Output Folder: "./output/Temperature/"
+  Dic Output Folder: "./output/Dic/"
   figure temperature name: Temperature
   figure dic name: Dic
   Color Interpolation: 50
