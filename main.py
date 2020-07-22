@@ -8,13 +8,12 @@ cwd = os.getcwd()
 
 deck = Deck( cwd + "/TwoPlates.yaml" )
 
-
 meshes = MeshTwoPlates( deck )
 
-model_HT= HeatTransfer(deck)
+model_HT= HeatTransfer(deck,meshes)
 
 model_IC = IntimateContact(meshes,deck)
 
-plots=PlotsTwoPlates(deck,meshes,meshes.T)
+plots=PlotsTwoPlates(deck,meshes,meshes.T,meshes.Dic)
 
 solves = SolvesTwoPlates( deck,model_HT,meshes,plots,model_IC)

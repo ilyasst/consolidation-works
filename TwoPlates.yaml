@@ -1,29 +1,36 @@
 Problem Type:
     Type: TwoPlates
 Processing Parameters:
-    Temperature: 655
-    Pressure: 0.5
+    Temperature: 648
+    Pressure: 0.1
+    Power Density: 2613203000
 Materials:
   Material1:
-    Thermal Diffusivity X: 10.
-    Thermal Diffusivity Y: 10.
+    Thermal Conductivity X: 0.65
+    Thermal Conductivity Y: 0.65
+    Density: 1598
+    Cp: 930
     Domain Initial Temperature: 293.
   Material2:
-    Thermal Diffusivity X: 10.
-    Thermal Diffusivity Y: 10.
+    Thermal Conductivity X: 0.65
+    Thermal Conductivity Y: 0.65
+    Density: 1598
+    Cp: 930
     Domain Initial Temperature: 293.
 
 Simulation:
-  Time Step: 0.0002
+  Time Step: 0.0001
   Number Time Steps: 10001
-  lenX: 20
-  lenY: 10
-  dx: 0.1
-  dy: 0.1
+  lenX: 0.2
+  lenY: 0.005248
+  Number of Elements X: 200
+  Number of Elements Y: 128
 
 Plot:
-  folder: "./output/"
-  figure name: temperatue
+  Temp Output Folder: "./output/Temperature/"
+  Dic Output Folder: "./output/Dic/"
+  figure temperature name: Temperature
+  figure dic name: Dic
   Color Interpolation: 50
   Color Map: "inferno"
   plot interval: 500
