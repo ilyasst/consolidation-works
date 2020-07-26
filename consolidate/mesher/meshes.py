@@ -3,8 +3,9 @@ import numpy as np
 
 class MeshTwoPlates():
 
-    def __init__(self, deck):
+    def __init__(self, deck,geometry):
         self.deck = deck
+        self.geometry=geometry
         self.set_mesh_grid() 
         self.set_temperatures()
         self.set_conductivity()
@@ -20,11 +21,8 @@ class MeshTwoPlates():
     def set_mesh_grid(self):
         self.nx = int(self.deck.doc["Simulation"]["Number of Elements X"])
         self.ny = int(self.deck.doc["Simulation"]["Number of Elements Y"])
-        self.q=float(self.deck.doc["Processing Parameters"]["Power Density"])
-        self.Lx=float(self.deck.doc["Simulation"]["lenX"])
-        self.Ly=float(self.deck.doc["Simulation"]["lenY"])
-        self.dx=self.Lx/self.nx
-        self.dy=self.Ly/self.ny
+        self.dx=self.geometry.Lx/self.nx
+        self.dy=self.geometry.Ly/self.ny
         X, Y = np.meshgrid(np.arange(0, self.ny), np.arange(0, self.nx))
         X=X[1,:].copy()
         Y=Y[:,1].copy()
@@ -37,12 +35,13 @@ class MeshTwoPlates():
     
     def set_temperatures(self):
         T = np.zeros((self.ny, self.nx))        
-        T[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Domain Initial Temperature"] # Set array size and set the interior value with Tini
-        T[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Domain Initial Temperature"] # Set array size and set the interior value with Tini
-        T[int(self.ny/2), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
-        T[int(self.ny/2-1), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
+        T[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Initial Temperature"] # Set array size and set the interior value with Tini
+        T[self.ny1:self.ny, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Initial Temperature"] # Set array size and set the interior value with Tini
+        T[int(self.ny1), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
+        T[int(self.ny1+1), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
         self.T = T.copy()
         self.T0=T.copy()
+        
       
     def set_conductivity(self):
         KtotalX= np.zeros((self.ny, self.nx)) 
@@ -90,6 +89,7 @@ class MeshTwoPlates():
 
 
     def set_heat_density(self):       
+        self.q=float(self.deck.doc["Processing Parameters"]["Power Density"])
         Q=np.zeros((self.ny, self.nx))
         # Q[int(self.ny/2), 0:] = self.q
         # Q[int(self.ny/2-1), 0:] = self.q
