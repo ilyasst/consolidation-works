@@ -29,14 +29,14 @@ class MeshTwoPlates():
         self.X = X
         self.Y = Y
 
-        self.nx1, self.nx2 = self.nx, self.nx
-        self.ny1, self.ny2 = int(self.ny/2), self.ny
+        
+        self.ny1= int(self.ny/2)
 
     
     def set_temperatures(self):
         T = np.zeros((self.ny, self.nx))        
-        T[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Initial Temperature"] # Set array size and set the interior value with Tini
-        T[self.ny1:self.ny, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Initial Temperature"] # Set array size and set the interior value with Tini
+        T[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Initial Temperature"] # Set array size and set the interior value with Tini
+        T[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Initial Temperature"] # Set array size and set the interior value with Tini
         T[int(self.ny1), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
         T[int(self.ny1+1), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
         self.T = T.copy()
@@ -45,25 +45,25 @@ class MeshTwoPlates():
       
     def set_conductivity(self):
         KtotalX= np.zeros((self.ny, self.nx)) 
-        KtotalX[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Thermal Conductivity X"]
-        KtotalX[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Thermal Conductivity X"]
+        KtotalX[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Thermal Conductivity X"]
+        KtotalX[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Thermal Conductivity X"]
         self.KtotalX=KtotalX
                                                                                          
         KtotalY= np.zeros((self.ny, self.nx)) 
-        KtotalY[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Thermal Conductivity Y"]
-        KtotalY[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Thermal Conductivity Y"]                                                                                       
+        KtotalY[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Thermal Conductivity Y"]
+        KtotalY[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Thermal Conductivity Y"]                                                                                       
         self.KtotalY=KtotalY         
 
     def set_density(self):
         RhoTotal= np.zeros((self.ny, self.nx)) 
-        RhoTotal[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Density"]
-        RhoTotal[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Density"]                                                                                       
+        RhoTotal[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Density"]
+        RhoTotal[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Density"]                                                                                       
         self.RhoTotal=RhoTotal  
 
     def set_specific_heat(self):
         CpTotal= np.zeros((self.ny, self.nx)) 
-        CpTotal[0:self.ny1, 0:self.nx1] = self.deck.doc["Materials"]["Material1"]["Cp"]
-        CpTotal[self.ny1:self.ny2, 0:self.nx2] = self.deck.doc["Materials"]["Material2"]["Cp"]                                                                                       
+        CpTotal[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Cp"]
+        CpTotal[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Cp"]                                                                                       
         self.CpTotal=CpTotal  
 
     def set_diffusivity(self):                                                                                  
