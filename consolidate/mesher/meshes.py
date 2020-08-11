@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Sat Aug  8 11:20:57 2020
+
+@author: andre
+"""
+
 import numpy as np
 
 class MeshTwoPlates():
@@ -7,90 +13,90 @@ class MeshTwoPlates():
         self.deck = deck
         self.geometry=geometry
         self.set_mesh_grid() 
-        self.set_temperatures()
-        self.set_conductivity()
-        self.set_density()
-        self.set_specific_heat()
-        self.set_diffusivity()
-        self.set_viscosity()   
-        self.set_dic()
-        self.set_heat_density()
-        
+        self.set_dx()
+        self.set_dy()
+        self.set_Element_Position()
         
         
     def set_mesh_grid(self):
-        self.nx = int(self.deck.doc["Simulation"]["Number of Elements X"])
-        self.ny = int(self.deck.doc["Simulation"]["Number of Elements Y"])
-        self.dx=self.geometry.Lx/self.nx
-        self.dy=self.geometry.Ly/self.ny
-        X, Y = np.meshgrid(np.arange(0, self.ny), np.arange(0, self.nx))
-        X=X[1,:].copy()
-        Y=Y[:,1].copy()
-        self.X = X
-        self.Y = Y
+        self.nx = int(self.deck.doc["Simulation"]["Number of Elements X"])        
+        self.ny =  {
+  "Top Adherent": int(self.deck.doc["Simulation"]["Number of Elements Top Plate Thickness"]) ,
+  "HE"       : int(self.deck.doc["Simulation"]["Number of Elements HE"]),
+  "Bottom Adherent": int(self.deck.doc["Simulation"]["Number of Elements Bottom Plate Thickness"]) 
+                  }
 
-        
-        self.ny1= int(self.ny/2)
 
+        self.number_of_elements_Y=self.ny.get("Top Adherent")+self.ny.get("HE")+self.ny.get("Bottom Adherent")
     
-    def set_temperatures(self):
-        T = np.zeros((self.ny, self.nx))        
-        T[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Initial Temperature"] # Set array size and set the interior value with Tini
-        T[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Initial Temperature"] # Set array size and set the interior value with Tini
-        T[int(self.ny1), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
-        T[int(self.ny1+1), 1:-1] = self.deck.doc["Processing Parameters"]["Temperature"]
-        self.T = T.copy()
-        self.T0=T.copy()
+        self.dx = self.geometry.Lx/self.nx
+        self.dy = {
+        "Top Adherent":self.geometry.Ly.get("Top Adherent")/self.ny.get("Top Adherent"),
+        "HE"       :self.geometry.Ly.get("HE")/self.ny.get("HE"),
+        "Bottom Adherent":self.geometry.Ly.get("Bottom Adherent")/self.ny.get("Bottom Adherent")
+                  }
         
-      
-    def set_conductivity(self):
-        KtotalX= np.zeros((self.ny, self.nx)) 
-        KtotalX[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Thermal Conductivity X"]
-        KtotalX[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Thermal Conductivity X"]
-        self.KtotalX=KtotalX
-                                                                                         
-        KtotalY= np.zeros((self.ny, self.nx)) 
-        KtotalY[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Thermal Conductivity Y"]
-        KtotalY[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Thermal Conductivity Y"]                                                                                       
-        self.KtotalY=KtotalY         
-
-    def set_density(self):
-        RhoTotal= np.zeros((self.ny, self.nx)) 
-        RhoTotal[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Density"]
-        RhoTotal[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Density"]                                                                                       
-        self.RhoTotal=RhoTotal  
-
-    def set_specific_heat(self):
-        CpTotal= np.zeros((self.ny, self.nx)) 
-        CpTotal[0:self.ny1, 0:self.nx] = self.deck.doc["Materials"]["Material1"]["Cp"]
-        CpTotal[self.ny1:self.ny, 0:self.nx] = self.deck.doc["Materials"]["Material2"]["Cp"]                                                                                       
-        self.CpTotal=CpTotal  
-
-    def set_diffusivity(self):                                                                                  
-        DiffTotalX = np.zeros((self.ny, self.nx)) 
-        DiffTotalX[0:,0:]=self.KtotalX[0:,0:]/(self.RhoTotal[0:,0:]*self.CpTotal[0:,0:])
-        self.DiffTotalX = DiffTotalX.copy()
         
-        DiffTotalY = np.zeros((self.ny, self.nx)) 
-        DiffTotalY[0:,0:]=self.KtotalY[0:,0:]/(self.RhoTotal[0:,0:]*self.CpTotal[0:,0:])
-        self.DiffTotalY = DiffTotalY.copy()
-
-    def set_viscosity(self):         
-        Visc=np.zeros((self.ny, self.nx))
-        Visc[0:, 0:]=1.14*10**(-12)*np.exp(26300/self.T[0:, 0:])
-        self.Visc=Visc.copy()
-
-    def set_dic(self):
-        Dic=np.ones((self.ny, self.nx))
-        self.dic=1/(1+0.45)
-        Dic[self.ny1-1:self.ny1+1,1:-1]=self.dic
-        self.Dic0=Dic.copy()
-        self.Dic=Dic.copy()   
-
-
-    def set_heat_density(self):       
-        self.q=float(self.deck.doc["Processing Parameters"]["Power Density"])
-        Q=np.zeros((self.ny, self.nx))
-        # Q[int(self.ny/2), 0:] = self.q
-        # Q[int(self.ny/2-1), 0:] = self.q
-        self.Q=Q.copy()
+        
+        
+       
+       
+    
+    def set_dx(self):
+        Mdx=    {
+        "Top Adherent":np.zeros((self.ny.get("Top Adherent"), self.nx)) ,
+        "HE"       :np.zeros((self.ny.get("HE"), self.nx)) ,
+        "Bottom Adherent":np.zeros((self.ny.get("Bottom Adherent"), self.nx)) 
+                  }
+        
+        Mdx["Top Adherent"][0:self.ny.get("Top Adherent"),0:self.nx]=self.dx
+        Mdx["HE"][0:self.ny.get("HE"),0:self.nx]=self.dx
+        Mdx["Bottom Adherent"][0:self.ny.get("Bottom Adherent"),0:self.nx]=self.dx
+        
+        Mdx=np.concatenate((Mdx["Bottom Adherent"], Mdx["HE"], Mdx["Top Adherent"]), axis=0)
+        
+        
+        self.Mdx=Mdx.copy()
+        
+        
+    def set_dy(self):
+        Mdy=    {
+        "Top Adherent":np.zeros((self.ny.get("Top Adherent"), self.nx)) ,
+        "HE"       :np.zeros((self.ny.get("HE"), self.nx)) ,
+        "Bottom Adherent":np.zeros((self.ny.get("Bottom Adherent"), self.nx)) 
+                  }
+        
+        Mdy["Top Adherent"][0:self.ny.get("Top Adherent"),0:self.nx]=self.dy.get("Top Adherent")
+        Mdy["HE"][0:self.ny.get("HE"),0:self.nx]=self.dy.get("HE")
+        Mdy["Bottom Adherent"][0:self.ny.get("Bottom Adherent"),0:self.nx]=self.dy.get("Bottom Adherent")
+        
+        Mdy=np.concatenate((Mdy["Bottom Adherent"], Mdy["HE"], Mdy["Top Adherent"]), axis=0)
+        
+        self.Mdy=Mdy.copy()
+        
+    def set_Element_Position(self):
+        
+        ElementXPosition=    {
+        "Top Adherent":np.arange(self.nx)*self.dx+self.dx ,
+        "HE"       :np.arange(self.nx)*self.dx+self.dx ,
+        "Bottom Adherent":np.arange(self.nx)*self.dx+self.dx 
+                  }
+        self.ElementXPosition=ElementXPosition.copy()
+        
+        ElementYPosition=    {
+        "Top Adherent":np.arange(self.ny.get("Top Adherent"))*self.dy.get("Top Adherent")+self.dy.get("Top Adherent") ,
+        "HE"       :np.arange(self.ny.get("HE")+1)*self.dy.get("HE"),
+        "Bottom Adherent":np.arange(self.ny.get("Bottom Adherent"))*self.dy.get("Bottom Adherent")+self.dy.get("Bottom Adherent") 
+                  }
+        
+       
+        self.ElementYPosition=ElementYPosition.copy()
+        
+        
+        if all(self.ElementXPosition["Top Adherent"] == self.ElementXPosition["Bottom Adherent"]) and all(self.ElementXPosition["Top Adherent"] == self.ElementXPosition["HE"] ):
+            self.Xposition=self.ElementXPosition.get("Top Adherent")
+        else:
+            print("Error")
+            
+        self.Yposition = np.concatenate((ElementYPosition["Bottom Adherent"], ElementYPosition["HE"]+ElementYPosition.get("Bottom Adherent")[-1],ElementYPosition["Top Adherent"]+ElementYPosition.get("HE")[-1]+ElementYPosition.get("Bottom Adherent")[-1]))
+    
