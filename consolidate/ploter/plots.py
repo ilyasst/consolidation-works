@@ -8,17 +8,19 @@ Created on Wed Jun 10 15:00:34 2020
 import matplotlib.pyplot as plt
 from PIL import Image
 import glob
+import numpy as np
 
 class PlotsTwoPlates():
     
-    def __init__(self, deck,meshes,T,Dic):
+    def __init__(self, deck,meshes, BC):
         self.deck = deck
         self.nsteps =  int(self.deck.doc["Simulation"]["Number Time Steps"])
         self.nsetepinterval =int(self.deck.doc["Plot"]["plot interval"])
         self.meshes=meshes
-        self.T = T
-        self.Dic=Dic
+        self.T = BC.T
+        self.Dic=BC.Dic
         self.set_plots()
+        self.Dic0=BC.Dic0
 
 
 # -------------- BEGIN NEW PLOT GENERATION---------- 
@@ -45,8 +47,8 @@ class PlotsTwoPlates():
                 print(m, self.fignum)
                 # plt.figure( figsize=(8, 6), dpi=280)
                 plt.gcf().set_size_inches(16, 8)
-                plt.gcf().set_dpi(80)
-                plt.pcolormesh(self.meshes.Y*self.meshes.dx, self.meshes.X*self.meshes.dy, self.T,vmin=float(self.deck.doc["Materials"]["Material1"]["Initial Temperature"]), vmax=float(self.deck.doc["Processing Parameters"]["Temperature"]),cmap=self.deck.doc["Plot"]["Color Map"])
+                plt.gcf().set_dpi(80)                
+                plt.pcolormesh(self.meshes.Xposition, self.meshes.Yposition, self.T, vmin=float(self.deck.doc["Boundary Condition"]["Initial Temperature Bottom Adherent"]), vmax=float(self.deck.doc["Boundary Condition"]["Ideal Temperature"]),cmap=self.deck.doc["Plot"]["Color Map"])
                 plt.colorbar()
                 self.fig.suptitle('time: {:.2f}'.format( m*float(self.deck.doc["Simulation"]["Time Step"])), fontsize=16)
                 plt.savefig(self.deck.plot_dirTemp+self.deck.doc["Plot"]["figure temperature name"]+ str("%03d" %self.fignum) + '.jpg')
@@ -56,7 +58,7 @@ class PlotsTwoPlates():
                 # plt.figure( figsize=(8, 6), dpi=280)
                 plt.gcf().set_size_inches(16, 8)
                 plt.gcf().set_dpi(80)
-                plt.pcolormesh(self.meshes.Y*self.meshes.dx, self.meshes.X*self.meshes.dy, self.Dic,vmin=self.meshes.dic, vmax=1,cmap=self.deck.doc["Plot"]["Color Map"])
+                plt.pcolormesh(self.meshes.Xposition, self.meshes.Yposition, self.Dic, vmin=self.Dic0, vmax=1,cmap=self.deck.doc["Plot"]["Color Map"])
                 plt.colorbar()
                 self.fig.suptitle('time: {:.2f}'.format( m*float(self.deck.doc["Simulation"]["Time Step"])), fontsize=16)
                 plt.savefig(self.deck.plot_dirDic+self.deck.doc["Plot"]["figure dic name"]+ str("%03d" %self.fignum) + '.jpg')
@@ -80,7 +82,7 @@ class PlotsTwoPlates():
             frames.append(new_frame)
             print(i)
             
-        direction=(self.deck.plot_dirTemp+self.deck.doc["Animation"]["name"]+'.gif')
+        direction=(self.deck.plot_dirTemp+self.deck.doc["Animation"]["Temperature name"]+'.gif')
         frames[0].save(direction, format='GIF',
                         append_images=frames[1:],
                         save_all=True,
@@ -95,7 +97,7 @@ class PlotsTwoPlates():
             frames.append(new_frame)
             print(i)
             
-        direction=(self.deck.plot_dirDic+self.deck.doc["Animation"]["name"]+'.gif')
+        direction=(self.deck.plot_dirDic+self.deck.doc["Animation"]["Dic name"]+'.gif')
         frames[0].save(direction, format='GIF',
                         append_images=frames[1:],
                         save_all=True,
