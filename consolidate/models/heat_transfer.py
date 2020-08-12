@@ -24,6 +24,7 @@ class HeatTransfer:
         Q[-1,:]  =  self.h*(float(self.BC.Troom) - u[-1,:])
         Q[:,-1]  =  self.h*(float(self.BC.Troom) - u[:,-1])     
         Q[:,0]   =  self.h*(float(self.BC.Troom) - u[:,-1])  
+        
         Q[0,0]   =  self.h*(float(self.BC.Troom)  - u[0,0])
         Q[-1,0]  =  self.h*(float(self.BC.Troom) - u[-1,0])
         Q[0,-1]  =  self.h*(float(self.BC.Troom) - u[0,-1])
@@ -35,7 +36,8 @@ class HeatTransfer:
         
         valueX=np.zeros(np.shape(self.BC.T))
         valueX[:,0 ]  = -Q[:,0]/ self.BC.Kx[:,0]
-        valueX[:,-1]  = -Q[:,-1]/self.BC.Kx[:,-1]        
+        valueX[:,-1]  = -Q[:,-1]/self.BC.Kx[:,-1]   
+        
         valueX[0,0]   = -Q[0,0]/self.BC.Kx[0,0]     
         valueX[-1,0]  = -Q[-1,0]/self.BC.Kx[-1,0]  
         valueX[0,-1]  = -Q[0,-1]/self.BC.Kx[0,-1]   
@@ -84,11 +86,9 @@ class HeatTransfer:
         
         u[0,1:-1]     = u0[0,1:-1]     + Diffy[0,1:-1] *self.dt*      ((u0[1,1:-1]    -2*u[0,1:-1]      + UoutY[0,1:-1]) /self.dy2[0,1:-1])      + Diffx[0,1:-1] *self.dt*       ((u0[0, 2:]    -2*u0[0,1:-1]     +u0[0,:-2])/self.dx2[0,1:-1]) 
         u[-1,1:-1]    = u0[-1,1:-1]    + Diffy[-1,1:-1]*self.dt*      ((u0[-2,1:-1]   -2*u[-1,1:-1]     + UoutY[-1,1:-1])/self.dy2[-1,1:-1])     + Diffx[-1,1:-1]*self.dt*       ((u0[-1, 2:]   -2*u0[-1,1:-1]    +u0[-1,:-2])/self.dx2[-1,1:-1]) 
-        # u[1:-1, 1:-1] = u0[1:-1, 1:-1] + Diffy[1:-1, 1:-1]* self.dt * ((u0[2:, 1:-1] - 2*u0[1:-1, 1:-1] + u0[:-2, 1:-1])/self.dy2[1:-1, 1:-1] ) + Diffx[1:-1, 1:-1]* self.dt *  ((u0[1:-1, 2:] -2*u0[1:-1, 1:-1] +u0[1:-1, :-2])/self.dx2[1:-1, 1:-1] )
         
         u[1:-1,0]     = u0[1:-1,0]     + Diffy[1:-1,0] *self.dt*      ((u0[2:,0 ]     -2*u[1:-1,0]      + u0[0:-2,0]) /self.dy2[1:-1,0])       + Diffx[1:-1, 0]*self.dt*       ((u0[1:-1, 1 ] -2*u0[1:-1,0]     +UoutX[1:-1,0])/self.dx2[1:-1,0])        
         u[1:-1,-1]    = u0[1:-1,-1]    + Diffy[1:-1,-1]*self.dt*      ((u0[2:,-1]     -2*u[1:-1,-1]     + u0[0:-2,-1])/self.dy2[1:-1,-1])      + Diffx[1:-1,-1]*self.dt*       ((u0[1:-1, -2 ]-2*u0[1:-1,-1]    +UoutX[1:-1,-1])/self.dx2[1:-1,-1]) 
-        # u[1:-1, 1:-1] = u0[1:-1, 1:-1] + Diffy[1:-1, 1:-1]* self.dt * ((u0[2:, 1:-1] - 2*u0[1:-1, 1:-1] + u0[:-2, 1:-1])/self.dy2[1:-1, 1:-1] ) + Diffx[1:-1, 1:-1]* self.dt *  ((u0[1:-1, 2:] -2*u0[1:-1, 1:-1] +u0[1:-1, :-2])/self.dx2[1:-1, 1:-1] )
 
         u[0,0]   = u0[0,0]      +Diffy[0,0]      *self.dt*((u0[1,0]   -2*u[0,0]    + UoutX[0,0])/self.dy2[0,0])         +Diffx[0,0]     *self.dt*((u0[0, 1]     -2*u0[0,0]    +UoutY[0,0])/self.dx2[0,0])
         u[-1,0]  = u0[-1,0]     +Diffy[-1,0]     *self.dt*((u0[-2,0]  -2*u[-1,0]   + UoutX[-1,0])/self.dy2[-1,0])       +Diffx[-1,0]    *self.dt*((u0[-1, 1]    -2*u0[-1,0]   +UoutY[-1,0])/self.dx2[-1,0])  
