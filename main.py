@@ -20,6 +20,3 @@ model_IC = IntimateContact(meshes,deck)
 plots=PlotsTwoPlates(deck,meshes,BC)
 
 solves = SolvesTwoPlates( deck, meshes, BC,model_HT,model_IC,plots)
-
-
-    
