@@ -20,7 +20,7 @@ class SolvesTwoPlates:
     def do_solver(self):
         for m in range(int(self.deck.doc["Simulation"]["Number Time Steps"])):
 # -------------- CALCULATE TEMPERATURE FOR EACH STEP INCREMENT----------        
-            self.BC.T0, self.BC.T = self.model_HT.do_convection(self.BC.T0, self.BC.T, self.BC.Dx, self.BC.Dy, self.BC.Q)            
+            self.BC.T0, self.BC.T = self.model_HT.do_convection(self.BC.T0, self.BC.T, self.BC.Dx, self.BC.Dy)            
             self.BC.T0, self.BC.T = self.model_HT.do_timestep(self.BC.T0, self.BC.T, self.BC.Dx, self.BC.Dy, self.BC.Q)
 # -------------- FORCE TEMPERATURE AT THE INTERFACE: ISOTHERMAL CONDITION----------             
             # self.BC.T[50, 1:-1] = self.deck.doc["Boundary Condition"]["Ideal Temperature"]
