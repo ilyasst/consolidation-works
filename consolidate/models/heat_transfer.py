@@ -9,6 +9,7 @@ class HeatTransfer:
         self.BC=BC
         self.Mdy=meshes.Mdy
         self.Mdx=meshes.Mdx
+        self.meshes=meshes
         self.h= float(deck.doc["Boundary Condition"]["Convective Coefficient"])
 
         
@@ -93,7 +94,11 @@ class HeatTransfer:
         u[-1,0]  = u0[-1,0]     +Diffy[-1,0]     *self.dt*((u0[-2,0]  -2*u[-1,0]   + UoutX[-1,0])/self.dy2[-1,0])       +Diffx[-1,0]    *self.dt*((u0[-1, 1]    -2*u0[-1,0]   +UoutY[-1,0])/self.dx2[-1,0])  
         u[0,-1]  = u0[0,-1]     +Diffy[0,-1]     *self.dt*((u0[1,-1]  -2*u[0,-1]   + UoutX[0,-1])/self.dy2[0,-1])       +Diffx[0,-1]    *self.dt*((u0[0, -2]    -2*u0[0,-1]   +UoutY[0,-1])/self.dx2[0,-1])
         u[-1,-1] = u0[-1,-1]    +Diffy[-1,-1]    *self.dt*((u0[-2,-1] -2*u[-1,-1]  + UoutX[-1,-1])/self.dy2[-1,-1])     +Diffx[-1,-1]   *self.dt*((u0[-1,-2]    -2*u0[-1,-1]  +UoutY[-1,-1])/self.dx2[-1,-1])
-
+        
+        
+        # u[self.meshes.ny.get("Bottom Adherent"),0]   = u0[self.meshes.ny.get("Bottom Adherent"),0]      +self.dt*(self.BC.q)/(self.BC.Rho[self.meshes.ny.get("Bottom Adherent"),0] *self.BC.Cp[self.meshes.ny.get("Bottom Adherent"),0])
+        # u[self.meshes.ny.get("Bottom Adherent"),:]  = u0[self.meshes.ny.get("Bottom Adherent"),-:]     +self.dt*(self.BC.q)/(self.BC.Rho[self.meshes.ny.get("Bottom Adherent"),-1]*self.BC.Cp[self.meshes.ny.get("Bottom Adherent"),:])
+        
         u0=u.copy()
         
         return u0,u 
