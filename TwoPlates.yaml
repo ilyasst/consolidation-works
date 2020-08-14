@@ -3,32 +3,44 @@ Problem Type:
     
 Geometry:
     Length X: 0.2
-    Length Y: 0.005248
-    
-Processing Parameters:
-    Temperature: 648
-    Pressure: 0.1
-    Power Density: 2613203000
-    
+    Top Plate Thickness: 0.0016
+    Bottom Plate Thickness: 0.0016
+    HE: 0.0002   
 Materials:
-  Material1:
+  Top Adherent:
     Thermal Conductivity X: 0.65
     Thermal Conductivity Y: 0.65
     Density: 1598
-    Cp: 930
-    Initial Temperature: 293.
-  Material2:
+    Specific Heat Capacity: 930
+  HE:
     Thermal Conductivity X: 0.65
     Thermal Conductivity Y: 0.65
     Density: 1598
-    Cp: 930
-    Initial Temperature: 293.
+    Specific Heat Capacity: 930  
+  Bottom Adherent:
+    Thermal Conductivity X: 0.65
+    Thermal Conductivity Y: 0.65
+    Density: 1598
+    Specific Heat Capacity: 930
 
+Boundary Condition:
+    Initial Temperature Top Adherent: 293
+    Initial Temperature HE: 293
+    Initial Temperature Bottom Adherent: 293
+    Input Power Density: 261320300
+    Consolidation Pressure: 0.1
+    Ideal Temperature: 648
+    Room Temperature: 293
+    Convective Coefficient: 150
+    
 Simulation:
-  Time Step: 0.0001
-  Number Time Steps: 10001
+  Time Step: 0.0002
+  Number Time Steps: 30001
   Number of Elements X: 200
-  Number of Elements Y: 128
+  Number of Elements Bottom Plate Thickness: 40
+  Number of Elements HE: 1
+  Number of Elements Top Plate Thickness: 40
+  
 
 Plot:
   Temp Output Folder: "./output/Temperature/"
@@ -40,5 +52,5 @@ Plot:
   plot interval: 500
   
 Animation:
-    name: temperature
-
+    Temperature name: temperature
+    Dic name: Dic

@@ -11,10 +11,12 @@ geometry = Geometry(deck)
 
 meshes = MeshTwoPlates( deck,geometry )
 
-model_HT= HeatTransfer(deck,meshes)
+BC = BoundaryCondition(deck, geometry, meshes)
+
+model_HT= HeatTransfer(deck,meshes, BC)
 
 model_IC = IntimateContact(meshes,deck)
 
-plots=PlotsTwoPlates(deck,meshes,meshes.T,meshes.Dic)
+plots=PlotsTwoPlates(deck,meshes,BC)
 
-solves = SolvesTwoPlates( deck,model_HT,meshes,plots,model_IC)
+solves = SolvesTwoPlates( deck, meshes, BC,model_HT,model_IC,plots)
