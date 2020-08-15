@@ -1,20 +1,12 @@
 from consolidate import *
 
-
-
 cwd = os.getcwd()
 # All the data from deck.yaml is now in the following deck variable
 
-deck = Deck( cwd + "/AL_problem.yaml" )
+deck = Deck( cwd + "/TwoPlates.yaml" )
 
-geometry = Geometry(deck)
+problem = TwoPlates(deck)
 
-meshes = Plate( deck,geometry )
+mesh = Mesher( deck, problem )
 
-model_HT= HeatTransfer(deck,meshes)
-
-# model_IC = IntimateContact(meshes,deck)
-
-plots=PlotsTwoPlates(deck,meshes,meshes.T)
-
-solves = SolvesTwoPlates( deck,model_HT,meshes,plots)
+import pdb; pdb.set_trace()

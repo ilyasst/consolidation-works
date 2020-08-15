@@ -1,0 +1,32 @@
+Problem Type:
+    Type: OnePlate
+
+Geometry:
+    Length (X): 10.0
+    Width (Y): 10.0
+    
+Mesh:
+  Plate:
+    Number of Elements in X: 10
+    Number of Elements in Y: 10
+
+Materials:
+    Plate:
+        Thermal Conductivity X: 0.65
+        Thermal Conductivity Y: 0.65
+        Density: 1598
+        Specific Heat Capacity: 930
+
+Boundary Conditions:
+    Top:
+      Models: Heat Transfer
+      Initial Temperature: 293
+    Bottom:
+      Models: Heat Transfer
+      Initial Temperature: 293
+    Left:
+      Models: Heat Transfer
+      Initial Temperature: 293
+    Right:
+      Models: Heat Transfer
+      Initial Temperature: 293
