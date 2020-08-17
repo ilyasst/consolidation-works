@@ -1,7 +1,3 @@
-from .IO        import *
-from .geometer  import*
-from .mesher    import *
-from .BC        import*
-from .models    import *
-from .solver    import *
-from .ploter    import*
+from .IO import *
+from .problems import *
+from .mesher import *
