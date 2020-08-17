@@ -13,13 +13,6 @@ class Geometry():
         
         
     def geometry(self):
-        
-        
         self.Lx=float(self.deck.doc["Geometry"]["Length X"])
+        self.Ly=float(self.deck.doc["Geometry"]["Length Y"])
         
-        self.Ly = {
-  "Top Adherent": float(self.deck.doc["Geometry"]["Top Plate Thickness"]) ,
-  "HE": float(self.deck.doc["Geometry"]["HE"]),
-  "Bottom Adherent": float(self.deck.doc["Geometry"]["Bottom Plate Thickness"]) 
-                  }
-   
