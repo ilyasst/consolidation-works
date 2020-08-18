@@ -9,4 +9,4 @@ problem = TwoPlates(deck)
 
 mesh = Mesher( deck, problem )
 
-import pdb; pdb.set_trace()
+# import pdb; pdb.set_trace()
