@@ -85,5 +85,4 @@ class TwoPlates:
         self.required_fields = []
         if deck.doc["Problem Type"]["Analysis Type"] == "Welding":
             self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "Qconvection", "Viscosity" ,"Dic"]
-            # self.required_fields.append(variables)
             
