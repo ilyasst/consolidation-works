@@ -7,6 +7,4 @@ deck = Deck( cwd + "/TwoPlates.yaml" )
 
 problem = TwoPlates(deck)
 
-mesh = Mesher( deck, problem )
-
-# import pdb; pdb.set_trace()
+mesh = Mesher( problem )

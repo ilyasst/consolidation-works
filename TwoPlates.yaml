@@ -1,5 +1,6 @@
 Problem Type:
     Type: TwoPlates
+    Analysis Type: Welding
 
 Geometry:
     Top Plate:
@@ -28,17 +29,17 @@ Materials:
         Thermal Conductivity X: 0.65
         Thermal Conductivity Y: 0.65
         Density: 1598
-        Specific Heat Capacity: 930
+        Specific Heat: 930
     Heat Element:
         Thermal Conductivity X: 0.65
         Thermal Conductivity Y: 0.65
         Density: 1598
-        Specific Heat Capacity: 930 
+        Specific Heat: 930 
     Top Plate:
         Thermal Conductivity X: 0.65
         Thermal Conductivity Y: 0.65
         Density: 1598
-        Specific Heat Capacity: 930   
+        Specific Heat: 930   
 
 Boundary Conditions:
     Top Plate Top:
@@ -62,12 +63,12 @@ Boundary Conditions:
       
 Initial Conditions:
     Top Plate:
-      Models: Heat
+      Models: Conduction   
       Initial Temperature: 292
     Heat Element:
-      Models: Heat
-      Initial Temperature: 291
+      Models: Conduction
+      Initial Temperature: 295
       Input Heat: 1
     Bottom Plate:
-      Models: Heat
+      Models: Conduction
       Initial Temperature: 290
