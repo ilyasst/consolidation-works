@@ -70,7 +70,6 @@ class TwoPlates:
             elif deck_BC == "Bottom Plate Right":
                 self.boundaryconditions.append( LinearBC( (self.domains[0].x1,0.), (self.domains[0].x1,self.domains[0].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
 
-                
     def set_initialconds(self, deck):
         self.Initial_Conditions = []
         for deck_InitCond in deck.doc["Initial Conditions"]:
@@ -85,4 +84,3 @@ class TwoPlates:
         self.required_fields = []
         if deck.doc["Problem Type"]["Analysis Type"] == "Welding":
             self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "Qconvection", "Viscosity" ,"Dic"]
-            
