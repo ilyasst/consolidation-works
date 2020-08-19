@@ -23,10 +23,10 @@ class Mesher():
             for i, domain in enumerate(problem.domains): 
                 if i == 0:
                     if field == "Temperature":
-                        Fields[field]=domain.initial_temperature*np.ones((self.meshes[i].nx, self.meshes[i].ny))    
+                        Fields[field]=domain.initial_temperature*np.ones((self.meshes[i].ny, self.meshes[i].nx))    
                     else:    
                         try:
-                            Fields[field] = float(domain.material[field])*np.ones((self.meshes[i].nx, self.meshes[i].ny))
+                            Fields[field] = float(domain.material[field])*np.ones((self.meshes[i].ny, self.meshes[i].nx))
                         except:
                              continue
                     continue
@@ -34,10 +34,10 @@ class Mesher():
                     # import pdb; pdb.set_trace()
                     if field == "Temperature":
                 
-                        Fields[field] = np.vstack((Fields[field] , domain.initial_temperature*np.ones((self.meshes[i].nx, self.meshes[i].ny))))
+                        Fields[field] = np.vstack((Fields[field] , domain.initial_temperature*np.ones((self.meshes[i].ny, self.meshes[i].nx))))
                     else:
                         try:
-                            Fields[field] = np.vstack((Fields[field] , float(domain.material[field])*np.ones((self.meshes[i].nx, self.meshes[i].ny))))
+                            Fields[field] = np.vstack((Fields[field] , float(domain.material[field])*np.ones((self.meshes[i].ny, self.meshes[i].nx))))
                         except: 
                             continue
         self.fields=Fields
