@@ -1,5 +1,6 @@
 from .domains import RectangularDomain
 from .boundaryconditions import LinearBC
+from .initialconditions import InitialConditions
 
 class TwoPlates:
 
@@ -7,6 +8,8 @@ class TwoPlates:
         self.set_problem_parameters(deck)
         self.set_domains(deck)
         self.set_boundaryconds(deck)
+        self.set_initialconds(deck)
+        self.define_fields(deck)
 
     def set_problem_parameters(self, deck):
         self.dimensions = 2
@@ -68,8 +71,19 @@ class TwoPlates:
                 self.boundaryconditions.append( LinearBC( (self.domains[0].x1,0.), (self.domains[0].x1,self.domains[0].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
 
                 
-    # def set_initialconds(self,deck):
-    #     self.initialconds=[]
-    #     for deck_IC in deck.doc["Materials"]:
-    #         if deck_IC == "Bottom Plate":
-    #             self.initialconds.append(LinearBC(()))
+    def set_initialconds(self, deck):
+        self.Initial_Conditions = []
+        for deck_InitCond in deck.doc["Initial Conditions"]:
+            if deck_InitCond == "Bottom Plate":        
+                self.Initial_Conditions.append(InitialConditions(self.domains[0].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
+            elif deck_InitCond == "Heat Element":
+                self.Initial_Conditions.append(InitialConditions(self.domains[1].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
+            elif deck_InitCond == "Top Plate":
+                self.Initial_Conditions.append(InitialConditions(self.domains[2].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
+            
+    def define_fields(self,deck):
+        self.required_fields = []
+        if deck.doc["Problem Type"]["Analysis Type"] == "Welding":
+            self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "Qconvection", "Viscosity" ,"Dic"]
+            # self.required_fields.append(variables)
+            
