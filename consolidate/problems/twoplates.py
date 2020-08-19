@@ -8,16 +8,16 @@ class TwoPlates:
         self.set_problem_parameters(deck)
         self.set_domains(deck)
         self.set_boundaryconds(deck)
-        self.set_initialconds(deck)
+        # self.set_initialconds(deck)
         self.define_fields(deck)
 
     def set_problem_parameters(self, deck):
         self.dimensions = 2
-        self.Keys = []
+        Keys = []
         for deck_geometry in deck.doc["Geometry"]:
             # if deck_geometry == "Bottom Plate":
-            self.Keys.append(deck_geometry)
-        self.geometry=dict.fromkeys(self.Keys,None)    
+            Keys.append(deck_geometry)
+        self.geometry=dict.fromkeys(Keys,None)    
         for deck_geometry in deck.doc["Geometry"]:
             # if deck_geometry == "Bottom Plate":
             self.geometry[deck_geometry]= [((float(deck.doc["Geometry"][deck_geometry]["Width (X)"]), float(deck.doc["Geometry"][deck_geometry]["Thickness (Y)"])))]
@@ -33,7 +33,8 @@ class TwoPlates:
                 plate_initial_temperature=float(deck.doc["Initial Conditions"][deck_domain]["Initial Temperature"])
                 number_of_elements_X = int(deck.doc["Mesh"][deck_domain]["Number of Elements in X"])
                 number_of_elements_Y = int(deck.doc["Mesh"][deck_domain]["Number of Elements in Y"])
-                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y ))
+                Power_Input_Density = float(deck.doc["Initial Conditions"][deck_domain]["Power Input Density"])
+                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y,Power_Input_Density ))
             elif deck_domain == "Heat Element":
                 corner0=(0,self.geometry["Bottom Plate"][0][1])
                 corner1 = (self.geometry[deck_domain][0][0],self.geometry["Bottom Plate"][0][1]+self.geometry[deck_domain][0][1])
@@ -41,7 +42,8 @@ class TwoPlates:
                 plate_initial_temperature=float(deck.doc["Initial Conditions"][deck_domain]["Initial Temperature"])
                 number_of_elements_X = int(deck.doc["Mesh"][deck_domain]["Number of Elements in X"])
                 number_of_elements_Y = int(deck.doc["Mesh"][deck_domain]["Number of Elements in Y"])
-                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y ))
+                Power_Input_Density = float(deck.doc["Initial Conditions"][deck_domain]["Power Input Density"])
+                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y,Power_Input_Density ))
             elif deck_domain == "Top Plate":
                 corner0 = (0,self.geometry["Bottom Plate"][0][1]+self.geometry["Heat Element"][0][1])
                 corner1 = (self.geometry[deck_domain][0][0],self.geometry["Bottom Plate"][0][1]+self.geometry["Heat Element"][0][1]++self.geometry[deck_domain][0][1])
@@ -49,7 +51,8 @@ class TwoPlates:
                 plate_initial_temperature=float(deck.doc["Initial Conditions"][deck_domain]["Initial Temperature"])
                 number_of_elements_X = int(deck.doc["Mesh"][deck_domain]["Number of Elements in X"])
                 number_of_elements_Y = int(deck.doc["Mesh"][deck_domain]["Number of Elements in Y"])
-                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y ))
+                Power_Input_Density = float(deck.doc["Initial Conditions"][deck_domain]["Power Input Density"])
+                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y,Power_Input_Density ))
                 
     
 
@@ -70,15 +73,15 @@ class TwoPlates:
             elif deck_BC == "Bottom Plate Right":
                 self.boundaryconditions.append( LinearBC( (self.domains[0].x1,0.), (self.domains[0].x1,self.domains[0].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
 
-    def set_initialconds(self, deck):
-        self.Initial_Conditions = []
-        for deck_InitCond in deck.doc["Initial Conditions"]:
-            if deck_InitCond == "Bottom Plate":        
-                self.Initial_Conditions.append(InitialConditions(self.domains[0].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
-            elif deck_InitCond == "Heat Element":
-                self.Initial_Conditions.append(InitialConditions(self.domains[1].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
-            elif deck_InitCond == "Top Plate":
-                self.Initial_Conditions.append(InitialConditions(self.domains[2].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
+    # def set_initialconds(self, deck):
+    #     self.Initial_Conditions = []
+    #     for deck_InitCond in deck.doc["Initial Conditions"]:
+    #         if deck_InitCond == "Bottom Plate":        
+    #             self.Initial_Conditions.append(InitialConditions(self.domains[0].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
+    #         elif deck_InitCond == "Heat Element":
+    #             self.Initial_Conditions.append(InitialConditions(self.domains[1].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
+    #         elif deck_InitCond == "Top Plate":
+    #             self.Initial_Conditions.append(InitialConditions(self.domains[2].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
             
     def define_fields(self,deck):
         self.required_fields = []
