@@ -2,10 +2,11 @@ import numpy as np
 
 class Mesh:
 
-    def __init__(self, deck, domain):
-        self.set_mesh_grid(deck, domain)
+    def __init__(self,  domain):
+        self.set_mesh_grid(domain)
+        self.name = domain.name
 
-    def set_mesh_grid(self, deck, domain):
+    def set_mesh_grid(self, domain):
         self.nx = domain.Number_of_Elements_in_X
         self.ny = domain.Number_of_Elements_in_Y
         self.dx=domain.Lx/self.nx
