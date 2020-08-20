@@ -23,6 +23,7 @@ class Mesher():
         self.fields = {}
         for field_name in problem.required_fields:
             self.fields[field_name] = Field(field_name, self.M, problem)
+            # import pdb; pdb.set_trace()
                         
 
                     
