@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from .mesh import Mesh
+from .fields import Field
 
 class Mesher():
 
@@ -15,33 +16,19 @@ class Mesher():
 
            
             
+    # def initialize_fields(self, problem):
+        
+    #     self.fields=[]
+    #     for field in problem.required_fields:                
+    #         for domain in problem.domains: 
+    #             self.fields.append (Field(field, domain))
+                    
+            
     def initialize_fields(self, problem):
         
-        Fields = {}        
-        for field in problem.required_fields:
-                
-            for i, domain in enumerate(problem.domains): 
-                if i == 0:
-                    if field == "Temperature":
-                        Fields[field]=domain.initial_temperature*np.ones((self.meshes[i].ny, self.meshes[i].nx))    
-                    else:    
-                        try:
-                            Fields[field] = float(domain.material[field])*np.ones((self.meshes[i].ny, self.meshes[i].nx))
-                        except:
-                             continue
-                    continue
-                else:
-                    # import pdb; pdb.set_trace()
-                    if field == "Temperature":
-                
-                        Fields[field] = np.vstack((Fields[field] , domain.initial_temperature*np.ones((self.meshes[i].ny, self.meshes[i].nx))))
-                    else:
-                        try:
-                            Fields[field] = np.vstack((Fields[field] , float(domain.material[field])*np.ones((self.meshes[i].ny, self.meshes[i].nx))))
-                        except: 
-                            continue
-        self.fields=Fields
-                    
+        self.fields=[]
+        self.fields.append (Field(problem))
+        
                     
                 
         
