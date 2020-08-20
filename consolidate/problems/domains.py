@@ -14,9 +14,14 @@ class RectangularDomain:
         self.initial_temperature=initial_temperature
         self.Power_Input_Density=Power_Input_Density
         self.Dic = Initial_Dic
+        self.initial_fields = {"Temperature": float(initial_temperature)}
 
-    def test(self, point):
+    def test_metric(self, point):
         if point[0] > self.x0 and point[0] < self.x1 and point[1] > self.y0 and point[1] < self.y1:
             return True
         else:
             return False
+        
+    def set_field_init_value(self, field_dict):
+        for key, value in field_dict.items():
+            self.initial_fields[key] = float(value)
