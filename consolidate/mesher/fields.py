@@ -6,9 +6,7 @@ class Field:
     
     
     def __init__(self,  problem ):
-        # self.name = variable
-        # self.populate_field(variable,domain)
-        self.field_size(problem)
+        # self.field_size(problem)
         self.create_field(problem)
         
     # def populate_field(self, variable, domain):
@@ -24,7 +22,7 @@ class Field:
         ny=0
         for domain in problem.domains:
             nx=nx+domain.Number_of_Elements_in_X
-            ny=ny+domain.Number_of_Elements_in_X
+            ny=ny+domain.Number_of_Elements_in_Y
         self.nx = nx
         self.ny = ny
         
@@ -46,12 +44,25 @@ class Field:
                         fields[field]=res
                         test=[]
                     
+                if field == "Input Power Density":
+                    test=(domain.Power_Input_Density*np.ones((domain.Number_of_Elements_in_Y, domain.Number_of_Elements_in_X)))                     
+                    if domain == problem.domains[0]:
+                        res=test    
+                        fields[field]=res
+                        test=[]
+                    
+                    else:
+                        res=np.concatenate((res, test))
+                        fields[field]=res
+                        test=[]
+                    
                         
                         
-                elif field != "Temperature":
+                elif field != "Temperature" or field!="Input Power Density":
                     try:
                         test=(float(domain.material[field])*np.ones((domain.Number_of_Elements_in_Y, domain.Number_of_Elements_in_X)))
                     except:
+                        print ("missing " + field + " field")
                         continue
                     if domain == problem.domains[0]:
                         res=test             
@@ -81,7 +92,7 @@ class Field:
                     
         
                     self.fields=res
-                    self.fieds2=fields
+                    self.fields2=fields
 
                         
                         
