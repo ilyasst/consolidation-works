@@ -1,49 +1,82 @@
 Problem Type:
     Type: TwoPlates
+    Analysis Type: Welding
 
 Geometry:
-    Length (Y): 20.0
-    Width (X): 10.0
+    Top Plate:
+        Thickness (Y): 0.4
+        Width (X): 10.0
+    Heat Element:
+        Thickness (Y): 0.01
+        Width (X): 10.0
+    Bottom Plate:
+        Thickness (Y): 0.4
+        Width (X): 10.0
     
 Mesh:
     Top Plate:
-      Number of Elements in X: 10
-      Number of Elements in Y: 10
+        Number of Elements in X: 10
+        Number of Elements in Y: 10
+    Heat Element: 
+        Number of Elements in X: 10
+        Number of Elements in Y: 1
     Bottom Plate:
-      Number of Elements in X: 10
-      Number of Elements in Y: 10
+        Number of Elements in X: 10
+        Number of Elements in Y: 10
 
 Materials:
     Bottom Plate:
         Thermal Conductivity X: 0.65
         Thermal Conductivity Y: 0.65
         Density: 1598
-        Specific Heat Capacity: 930
+        Specific Heat: 930
+        DicW0OverB0: 0.45
+        DicA0OverB0: 0.85
+    Heat Element:
+        Thermal Conductivity X: 0.65
+        Thermal Conductivity Y: 0.65
+        Density: 1598
+        Specific Heat: 931
+        DicW0OverB0: 0.45
+        DicA0OverB0: 0.85
     Top Plate:
         Thermal Conductivity X: 0.65
         Thermal Conductivity Y: 0.65
         Density: 1598
-        Specific Heat Capacity: 930   
+        Specific Heat: 932
+        DicW0OverB0: 0.45
+        DicA0OverB0: 0.85        
 
 Boundary Conditions:
     Top Plate Top:
-      Models: Heat
-      Initial Temperature: 293
+        Models: Heat
+        Initial Temperature: 293
     Top Plate Left:
-      Models: Heat
-      Initial Temperature: 293
+        Models: Heat
+        Initial Temperature: 293
     Top Plate Right:
-      Models: Heat
-      Initial Temperature: 293
+        Models: Heat
+        Initial Temperature: 293
     Bottom Plate Left:
-      Models: Heat
-      Initial Temperature: 293
+        Models: Heat
+        Initial Temperature: 293
     Bottom Plate Right:
-      Models: Heat
-      Initial Temperature: 293
+        Models: Heat
+        Initial Temperature: 293
     Bottom Plate Bottom:
-      Models: Heat
-      Initial Temperature: 293
-    Weld Line:
-      Models: Heat
-      Initial Temperature: 293
+        Models: Heat
+        Initial Temperature: 293
+      
+Initial Conditions:
+    Top Plate:
+        Models: Conduction   
+        Initial Temperature: 292
+        Power Input Density: 0
+    Heat Element:
+        Models: Conduction
+        Initial Temperature: 295
+        Power Input Density: 1
+    Bottom Plate:
+        Models: Conduction
+        Power Input Density: 0
+        Initial Temperature: 290
