@@ -5,12 +5,14 @@ from .initialconditions import InitialConditions
 class TwoPlates:
 
     def __init__(self, deck):
+        self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat"]
         self.set_problem_parameters(deck)
         self.set_domains(deck)
         self.set_boundaryconds(deck)
-        # self.set_initialconds(deck)
-        self.define_fields(deck)
+        self.set_initialconds(deck)
+        # self.define_fields(deck)
 
+    
     def set_problem_parameters(self, deck):
         self.dimensions = 2
         Keys = []
@@ -57,9 +59,6 @@ class TwoPlates:
                 Initial_Dic = 1/(1+float(deck.doc["Materials"][deck_domain]["DicW0OverB0"]))
                 self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y,Power_Input_Density,Initial_Dic ))
                 
-    
-
-
     def set_boundaryconds(self, deck):
         self.boundaryconditions = []
         for deck_BC in deck.doc["Boundary Conditions"]:
@@ -76,17 +75,10 @@ class TwoPlates:
             elif deck_BC == "Bottom Plate Right":
                 self.boundaryconditions.append( LinearBC( (self.domains[0].x1,0.), (self.domains[0].x1,self.domains[0].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
 
-    # def set_initialconds(self, deck):
-    #     self.Initial_Conditions = []
-    #     for deck_InitCond in deck.doc["Initial Conditions"]:
-    #         if deck_InitCond == "Bottom Plate":        
-    #             self.Initial_Conditions.append(InitialConditions(self.domains[0].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
-    #         elif deck_InitCond == "Heat Element":
-    #             self.Initial_Conditions.append(InitialConditions(self.domains[1].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
-    #         elif deck_InitCond == "Top Plate":
-    #             self.Initial_Conditions.append(InitialConditions(self.domains[2].name,deck.doc["Initial Conditions"][deck_InitCond]["Initial Temperature"]))
-            
-    def define_fields(self,deck):
-        self.required_fields = []
-        if deck.doc["Problem Type"]["Analysis Type"] == "Welding":
-            self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "Qconvection", "Viscosity" ,"Dic"]
+   
+    def set_initialconds(self, deck):
+        for domain in self.domains:
+            for field in self.required_fields:
+                if field in field in deck.doc["Materials"][domain.name]:
+                    domain.set_field_init_value({field: deck.doc["Materials"][domain.name][field]})        
+        
