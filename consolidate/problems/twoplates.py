@@ -5,7 +5,7 @@ from .initialconditions import InitialConditions
 class TwoPlates:
 
     def __init__(self, deck):
-        self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat"]
+        self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Heat Input", "Initial Convection Temperature"]
         self.set_problem_parameters(deck)
         self.set_domains(deck)
         self.set_boundaryconds(deck)
