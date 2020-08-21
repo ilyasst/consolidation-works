@@ -1,7 +1,5 @@
 Problem Type:
     Type: TwoPlates
-    Analysis Type: Welding
-
 Geometry:
     Top Plate:
         Thickness (Y): 0.4
@@ -96,3 +94,7 @@ Initial Conditions:
     Bottom Plate:
         Models: Conduction
         Initial Temperature: 290
+
+Simulation:
+    Step Time: 0.1
+    Number of Steps: 1000
