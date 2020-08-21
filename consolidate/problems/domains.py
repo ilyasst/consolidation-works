@@ -1,6 +1,6 @@
 class RectangularDomain:
 
-    def __init__(self, name, corner0, corner1, material, initial_temperature, number_of_elements_X, number_of_elements_Y,Power_Input_Density, Initial_Dic ):
+    def __init__(self, name, corner0, corner1, material, initial_temperature, number_of_elements_X, number_of_elements_Y ):
         self.x0 = float(corner0[0])
         self.y0 = float(corner0[1])
         self.x1 = float(corner1[0])
@@ -12,8 +12,6 @@ class RectangularDomain:
         self.material = material
         self.name = name
         self.initial_temperature=initial_temperature
-        self.Power_Input_Density=Power_Input_Density
-        self.Dic = Initial_Dic
         self.initial_fields = {"Temperature": float(initial_temperature)}
 
     def test_metric(self, point):
