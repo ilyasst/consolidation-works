@@ -46,15 +46,15 @@ Boundary Conditions:
         Left Edge: 
             Models: 
                 Convection:
-                    Temperature: 293
+                    Temperature: 200
         Top Edge:
             Models: 
                 Convection:
-                    Temperature: 293
+                    Temperature: 210
         Right Edge:
             Models: 
                 Convection:
-                    Temperature: 293
+                    Temperature: 220
         Bottom Edge:
             Models:
                 Intimate Contact:
@@ -71,15 +71,15 @@ Boundary Conditions:
         Left Edge:
             Models: 
                 Convection:
-                    Temperature: 293
+                    Temperature: 300
         Bottom Edge:
             Models: 
                 Convection:
-                    Temperature: 293
+                    Temperature: 310
         Right Edge:
             Models: 
                 Convection:
-                    Temperature: 293 
+                    Temperature: 320 
         Top Edge:
             Models:
                 Intimate Contact:
