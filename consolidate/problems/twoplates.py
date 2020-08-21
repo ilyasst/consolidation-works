@@ -1,16 +1,17 @@
 from .domains import RectangularDomain
 from .boundaryconditions import LinearBC
-from .initialconditions import InitialConditions
 
 class TwoPlates:
 
     def __init__(self, deck):
-        self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Heat Input", "Initial Convection Temperature"]
+        self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Heat Input", "Initial Convection Temperature", "dx","dy"]
         self.set_problem_parameters(deck)
         self.set_domains(deck)
         self.set_boundaryconds(deck)
         self.set_initialconds(deck)
-        # self.define_fields(deck)
+        self.dt = float(deck.doc["Simulation"]["Step Time"])
+        self.nstes = int(deck.doc["Simulation"]["Number of Steps"])
+
 
     
     def set_problem_parameters(self, deck):
@@ -80,6 +81,11 @@ class TwoPlates:
             for field in self.required_fields:
                 if field in field in deck.doc["Materials"][domain.name]:
                     domain.set_field_init_value({field: deck.doc["Materials"][domain.name][field]})
+                elif field == "dx":
+                    domain.set_field_init_value({field: domain.Lx/domain.Number_of_Elements_in_X })
+                elif field == "dy":
+                    domain.set_field_init_value({field: domain.Ly/domain.Number_of_Elements_in_Y })
+                
                     
     
     def set_boundaryconds(self, deck):
@@ -112,9 +118,8 @@ class TwoPlates:
                 for model in deck.doc["Boundary Conditions"][BC_domain.name]["Models"].keys():
                     if model == "Heating":
                         parameter = "Input Power Density"
-                        # import pdb; pdb.set_trace()
                         self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y1), (BC_domain.x1, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name]["Models"][model][parameter], BC_domain.name, "all") )             
-                    #     print ("hello")
+
 
             
                     
