@@ -56,15 +56,15 @@ Boundary Conditions:
         Bottom Edge:
             Models:
                 Intimate Contact:
-                    W0OverB0: 0.45
-                    A0OverB0: 0.85
+                    Horizontal asperity ratio: 0.45
+                    Vertical asperity ratio: 0.85
     Heat Element:
         Models:
             Heating:
                 Input Power Density: 1000
             Intimate Contact:
-                W0OverB0: 0.45
-                A0OverB0: 0.85
+                Horizontal asperity ratio: 0.45
+                Vertical asperity ratio: 0.85
     Bottom Plate:  
         Left Edge:
             Models: 
@@ -81,8 +81,8 @@ Boundary Conditions:
         Top Edge:
             Models:
                 Intimate Contact:
-                    W0OverB0: 0.45
-                    A0OverB0: 0.85
+                    Horizontal asperity ratio: 0.45
+                    Vertical asperity ratio: 0.85
 
 Initial Conditions:
     Top Plate:
