@@ -18,11 +18,9 @@ class TwoPlates:
         self.dimensions = 2
         Keys = []
         for deck_geometry in deck.doc["Geometry"]:
-            # if deck_geometry == "Bottom Plate":
             Keys.append(deck_geometry)
         self.geometry=dict.fromkeys(Keys,None)    
         for deck_geometry in deck.doc["Geometry"]:
-            # if deck_geometry == "Bottom Plate":
             self.geometry[deck_geometry]= [((float(deck.doc["Geometry"][deck_geometry]["Width (X)"]), float(deck.doc["Geometry"][deck_geometry]["Thickness (Y)"])))]
            
 
@@ -53,25 +51,6 @@ class TwoPlates:
                 number_of_elements_X = int(deck.doc["Mesh"][deck_domain]["Number of Elements in X"])
                 number_of_elements_Y = int(deck.doc["Mesh"][deck_domain]["Number of Elements in Y"])
                 self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y ))
-                
-    # def set_boundaryconds(self, deck):
-    #     self.boundaryconditions = []
-    #     for deck_BC in deck.doc["Boundary Conditions"]:
-    #         if deck_BC == "Top Plate Top":
-    #             self.boundaryconditions.append( LinearBC( (0.,self.domains[2].y1), (self.domains[2].x1,self.domains[2].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
-    #         elif deck_BC == "Top Plate Left":
-    #             self.boundaryconditions.append( LinearBC( (0.,self.domains[2].y0), (0.,self.domains[2].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
-    #         elif deck_BC == "Top Plate Right":
-    #             self.boundaryconditions.append( LinearBC( (self.domains[2].x1,self.domains[2].y0), (self.domains[2].x1,self.domains[2].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
-    #         elif deck_BC == "Bottom Plate Bottom":
-    #             self.boundaryconditions.append( LinearBC( (self.domains[0].x0,self.domains[0].y0), (self.domains[0].x1,0.), deck.doc["Boundary Conditions"][deck_BC] ) )
-    #         elif deck_BC == "Bottom Plate Left":
-    #             self.boundaryconditions.append( LinearBC( (0.,0.), (0.,self.domains[0].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
-    #         elif deck_BC == "Bottom Plate Right":
-    #             self.boundaryconditions.append( LinearBC( (self.domains[0].x1,0.), (self.domains[0].x1,self.domains[0].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
-    #         elif deck_BC == "Heating Element":
-    #             self.boundaryconditions.append( LinearBC( (self.domains[1].x1,0.), (self.domains[1].x1,self.domains[1].y1), deck.doc["Boundary Conditions"][deck_BC] ) )
-                
                 
                 
                 
