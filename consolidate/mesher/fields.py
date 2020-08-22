@@ -12,7 +12,14 @@ class Field:
          # import pdb; pdb.set_trace()
          self.var = shape.copy()
          var=shape.copy()
-         VarConv=shape.copy()
+         
+         
+        
+         VarConv = np.concatenate((var, np.zeros((np.shape(var)[0],2))), axis=1)
+         nx_var = np.shape(VarConv)[1]
+         VarConv= np.concatenate((VarConv, np.zeros((2, nx_var))), axis=0)
+        
+
          nx=0
          nyu=0
          nyl=0
@@ -32,54 +39,33 @@ class Field:
          elif self.name == "Initial Convection Temperature":
              for BC in problem.BoundaryConditions:
                  if BC.kind == "Convection":
-                     if BC.edge == "Left Edge":
-                         aux=np.zeros((np.shape(VarConv)[0],1))
-                         if BC.domain == "Bottom Plate":
-                             VarConv=np.concatenate((aux,VarConv),axis=1)
-                     if BC.edge == "Bottom Edge":
-                         aux=np.zeros((1,np.shape(VarConv)[1]))
-                         if BC.domain == "Bottom Plate":
-                             VarConv=np.concatenate((aux, VarConv),axis=0)
-                     if BC.edge == "Right Edge":
-                         aux=np.zeros((np.shape(VarConv)[0],1))
-                         if BC.domain == "Bottom Plate":
-                             VarConv=np.concatenate((VarConv,aux),axis=1)
-                     if BC.edge == "Top Edge":
-                         aux=np.zeros((1,np.shape(VarConv)[1]))
-                         if BC.domain == "Top Plate":
-                             VarConv=np.concatenate(( VarConv,aux),axis=0)
-                    
-                        
-                     for domain_name in problem.domains:
-                         if domain_name.name == BC.domain:
-                             if BC.domain == "Bottom Plate":
-                                 nyl=0
-                                 nyu=domain_name.Number_of_Elements_in_Y
-                                 if BC.edge == "Bottom Edge":
-                                     VarConv[0, 1:domain_name.Number_of_Elements_in_X+1]=BC.value
-                                 if BC.edge == "Left Edge":
-                                     VarConv[0:domain_name.Number_of_Elements_in_Y, 0]=BC.value
-                                 if BC.edge == "Right Edge":
-                                    VarConv[1:domain_name.Number_of_Elements_in_Y+1, -1]=BC.value
+                     if (BC.x0 == BC.x1) and (BC.x0 != 0.0):
+                         if BC.y0 == 0.0:
+                             VarConv[1:BC.ny+1,-1] = BC.value
+                         if BC.y0 != 0.0:
+                             VarConv[-2:-BC.ny-2:-1,-1] = BC.value 
+                     if (BC.x0 == BC.x1) and (BC.x0 == 0.0):
+                         if BC.y0 == 0.0:
+                             VarConv[1:BC.ny+1, 0]=BC.value
+                         if BC.y0 != 0.0:
+                            VarConv[-2:-BC.ny-2:-1,0] = BC.value 
+                     if (BC.y0 == BC.y1) and (BC.y0 != 0.0):
+                            VarConv[-1, 1:BC.nx+1] = BC.value
+                     if (BC.y0 == BC.y1) and (BC.y0 == 0.0):   
+                         VarConv[0, 1:BC.nx+1] = BC.value
+                    # if BC.edge == "Bottom Edge":
+                    #     if BC.y0 == 0:
+                     var=VarConv
+                # import pdb; pdb.set_trace()
+                             
+                  
                                     
-                                    
-                             if BC.domain == "Top Plate":
-                                 nyltp = nyu + problem.domains[1].Number_of_Elements_in_Y
-                                 nyutp = nyltp + domain_name.Number_of_Elements_in_Y
-                                 if BC.edge == "Top Edge":
-                                     VarConv[-1, 1:domain_name.Number_of_Elements_in_X+1]=BC.value
-                                 if BC.edge == "Left Edge":
-                                     VarConv[1+nyltp:nyutp+1, 0]=BC.value
-                                 if BC.edge == "Right Edge":
-                                    VarConv[1+nyltp:nyutp+1, -1]=BC.value
-                                 # import pdb; pdb.set_trace()
-                                    var=VarConv
          else:
              for domain in problem.domains:
-                  nx=domain.Number_of_Elements_in_X
-                  nyu=nyu+domain.Number_of_Elements_in_Y
-                  var[nyl:nyu, 0:nx]=domain.initial_fields[self.name]
-                  nyl=nyu
+                 nx=domain.Number_of_Elements_in_X
+                 nyu=nyu+domain.Number_of_Elements_in_Y
+                 var[nyl:nyu, 0:nx]=domain.initial_fields[self.name]
+                 nyl=nyu
          self.var=var
              
              
