@@ -17,12 +17,17 @@ class TwoPlates:
     def set_problem_parameters(self, deck):
         self.dimensions = 2
         Keys = []
+        thickness=0
         for deck_geometry in deck.doc["Geometry"]:
-            Keys.append(deck_geometry)
+            for geom_par in deck.doc["Geometry"][deck_geometry]:
+                if geom_par == "Thickness (Y)":
+                    thickness = float(deck.doc["Geometry"][deck_geometry][geom_par]) + thickness
         self.geometry=dict.fromkeys(Keys,None)    
+        self.Total_Thickness = thickness
         for deck_geometry in deck.doc["Geometry"]:
             self.geometry[deck_geometry]= [((float(deck.doc["Geometry"][deck_geometry]["Width (X)"]), float(deck.doc["Geometry"][deck_geometry]["Thickness (Y)"])))]
-           
+        
+       
 
     def set_domains(self, deck):
         self.domains = []
