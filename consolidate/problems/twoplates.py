@@ -98,27 +98,27 @@ class TwoPlates:
                         if model == "Convection":    
                             if edge=="Left Edge":
                                 # import pdb; pdb.set_trace()
-                                self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge ) )
+                                self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
                             if edge=="Bottom Edge":
-                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x1, BC_domain.y0), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge ) )
+                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x1, BC_domain.y0), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
                             if edge=="Right Edge":
-                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x1, BC_domain.y0), (BC_domain.x1, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge ) )
+                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x1, BC_domain.y0), (BC_domain.x1, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
                             if edge=="Top Edge":            
-                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x0, BC_domain.y1), (BC_domain.x1, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge ) )
+                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x0, BC_domain.y1), (BC_domain.x1, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
                         
                         if model == "Intimate Contact":
                             for parameter in deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model].keys():
                                 if edge=="Top Edge":
-                                    self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model][parameter], BC_domain.name, edge ) )
+                                    self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model][parameter], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
                                 if edge=="Bottom Edge":
-                                    self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model][parameter], BC_domain.name, edge ) )
+                                    self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model][parameter], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
                                           
 
             elif BC_domain.name == "Heat Element":
                 for model in deck.doc["Boundary Conditions"][BC_domain.name]["Models"].keys():
                     if model == "Heating":
                         parameter = "Input Power Density"
-                        self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y1), (BC_domain.x1, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name]["Models"][model][parameter], BC_domain.name, "all") )             
+                        self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y1), (BC_domain.x1, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name]["Models"][model][parameter], BC_domain.name, "all", BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y) )             
 
 
             
