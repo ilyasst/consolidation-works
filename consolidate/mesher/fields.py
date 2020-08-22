@@ -43,13 +43,13 @@ class Field:
                          if BC.y0 == 0.0:
                              VarConv[1:BC.ny+1,-1] = BC.value
                          if BC.y0 != 0.0:
-                             VarConv[-2:-BC.ny-2:-1,-1] = BC.value 
+                             VarConv[-2:-BC.ny-2:-1,-1] = BC.value                             
                      if (BC.x0 == BC.x1) and (BC.x0 == 0.0):
                          if BC.y0 == 0.0:
                              VarConv[1:BC.ny+1, 0]=BC.value
                          if BC.y0 != 0.0:
                             VarConv[-2:-BC.ny-2:-1,0] = BC.value 
-                     if (BC.y0 == BC.y1) and (BC.y0 != 0.0):
+                     if (BC.y0 == BC.y1) and (BC.y0 == problem.Total_Thickness):
                             VarConv[-1, 1:BC.nx+1] = BC.value
                      if (BC.y0 == BC.y1) and (BC.y0 == 0.0):   
                          VarConv[0, 1:BC.nx+1] = BC.value
