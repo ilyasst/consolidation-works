@@ -68,15 +68,15 @@ class TwoPlates:
         for domain in self.domains:
             for field in self.required_fields:
                 
-                if field in deck.doc["Domains"][domain.Name]["Initial Condition"]:
-                    domain.set_field_init_value({field: float(deck.doc["Domains"][domain.Name]["Initial Condition"][field])})
-                elif field in deck.doc["Domains"][domain.Name]["Material"]:
-                    domain.set_field_init_value({field: deck.doc ["Domains"][domain.Name]["Material"][field]})
+                if field in deck.doc["Domains"][domain.name]["Initial Condition"]:
+                    domain.set_field_init_value({field: float(deck.doc["Domains"][domain.name]["Initial Condition"][field])})
+                elif field in deck.doc["Domains"][domain.name]["Material"]:
+                    domain.set_field_init_value({field: deck.doc ["Domains"][domain.name]["Material"][field]})
                 elif field == "dx":
                     # import pdb; pdb.set_trace()
-                    domain.set_field_init_value({field: domain.Lx/domain.Mesh["Number of Elements in X"] })
+                    domain.set_field_init_value({field: domain.Lx/domain.mesh["Number of Elements in X"] })
                 elif field == "dy":
-                    domain.set_field_init_value({field: domain.Ly/domain.Mesh["Number of Elements in Y"] })
+                    domain.set_field_init_value({field: domain.Ly/domain.mesh["Number of Elements in Y"] })
                 
                 
         
