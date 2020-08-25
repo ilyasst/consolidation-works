@@ -7,4 +7,4 @@ deck = Deck( cwd + "/TwoPlates.yaml" )
 
 problem = TwoPlates(deck)
 
-mesh = Mesher( problem )
+# mesh = Mesher( problem )
