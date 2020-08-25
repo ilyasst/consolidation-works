@@ -7,13 +7,13 @@ class RectangularDomain:
         self.y1 = float(corner1[1])
         self.Lx = self.x1 - self.x0
         self.Ly = self.y1 - self.y0
-        self.Name = name
-        self.Material = material.copy()
-        self.InitialCondition = initialcondition.copy()
-        self.Mesh = mesh.copy()
-        self.initial_fields = self.InitialCondition.copy()
+        self.name = name
+        self.material = material.copy()
+        self.initial_condition = initialcondition.copy()
+        self.mesh = mesh.copy()
+        self.initial_fields = self.initial_condition.copy()
 
-    def test_metric(self, point):
+    def test(self, point):
         if point[0] > self.x0 and point[0] < self.x1 and point[1] > self.y0 and point[1] < self.y1:
             return True
         else:
@@ -27,5 +27,6 @@ class RectangularDomain:
         self.mask = problem_M.copy()
         for x_i, x_ in enumerate(problem_M):
             for y_i, y_ in enumerate(problem_M):
+                # import pdb; pdb.set_trace()
                 if self.test( (x_i, y_i) ):
                     self.mask[x_i][y_i] = 1
