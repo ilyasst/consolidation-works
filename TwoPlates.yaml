@@ -1,99 +1,81 @@
 Problem Type:
     Type: TwoPlates
-Geometry:
+Domains:
     Top Plate:
-        Thickness (Y): 0.4
-        Width (X): 10.0
-    Heat Element:
-        Thickness (Y): 0.01
-        Width (X): 10.0
+        Geometry:
+            Thickness (Y): 0.4
+            Width (X): 10.0
+            Pos: 3
+        Material:
+            Thermal Conductivity X: 3
+            Thermal Conductivity Y: 3
+            Density: 3
+            Specific Heat: 3
+        Mesh:
+            Number of Elements in X: 10
+            Number of Elements in Y: 10
+        Boundary Condition:
+            Left Edge:
+                Temperature: 3
+            Top Edge:
+                Temperature: 3
+            Right Edge:
+                Temperature: 3
+            Bottom Edge:
+                Horizontal asperity ratio: 3
+                Vertical asperity ratio: 3
+        Initial Condition:
+            Initial Temperature: 3
+        
     Bottom Plate:
-        Thickness (Y): 0.4
-        Width (X): 10.0
-    
-Mesh:
-    Top Plate:
-        Number of Elements in X: 10
-        Number of Elements in Y: 10
-    Heat Element: 
-        Number of Elements in X: 10
-        Number of Elements in Y: 1
-    Bottom Plate:
-        Number of Elements in X: 10
-        Number of Elements in Y: 10
-
-Materials:
-    Bottom Plate:
-        Thermal Conductivity X: 0.65
-        Thermal Conductivity Y: 0.65
-        Density: 1598
-        Specific Heat: 930
-    Heat Element:
-        Thermal Conductivity X: 0.65
-        Thermal Conductivity Y: 0.65
-        Density: 1598
-        Specific Heat: 931
-    Top Plate:
-        Thermal Conductivity X: 0.65
-        Thermal Conductivity Y: 0.65
-        Density: 1598
-        Specific Heat: 932    
-
-Boundary Conditions:
-    Top Plate:
-        Left Edge: 
-            Models: 
-                Convection:
-                    Temperature: 200
-        Top Edge:
-            Models: 
-                Convection:
-                    Temperature: 210
-        Right Edge:
-            Models: 
-                Convection:
-                    Temperature: 220
-        Bottom Edge:
-            Models:
-                Intimate Contact:
-                    Horizontal asperity ratio: 0.45
-                    Vertical asperity ratio: 0.85
-    Heat Element:
-        Models:
-            Heating:
-                Input Power Density: 1000
-            Intimate Contact:
-                Horizontal asperity ratio: 0.45
-                Vertical asperity ratio: 0.85
-    Bottom Plate:  
-        Left Edge:
-            Models: 
-                Convection:
-                    Temperature: 300
-        Bottom Edge:
-            Models: 
-                Convection:
-                    Temperature: 310
-        Right Edge:
-            Models: 
-                Convection:
-                    Temperature: 320 
-        Top Edge:
-            Models:
-                Intimate Contact:
-                    Horizontal asperity ratio: 0.45
-                    Vertical asperity ratio: 0.85
-
-Initial Conditions:
-    Top Plate:
-        Models: Conduction   
-        Initial Temperature: 292
-    Heat Element:
-        Models: Conduction
-        Initial Temperature: 295
-    Bottom Plate:
-        Models: Conduction
-        Initial Temperature: 290
+        Geometry:
+            Thickness (Y): 0.4
+            Width (X): 10.0
+            Pos: 1
+        Material: 
+            Thermal Conductivity X: 1
+            Thermal Conductivity Y: 1
+            Density: 1
+            Specific Heat: 1
+        Mesh:
+            Number of Elements in X: 10
+            Number of Elements in Y: 10
+        Boundary Condition:
+            Left Edge:
+                Temperature: 1
+            Bottom Edge:
+                Temperature: 1
+            Right Edge:
+                Temperature: 1 
+            Top Edge:
+                Horizontal asperity ratio: 1
+                Vertical asperity ratio: 1
+        Initial Condition: 
+            Initial Temperature: 1
+        
+    Middle Plate:
+        Geometry:
+            Thickness (Y): 0.01
+            Width (X): 10.0
+            Pos: 2
+        Material:
+            Thermal Conductivity X: 2
+            Thermal Conductivity Y: 2
+            Density: 2
+            Specific Heat: 2        
+        Mesh:
+            Number of Elements in X: 10
+            Number of Elements in Y: 1
+        Boundary Condition:                
+            Top Edge:
+                Horizontal asperity ratio: 2
+                Vertical asperity ratio: 2
+            Bottom Edge:
+                Horizontal asperity ratio: 2
+                Vertical asperity ratio: 2
+        Initial Condition:
+            Initial Temperature: 2   
+            Input Power Density: 2            
 
 Simulation:
     Step Time: 0.1
