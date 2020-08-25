@@ -4,109 +4,79 @@ from .boundaryconditions import LinearBC
 class TwoPlates:
 
     def __init__(self, deck):
-        self.required_fields = ["Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Heat Input", "Initial Convection Temperature", "dx","dy"]
+        self.required_fields = ["Initial Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Heat Input", "Initial Convection Temperature", "dx", "dy"]
+        self.set_simulation_parameters(deck)
         self.set_problem_parameters(deck)
-        self.set_domains(deck)
-        self.set_boundaryconds(deck)
+        self.set_domains2(deck)
+        # self.set_boundaryconds(deck)
         self.set_initialconds(deck)
-        self.dt = float(deck.doc["Simulation"]["Step Time"])
-        self.nstes = int(deck.doc["Simulation"]["Number of Steps"])
-
-
-    
-    def set_problem_parameters(self, deck):
-        self.dimensions = 2
-        Keys = []
-        thickness=0
-        for deck_geometry in deck.doc["Geometry"]:
-            for geom_par in deck.doc["Geometry"][deck_geometry]:
-                if geom_par == "Thickness (Y)":
-                    thickness = float(deck.doc["Geometry"][deck_geometry][geom_par]) + thickness
-        self.geometry=dict.fromkeys(Keys,None)    
-        self.Total_Thickness = thickness
-        for deck_geometry in deck.doc["Geometry"]:
-            self.geometry[deck_geometry]= [((float(deck.doc["Geometry"][deck_geometry]["Width (X)"]), float(deck.doc["Geometry"][deck_geometry]["Thickness (Y)"])))]
         
-       
-
-    def set_domains(self, deck):
+        
+    def set_simulation_parameters(self,deck):
+        self.SimulationParameters = []
+        for par in deck.doc["Simulation"]:
+            self.SimulationParameters.append((par, deck.doc["Simulation"][par]))
+            
+            
+    def set_problem_parameters(self, deck):
+        ny = 0
+        t = 0
+        for domain in deck.doc["Domains"]:
+            ny = ny + int(deck.doc["Domains"][domain]["Mesh"]["Number of Elements in Y"])
+            t = t + float(deck.doc["Domains"][domain]["Geometry"]["Thickness (Y)"])
+        self.TotalNy = ny
+        self.TotalThickness = t
+        
+    def set_domains2(self, deck):
         self.domains = []
-        for deck_domain in deck.doc["Materials"]:
-            if deck_domain == "Bottom Plate":
-                corner0 = (0,0)
-                corner1 = self.geometry[deck_domain][0]
-                plate_material = deck.doc["Materials"][deck_domain]
-                plate_initial_temperature=float(deck.doc["Initial Conditions"][deck_domain]["Initial Temperature"])
-                number_of_elements_X = int(deck.doc["Mesh"][deck_domain]["Number of Elements in X"])
-                number_of_elements_Y = int(deck.doc["Mesh"][deck_domain]["Number of Elements in Y"])
-                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y))
-            elif deck_domain == "Heat Element":
-                corner0=(0,self.geometry["Bottom Plate"][0][1])
-                corner1 = (self.geometry[deck_domain][0][0],self.geometry["Bottom Plate"][0][1]+self.geometry[deck_domain][0][1])
-                plate_material = deck.doc["Materials"][deck_domain]
-                plate_initial_temperature=float(deck.doc["Initial Conditions"][deck_domain]["Initial Temperature"])
-                number_of_elements_X = int(deck.doc["Mesh"][deck_domain]["Number of Elements in X"])
-                number_of_elements_Y = int(deck.doc["Mesh"][deck_domain]["Number of Elements in Y"])
-                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y))
-            elif deck_domain == "Top Plate":
-                corner0 = (0,self.geometry["Bottom Plate"][0][1]+self.geometry["Heat Element"][0][1])
-                corner1 = (self.geometry[deck_domain][0][0],self.geometry["Bottom Plate"][0][1]+self.geometry["Heat Element"][0][1]++self.geometry[deck_domain][0][1])
-                plate_material = deck.doc["Materials"][deck_domain]
-                plate_initial_temperature=float(deck.doc["Initial Conditions"][deck_domain]["Initial Temperature"])
-                number_of_elements_X = int(deck.doc["Mesh"][deck_domain]["Number of Elements in X"])
-                number_of_elements_Y = int(deck.doc["Mesh"][deck_domain]["Number of Elements in Y"])
-                self.domains.append(RectangularDomain(deck_domain, corner0, corner1, plate_material,plate_initial_temperature, number_of_elements_X, number_of_elements_Y ))
+        mesh = {}
+        initialcond = {}
+        material ={}
+        
+        for deck_domain in deck.doc["Domains"]:            
+            if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "1":
+                corner0 = (0, 0)
+                corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
+
+            if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "2":                
+                for domain_aux in deck.doc["Domains"]:
+                    if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
+                        aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+                        corner0=(0, aux)
+                        corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
+           
+            if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "3":                
+                corner0 = (0, self.TotalThickness-float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
+                corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), self.TotalThickness)
                 
-                
-                
+    
+            
+            for material_prop in deck.doc["Domains"][deck_domain]["Material"]:
+                material[material_prop] = float(deck.doc["Domains"][deck_domain]["Material"][material_prop])                   
+            for initcond in deck.doc["Domains"][deck_domain]["Initial Condition"]:
+                initialcond[initcond] = float(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond])   
+            for mesh_dir in deck.doc["Domains"][deck_domain]["Mesh"]:
+                mesh[mesh_dir] = int(deck.doc["Domains"][deck_domain]["Mesh"][mesh_dir])
+            
+            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, material, initialcond, mesh))
+   
+            
+            
+            
                 
     def set_initialconds(self, deck):
         for domain in self.domains:
             for field in self.required_fields:
-                if field in field in deck.doc["Materials"][domain.name]:
-                    domain.set_field_init_value({field: deck.doc["Materials"][domain.name][field]})
-                elif field == "dx":
-                    domain.set_field_init_value({field: domain.Lx/domain.Number_of_Elements_in_X })
-                elif field == "dy":
-                    domain.set_field_init_value({field: domain.Ly/domain.Number_of_Elements_in_Y })
                 
-                    
-    
-    def set_boundaryconds(self, deck):
-        self.BoundaryConditions = []
-        for BC_domain in self.domains:
-            if BC_domain.name == "Bottom Plate" or BC_domain.name == "Top Plate":              
-                for edge in deck.doc["Boundary Conditions"][BC_domain.name].keys(): 
-                    for model in deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"].keys():       
-                        # import pdb; pdb.set_trace()
-                        if model == "Convection":    
-                            if edge=="Left Edge":
-                                # import pdb; pdb.set_trace()
-                                self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
-                            if edge=="Bottom Edge":
-                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x1, BC_domain.y0), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
-                            if edge=="Right Edge":
-                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x1, BC_domain.y0), (BC_domain.x1, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
-                            if edge=="Top Edge":            
-                                self.BoundaryConditions.append(LinearBC ( (BC_domain.x0, BC_domain.y1), (BC_domain.x1, BC_domain.y1), model, "Temperature", deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model]["Temperature"], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
-                        
-                        if model == "Intimate Contact":
-                            for parameter in deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model].keys():
-                                if edge=="Top Edge":
-                                    self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model][parameter], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
-                                if edge=="Bottom Edge":
-                                    self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y0), (BC_domain.x0, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name][edge]["Models"][model][parameter], BC_domain.name, edge, BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y ) )
-                                          
-
-            elif BC_domain.name == "Heat Element":
-                for model in deck.doc["Boundary Conditions"][BC_domain.name]["Models"].keys():
-                    if model == "Heating":
-                        parameter = "Input Power Density"
-                        self.BoundaryConditions.append (LinearBC ( (BC_domain.x0, BC_domain.y1), (BC_domain.x1, BC_domain.y1), model, parameter, deck.doc["Boundary Conditions"][BC_domain.name]["Models"][model][parameter], BC_domain.name, "all", BC_domain.Number_of_Elements_in_X, BC_domain.Number_of_Elements_in_Y) )             
-
-
-            
-                    
+                if field in deck.doc["Domains"][domain.Name]["Initial Condition"]:
+                    domain.set_field_init_value({field: float(deck.doc["Domains"][domain.Name]["Initial Condition"][field])})
+                elif field in deck.doc["Domains"][domain.Name]["Material"]:
+                    domain.set_field_init_value({field: deck.doc ["Domains"][domain.Name]["Material"][field]})
+                elif field == "dx":
+                    # import pdb; pdb.set_trace()
+                    domain.set_field_init_value({field: domain.Lx/domain.Mesh["Number of Elements in X"] })
+                elif field == "dy":
+                    domain.set_field_init_value({field: domain.Ly/domain.Mesh["Number of Elements in Y"] })
                 
                 
         
