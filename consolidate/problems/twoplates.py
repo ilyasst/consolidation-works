@@ -26,9 +26,9 @@ class TwoPlates:
             nx = int(deck.doc["Domains"][domain]["Mesh"]["Number of Elements in X"])
             t = t + float(deck.doc["Domains"][domain]["Geometry"]["Thickness (Y)"])
             
-        self.TotalNy = ny
-        self.TotalNx = nx
-        self.TotalThickness = t
+        self.totalNy = ny
+        self.totalNx = nx
+        self.total_thickness = t
         
     def set_domains2(self, deck):
         self.domains = []
@@ -60,12 +60,12 @@ class TwoPlates:
                         
                         
             if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "3":                
-                corner0 = (0, self.TotalThickness-float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
-                corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), self.TotalThickness)
+                corner0 = (0, self.total_thickness-float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
+                corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), self.total_thickness)
                 ele_x0 = 0
                 ele_x1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in X"])
-                ele_y0 = int(self.TotalNy)-int(float(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"]))
-                ele_y1 = int(self.TotalNy)-1
+                ele_y0 = int(self.totalNy)-int(float(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"]))
+                ele_y1 = int(self.totalNy)-1
                 
     
             
