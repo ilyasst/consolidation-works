@@ -8,8 +8,8 @@ class Mesher():
     def __init__(self,  problem):
         # self.mesh_domains( problem)
        
-        self.TotalNx = problem.TotalNx
-        self.TotalNy = problem.TotalNy
+        self.totalNx = problem.totalNx
+        self.totalNy = problem.totalNy
         self.initialize_fields(problem)
 
             
@@ -17,7 +17,7 @@ class Mesher():
     def initialize_fields(self, problem):
         self.meshes=[]
         for domain in problem.domains:
-            self.meshes.append(Mesh( domain, self.TotalNx, self.TotalNy))
+            self.meshes.append(Mesh( domain, self.totalNx, self.totalNy))
             
     
                 
