@@ -23,9 +23,11 @@ class TwoPlates:
         t = 0
         for domain in deck.doc["Domains"]:
             ny = ny + int(deck.doc["Domains"][domain]["Mesh"]["Number of Elements in Y"])
+            nx = int(deck.doc["Domains"][domain]["Mesh"]["Number of Elements in X"])
             t = t + float(deck.doc["Domains"][domain]["Geometry"]["Thickness (Y)"])
             
         self.TotalNy = ny
+        self.TotalNx = nx
         self.TotalThickness = t
         
     def set_domains2(self, deck):
