@@ -11,6 +11,7 @@ class Mesher():
         self.totalNx = problem.totalNx
         self.totalNy = problem.totalNy
         self.create_masks(problem)
+        self.set_intial_condition_fields(problem)
 
             
             
@@ -21,4 +22,12 @@ class Mesher():
             
     
                 
+    def set_intial_condition_fields(self, problem):
+        self.fields=[]
+        
+        for fields in problem.required_fields:
+                self.fields.append(Field(fields, problem))
+        
+    
+        
         
