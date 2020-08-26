@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from .mesh import Mesh
-from .fields import Field
+# from .fields import Field
 
 class Mesher():
 
@@ -15,17 +15,24 @@ class Mesher():
         ny=0
         for domain in problem.domains:
             self.meshes.append( Mesh(domain) )
-            nx = max(nx,domain.Number_of_Elements_in_X)
-            ny = ny + domain.Number_of_Elements_in_Y
+            nx = domain.mesh["Number of Elements in X"]
+            ny = ny + domain.mesh["Number of Elements in Y"]
+        # self.Total_elements_X = nx
+        # self.Total_elements_Y = ny
         self.M= np.zeros((ny, nx))
         
+    
+    
     def initialize_fields(self, problem):
-        self.fields = {}
-        for field_name in problem.required_fields:
-            self.fields[field_name] = Field(field_name, self.M, problem)
+        self.test=[]
+        # self.fields = {}
+        M=self.M.copy()
+        for domain in problem.domains:            
+            domain.generate_mask(M.copy())
+            domain.mask
+            
+            self.test.append(domain.mask)
             # import pdb; pdb.set_trace()
-                        
-
                     
                 
         
