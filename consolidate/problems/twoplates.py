@@ -24,6 +24,7 @@ class TwoPlates:
         for domain in deck.doc["Domains"]:
             ny = ny + int(deck.doc["Domains"][domain]["Mesh"]["Number of Elements in Y"])
             t = t + float(deck.doc["Domains"][domain]["Geometry"]["Thickness (Y)"])
+            
         self.TotalNy = ny
         self.TotalThickness = t
         
@@ -37,17 +38,32 @@ class TwoPlates:
             if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "1":
                 corner0 = (0, 0)
                 corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
-
+                ele_x0 = 0
+                ele_x1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in X"])
+                ele_y0 = 0
+                ele_y1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"])-1
+                
             if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "2":                
                 for domain_aux in deck.doc["Domains"]:
                     if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
                         aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+                        auxeley=int(deck.doc["Domains"][domain_aux]["Mesh"]["Number of Elements in Y"])
                         corner0=(0, aux)
                         corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
-           
+                        ele_x0 = 0
+                        ele_x1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in X"])
+                        ele_y0 = auxeley
+                        ele_y1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"])+auxeley-1
+                        
+                        
+                        
             if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "3":                
                 corner0 = (0, self.TotalThickness-float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
                 corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), self.TotalThickness)
+                ele_x0 = 0
+                ele_x1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in X"])
+                ele_y0 = int(self.TotalNy)-int(float(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"]))
+                ele_y1 = int(self.TotalNy)-1
                 
     
             
@@ -58,7 +74,7 @@ class TwoPlates:
             for mesh_dir in deck.doc["Domains"][deck_domain]["Mesh"]:
                 mesh[mesh_dir] = int(deck.doc["Domains"][deck_domain]["Mesh"][mesh_dir])
             
-            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, material, initialcond, mesh))
+            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, material, initialcond, mesh))
    
             
             
