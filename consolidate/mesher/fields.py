@@ -1,25 +1,28 @@
 # import numpy as np
-
+import numpy as np
 
             
 class Field:
-     def __init__(self, name, shape, problem):
-        self.name = name
-        self.populate_field(shape, problem)
+    
+    def __init__(self, field, problem):
+        self.field=field 
+        # self.set_field_initial_temperature(problem)
+        # self.set_field_input_power_density(problem)
+        self.set_field(field, problem)
+        
+        
+    
+    def set_field(self, field, problem):
+        
+        value=0        
+        for domain in problem.domains:
+            if field in domain.initial_fields:
+                value = value+domain.mask*domain.initial_fields[field]
+                
+        self.value=value
+          
 
-                    
-     def populate_field(self, shape, problem):
-         # import pdb; pdb.set_trace()
-         self.var = shape.copy()
-         var=shape.copy()
-         nx=0
-         nyu=0
-         nyl=0
-         for domain in problem.domains:
-             nx=domain.Number_of_Elements_in_X
-             nyu=nyu+domain.Number_of_Elements_in_Y
-             var[nyl:nyu, 0:nx]=domain.initial_fields[self.name]
-             nyl=nyu
-         self.var=var
+    
+    
              
              
