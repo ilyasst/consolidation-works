@@ -10,11 +10,11 @@ class Mesher():
        
         self.totalNx = problem.totalNx
         self.totalNy = problem.totalNy
-        self.initialize_fields(problem)
+        self.create_masks(problem)
 
             
             
-    def initialize_fields(self, problem):
+    def create_masks(self, problem):
         self.meshes=[]
         for domain in problem.domains:
             self.meshes.append(Mesh( domain, self.totalNx, self.totalNy))
