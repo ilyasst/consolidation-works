@@ -4,7 +4,8 @@ from .boundaryconditions import LinearBC
 class TwoPlates:
 
     def __init__(self, deck):
-        self.required_fields = ["Initial Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "Initial Convection Temperature", "dx", "dy"]
+        self.required_fields = ["Initial Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "dx", "dy"]
+        self.required_BC_fields = ["Convection Temperature"]
         self.set_simulation_parameters(deck)
         self.set_problem_parameters(deck)
         self.set_domains2(deck)
