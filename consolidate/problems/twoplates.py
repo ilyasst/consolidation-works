@@ -8,8 +8,8 @@ class TwoPlates:
         self.set_simulation_parameters(deck)
         self.set_problem_parameters(deck)
         self.set_domains2(deck)
-        # self.set_boundaryconds(deck)
         self.set_initialconds(deck)
+        # self.set_boundaryconds(deck)
         
         
     def set_simulation_parameters(self,deck):
@@ -35,6 +35,7 @@ class TwoPlates:
         mesh = {}
         initialcond = {}
         material ={}
+        boundarycond={}
         
         for deck_domain in deck.doc["Domains"]:            
             if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "1":
@@ -76,7 +77,13 @@ class TwoPlates:
             for mesh_dir in deck.doc["Domains"][deck_domain]["Mesh"]:
                 mesh[mesh_dir] = int(deck.doc["Domains"][deck_domain]["Mesh"][mesh_dir])
             
-            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, material, initialcond, mesh))
+            for edge in deck.doc["Domains"][deck_domain]["Boundary Condition"]:
+                boundarycond[edge] = {}
+                for bc in deck.doc["Domains"][deck_domain]["Boundary Condition"][edge]:
+                    boundarycond[edge].update( {bc:float(deck.doc["Domains"][deck_domain]["Boundary Condition"][edge][bc])})
+                
+            
+            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, material, initialcond, boundarycond, mesh))
    
             
             
@@ -84,8 +91,7 @@ class TwoPlates:
                 
     def set_initialconds(self, deck):
         for domain in self.domains:
-            for field in self.required_fields:
-                
+            for field in self.required_fields:                
                 if field in deck.doc["Domains"][domain.name]["Initial Condition"]:
                     domain.set_field_init_value({field: float(deck.doc["Domains"][domain.name]["Initial Condition"][field])})
                 elif field in deck.doc["Domains"][domain.name]["Material"]:
@@ -96,5 +102,10 @@ class TwoPlates:
                 elif field == "dy":
                     domain.set_field_init_value({field: domain.Ly/domain.mesh["Number of Elements in Y"] })
                 
-                
+    # def set_boundaryconds(self, deck):
         
+    #     for domain in self.domains:
+    #         for edge in deck.doc["Domains"][domain.name]["Boundary Condition"]:
+    #             BC = deck.doc["Domains"][domain.name]["Boundary Condition"][edge]
+    #                 # import pdb; pdb.set_trace()
+    #             domain.set_BC_field_init_value(edge, BC)
