@@ -26,7 +26,6 @@ class RectangularDomain:
         
     def test_mesh(self, mesh):
         if mesh[0] >= self.ey0 and mesh[0] <= self.ey1 and mesh[1] >= self.ex0 and mesh[1]<= self.ex1:
-            # import pdb; pdb.set_trace()
             return True
         else:
             return False
