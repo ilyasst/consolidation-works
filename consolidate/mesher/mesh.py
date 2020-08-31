@@ -3,7 +3,6 @@ import numpy as np
 class Mesh:
 
     def __init__(self,  domain, totalNx=0, totalNy=0):
-        import pdb; pdb.set_trace
         self.set_mesh_grid(domain)
         self.name = domain.name
         # 
@@ -29,6 +28,7 @@ class Mesh:
         domain.generate_mask(self.M.copy())
         initialmask=domain.mask
         self.mask=initialmask
+        
         
         
   
