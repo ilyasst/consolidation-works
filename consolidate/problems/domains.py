@@ -1,7 +1,7 @@
 import numpy as np
 class RectangularDomain:
 
-    def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, material, initialcondition, mesh ):
+    def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, material, initialcondition, boundarycond, mesh ):
         self.x0 = float(corner0[0])
         self.y0 = float(corner0[1])
         self.x1 = float(corner1[0])
@@ -17,6 +17,7 @@ class RectangularDomain:
         self.ex1= ex1
         self.ey0 = ey0
         self.ey1=ey1
+        self.Boundary_fields= boundarycond.copy()
 
     def test(self, point):
         if point[0] >= self.x0 and point[0] <= self.x1 and point[1] >= self.y0 and point[1] <= self.y1:
@@ -35,13 +36,27 @@ class RectangularDomain:
         for key, value in field_dict.items():
             self.initial_fields[key] = float(value)
         
+    def set_BC_field_init_value(self, edge, bc):
+        # import pdb; pdb.set_trace()
+        for key, value in bc.items():
+            
+            self.Boundary_fields[key] = float(value)
+            
+        
+        
     def generate_mask(self, problem_M):
         self.mask = problem_M.copy()
         for x_i in range (0,np.shape(problem_M)[0]):
             for y_i in range (0,np.shape(problem_M)[1]):
-                # import pdb; pdb.set_trace()
                 if self.test_mesh( (x_i, y_i) ):
                     self.mask[x_i][y_i] = 1
                     
                     
+    # def generate_mask_BC(self, problem_M):
+    #     self.mask = problem_M.copy()
+    #     for x_i in range (0,np.shape(problem_M)[0]):
+    #         for y_i in range (0,np.shape(problem_M)[1]):
+    #             if self.test_mesh( (x_i, y_i) ):
+    #                 if 
+    #                 self.mask[x_i][y_i] = 1
                     
