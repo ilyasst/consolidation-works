@@ -14,9 +14,9 @@ class TwoPlates:
         
         
     def set_simulation_parameters(self,deck):
-        self.SimulationParameters = []
+        self.SimulationParameters = {}
         for par in deck.doc["Simulation"]:
-            self.SimulationParameters.append((par, deck.doc["Simulation"][par]))
+            self.SimulationParameters[par]= deck.doc["Simulation"][par]
             
             
     def set_problem_parameters(self, deck):
