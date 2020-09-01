@@ -8,9 +8,7 @@ class Mesh:
         # 
         
         if totalNx !=0 and totalNy !=0:
-            
-            self.M= np.zeros((totalNy,totalNx))
-            self.set_create_mask(domain)
+            self.set_create_mask(domain, totalNy, totalNx)
     
 
     def set_mesh_grid(self, domain):
@@ -24,8 +22,9 @@ class Mesh:
         self.X = X
         self.Y = Y
         
-    def set_create_mask(self, domain):
-        domain.generate_mask(self.M.copy())
+    def set_create_mask(self, domain, totalNy, totalNx):
+        M=np.zeros((totalNy, totalNx))        
+        domain.generate_mask(M.copy())
         initialmask=domain.mask
         self.mask=initialmask
         
