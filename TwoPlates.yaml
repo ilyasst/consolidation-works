@@ -15,15 +15,17 @@ Domains:
             Number of Elements in X: 10
             Number of Elements in Y: 10
         Boundary Condition:
-            Left Edge:
-                Temperature: 3
-            Top Edge:
-                Temperature: 3
-            Right Edge:
-                Temperature: 3
-            Bottom Edge:
-                Horizontal asperity ratio: 3
-                Vertical asperity ratio: 3
+            Convection:
+                Left Edge: 
+                    Temperature: 30
+                Top Edge: 
+                    Temperature: 31
+                Right Edge:
+                    Temperature: 32
+            Intimate Contact:
+                Bottom Edge:
+                    Horizontal asperity ratio: 3
+                    Vertical asperity ratio: 3
         Initial Condition:
             Initial Temperature: 3
         
@@ -41,15 +43,17 @@ Domains:
             Number of Elements in X: 10
             Number of Elements in Y: 10
         Boundary Condition:
-            Left Edge:
-                Temperature: 1
-            Bottom Edge:
-                Temperature: 1
-            Right Edge:
-                Temperature: 1 
-            Top Edge:
-                Horizontal asperity ratio: 1
-                Vertical asperity ratio: 1
+            Convection:
+                Left Edge:
+                    Temperature: 10
+                Bottom Edge:
+                    Temperature: 11
+                Right Edge:
+                    Temperature: 12
+            Intimate Contact:
+                Top Edge:
+                    Horizontal asperity ratio: 1
+                    Vertical asperity ratio: 1
         Initial Condition: 
             Initial Temperature: 1
         
@@ -66,13 +70,14 @@ Domains:
         Mesh:
             Number of Elements in X: 10
             Number of Elements in Y: 1
-        Boundary Condition:                
-            Top Edge:
-                Horizontal asperity ratio: 2
-                Vertical asperity ratio: 2
-            Bottom Edge:
-                Horizontal asperity ratio: 2
-                Vertical asperity ratio: 2
+        Boundary Condition:  
+            Intimate Contact:
+                Top Edge:
+                    Horizontal asperity ratio: 2
+                    Vertical asperity ratio: 2
+                Bottom Edge:
+                    Horizontal asperity ratio: 2
+                    Vertical asperity ratio: 2
         Initial Condition:
             Initial Temperature: 2   
             Input Power Density: 2            
