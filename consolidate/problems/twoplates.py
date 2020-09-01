@@ -37,6 +37,7 @@ class TwoPlates:
         initialcond = {}
         material ={}
         boundarycond={}
+        bc_edge={}
         
         for deck_domain in deck.doc["Domains"]:            
             if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "1":
@@ -78,10 +79,25 @@ class TwoPlates:
             for mesh_dir in deck.doc["Domains"][deck_domain]["Mesh"]:
                 mesh[mesh_dir] = int(deck.doc["Domains"][deck_domain]["Mesh"][mesh_dir])
             
-            for edge in deck.doc["Domains"][deck_domain]["Boundary Condition"]:
-                boundarycond[edge] = {}
-                for bc in deck.doc["Domains"][deck_domain]["Boundary Condition"][edge]:
-                    boundarycond[edge].update( {bc:float(deck.doc["Domains"][deck_domain]["Boundary Condition"][edge][bc])})
+            for bc in deck.doc["Domains"][deck_domain]["Boundary Condition"]:
+                boundarycond[bc] = {}
+                for edge in deck.doc["Domains"][deck_domain]["Boundary Condition"][bc]:
+                    bc_edge[edge]={}
+                    # import pdb; pdb.set_trace()
+                    for variable in deck.doc["Domains"][deck_domain]["Boundary Condition"][bc][edge]:
+                        # import pdb; pdb.set_trace()
+                        
+                        bc_edge[edge].update( {variable:float(deck.doc["Domains"][deck_domain]["Boundary Condition"][bc][edge][variable])})
+                    
+                    boundarycond[bc].update({edge: bc_edge[edge]} )
+                        
+                        
+                        
+                        
+                        # import pdb; pdb.set_trace()
+                        # dictionary[variable]={}
+                        # boundarycond[bc].append(dictionary)
+                        
                 
             
             self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, material, initialcond, boundarycond, mesh))
