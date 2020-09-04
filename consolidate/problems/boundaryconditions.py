@@ -1,11 +1,17 @@
 class LinearBC:
 
-    def __init__(self, edge0, edge1, kind):
+    def __init__(self, edge0, edge1, kind, unity, value, domain, edge, nx, ny):
         self.x0 = edge0[0]
         self.y0 = edge0[1]
         self.x1 = edge1[0]
         self.y1 = edge1[1]
         self.kind = kind
+        self.unity=unity
+        self.value=value
+        self.domain= domain
+        self.edge = edge
+        self.ny=ny
+        self.nx=nx
 
     def test(self, point):
         # return true if point is within line of BC if c is between a and b
