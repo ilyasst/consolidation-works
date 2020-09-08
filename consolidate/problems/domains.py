@@ -24,39 +24,20 @@ class RectangularDomain:
             return True
         else:
             return False
-        
+
     def test_mesh(self, mesh):
         if mesh[0] >= self.ey0 and mesh[0] <= self.ey1 and mesh[1] >= self.ex0 and mesh[1]<= self.ex1:
             return True
         else:
             return False
-        
-        
+
     def set_field_init_value(self, field_dict):
         for key, value in field_dict.items():
             self.initial_fields[key] = float(value)
-        
-    def set_BC_field_init_value(self, edge, bc):
-        # import pdb; pdb.set_trace()
-        for key, value in bc.items():
-            
-            self.boundary_fields[key] = float(value)
-            
-        
-        
+
     def generate_mask(self, problem_M):
         self.mask = problem_M.copy()
         for x_i in range (0,np.shape(problem_M)[0]):
             for y_i in range (0,np.shape(problem_M)[1]):
                 if self.test_mesh( (x_i, y_i) ):
                     self.mask[x_i][y_i] = 1
-                    
-                    
-    # def generate_mask_BC(self, problem_M):
-    #     self.mask = problem_M.copy()
-    #     for x_i in range (0,np.shape(problem_M)[0]):
-    #         for y_i in range (0,np.shape(problem_M)[1]):
-    #             if self.test_mesh( (x_i, y_i) ):
-    #                 if 
-    #                 self.mask[x_i][y_i] = 1
-                    
