@@ -39,8 +39,9 @@ class TwoPlates:
         boundarycond={}
         bc_edge={}
         
-        for deck_domain in deck.doc["Domains"]:            
-            if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "1":
+        for deck_domain in deck.doc["Domains"]:    
+            position = int(deck.doc["Domains"][deck_domain]["Geometry"]["Pos"])
+            if  position == 1:
                 corner0 = (0, 0)
                 corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
                 ele_x0 = 0
@@ -48,7 +49,8 @@ class TwoPlates:
                 ele_y0 = 0
                 ele_y1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"])-1
                 
-            if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "2":                
+                
+            if position == 2:                
                 for domain_aux in deck.doc["Domains"]:
                     if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
                         aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
@@ -62,7 +64,7 @@ class TwoPlates:
                         
                         
                         
-            if deck.doc["Domains"][deck_domain]["Geometry"]["Pos"] == "3":                
+            if position == 3:                
                 corner0 = (0, self.total_thickness-float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
                 corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), self.total_thickness)
                 ele_x0 = 0
@@ -96,7 +98,7 @@ class TwoPlates:
                         
                 
             
-            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, material, initialcond, boundarycond, mesh))
+            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, position, material, initialcond, boundarycond, mesh))
    
             
             
