@@ -1,7 +1,7 @@
 import numpy as np
 class RectangularDomain:
 
-    def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, material, initialcondition, boundarycond, mesh ):
+    def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, position, material, initialcondition, boundarycond, mesh ):
         self.x0 = float(corner0[0])
         self.y0 = float(corner0[1])
         self.x1 = float(corner1[0])
@@ -17,6 +17,7 @@ class RectangularDomain:
         self.ey0 = ey0
         self.ey1=ey1
         self.boundary_fields= boundarycond.copy()
+        self.position = position
 
     def test(self, point):
         if point[0] >= self.x0 and point[0] <= self.x1 and point[1] >= self.y0 and point[1] <= self.y1:
