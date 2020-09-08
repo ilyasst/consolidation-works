@@ -83,12 +83,8 @@ class TwoPlates:
                 boundarycond[bc] = {}
                 for edge in deck.doc["Domains"][deck_domain]["Boundary Condition"][bc]:
                     bc_edge[edge]={}
-                    # import pdb; pdb.set_trace()
                     for variable in deck.doc["Domains"][deck_domain]["Boundary Condition"][bc][edge]:
-                        # import pdb; pdb.set_trace()
-                        
                         bc_edge[edge].update( {variable:float(deck.doc["Domains"][deck_domain]["Boundary Condition"][bc][edge][variable])})
-                    
                     boundarycond[bc].update({edge: bc_edge[edge]} )
                         
                         
