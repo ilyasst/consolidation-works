@@ -4,8 +4,7 @@ from .boundaryconditions import LinearBC
 class TwoPlates:
 
     def __init__(self, deck):
-        self.required_fields = ["Initial Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "dx", "dy"]
-        self.required_BC_fields = ["Convection Temperature"]
+        self.required_fields = ["Initial Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Input Power Density", "dx", "dy", "External Temperature"]
         self.set_simulation_parameters(deck)
         self.set_problem_parameters(deck)
         self.set_domains2(deck)
@@ -89,21 +88,8 @@ class TwoPlates:
                         bc_edge[edge].update( {variable:float(deck.doc["Domains"][deck_domain]["Boundary Condition"][bc][edge][variable])})
                     boundarycond[bc].update({edge: bc_edge[edge]} )
                         
-                        
-                        
-                        
-                        # import pdb; pdb.set_trace()
-                        # dictionary[variable]={}
-                        # boundarycond[bc].append(dictionary)
-                        
-                
-            
             self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, position, material, initialcond, boundarycond, mesh))
-   
-            
-            
-            
-                
+
     def set_initialconds(self, deck):
         for domain in self.domains:
             for field in self.required_fields:                
@@ -116,11 +102,3 @@ class TwoPlates:
                     domain.set_field_init_value({field: domain.Lx/domain.mesh["Number of Elements in X"] })
                 elif field == "dy":
                     domain.set_field_init_value({field: domain.Ly/domain.mesh["Number of Elements in Y"] })
-                
-    # def set_boundaryconds(self, deck):
-        
-    #     for domain in self.domains:
-    #         for edge in deck.doc["Domains"][domain.name]["Boundary Condition"]:
-    #             BC = deck.doc["Domains"][domain.name]["Boundary Condition"][edge]
-    #                 # import pdb; pdb.set_trace()
-    #             domain.set_BC_field_init_value(edge, BC)
