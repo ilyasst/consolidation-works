@@ -5,11 +5,8 @@ class Mesh:
     def __init__(self,  domain, totalNx=0, totalNy=0):
         self.set_mesh_grid(domain)
         self.name = domain.name
-        # 
-        
         if totalNx !=0 and totalNy !=0:
             self.set_create_mask(domain, totalNy, totalNx)
-    
 
     def set_mesh_grid(self, domain):
         self.nx = domain.mesh["Number of Elements in X"]
@@ -21,13 +18,9 @@ class Mesh:
         Y=Y[:,0].copy()
         self.X = X
         self.Y = Y
-        
+
     def set_create_mask(self, domain, totalNy, totalNx):
-        M=np.zeros((totalNy, totalNx))        
+        M=np.zeros((totalNy, totalNx))
         domain.generate_mask(M.copy())
         initialmask=domain.mask
         self.mask=initialmask
-        
-        
-        
-  
