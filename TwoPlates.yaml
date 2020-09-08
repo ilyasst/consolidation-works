@@ -15,7 +15,7 @@ Domains:
             Number of Elements in X: 10
             Number of Elements in Y: 10
         Boundary Condition:
-            Convection:
+            External Temperature:
                 Left Edge: 
                     Temperature: 30
                 Top Edge: 
@@ -43,7 +43,7 @@ Domains:
             Number of Elements in X: 10
             Number of Elements in Y: 10
         Boundary Condition:
-            Convection:
+            External Temperature:
                 Left Edge:
                     Temperature: 10
                 Bottom Edge:
@@ -71,6 +71,11 @@ Domains:
             Number of Elements in X: 10
             Number of Elements in Y: 1
         Boundary Condition:  
+            External Temperature:
+                Right Edge:
+                    Temperature: 50
+                Left Edge:
+                    Temperature: 51
             Intimate Contact:
                 Top Edge:
                     Horizontal asperity ratio: 2
