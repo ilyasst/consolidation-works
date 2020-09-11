@@ -43,10 +43,14 @@ class RectangularDomain:
         maux=np.zeros((totalNy+2, totalNx+2))
         self.mask = m.copy()
         self.mask_external_boundary={}
+        self.mask_contact_interface={}
         mask_left= maux.copy()
         mask_right= maux.copy()
         mask_top= maux.copy()
         mask_bottom= maux.copy()
+        contact_mask=m.copy()
+        contact_mask_middle_top = m.copy()
+        contact_mask_middle_bottom = m.copy()
         for x_i in range (0,np.shape(m)[0]):
             for y_i in range (0,np.shape(m)[1]):
                 if self.test_mesh( (x_i, y_i) ):
@@ -55,9 +59,20 @@ class RectangularDomain:
                     mask_right[x_i+1][-1]=1
                     self.mask_external_boundary.update({"Left Edge":mask_left})
                     self.mask_external_boundary.update({"Right Edge":mask_right})
+                    
                     if self.position ==1:
                         mask_bottom[self.ey0][y_i+1]=1
+                        contact_mask[self.ey1][y_i] = 1
                         self.mask_external_boundary.update({"Bottom Edge": mask_bottom})
+                        self.mask_contact_interface.update({"Top Edge": contact_mask})
                     if self.position ==3:
                         mask_top[-1][y_i+1]=1
                         self.mask_external_boundary.update({"Top Edge": mask_top})
+                        contact_mask[self.ey0][y_i] = 1
+                        self.mask_contact_interface.update({"Bottom Edge": contact_mask})
+                    if self.position ==2:
+                        contact_mask_middle_bottom[self.ey0][y_i] = 1
+                        contact_mask_middle_top[self.ey1][y_i] = 1
+                        self.mask_contact_interface.update({"Bottom Edge": contact_mask_middle_bottom})
+                        self.mask_contact_interface.update({"Top Edge": contact_mask_middle_top})
+                        
