@@ -18,6 +18,7 @@ class RectangularDomain:
         self.ey1=ey1
         self.boundary_fields= boundarycond.copy()
         self.position = position
+        # import pdb; pdb.set_trace()
 
     def test(self, point):
         if point[0] >= self.x0 and point[0] <= self.x1 and point[1] >= self.y0 and point[1] <= self.y1:
@@ -26,7 +27,9 @@ class RectangularDomain:
             return False
 
     def test_mesh(self, mesh):
+        # import pdb; pdb.set_trace()
         if mesh[0] >= self.ey0 and mesh[0] <= self.ey1 and mesh[1] >= self.ex0 and mesh[1]<= self.ex1:
+            # import pdb; pdb.set_trace()
             return True
         else:
             return False
@@ -35,9 +38,26 @@ class RectangularDomain:
         for key, value in field_dict.items():
             self.initial_fields[key] = float(value)
 
-    def generate_mask(self, problem_M):
-        self.mask = problem_M.copy()
-        for x_i in range (0,np.shape(problem_M)[0]):
-            for y_i in range (0,np.shape(problem_M)[1]):
+    def generate_mask(self, totalNy, totalNx):
+        m=np.zeros((totalNy, totalNx))
+        maux=np.zeros((totalNy+2, totalNx+2))
+        self.mask = m.copy()
+        self.mask_external_boundary={}
+        mask_left= maux.copy()
+        mask_right= maux.copy()
+        mask_top= maux.copy()
+        mask_bottom= maux.copy()
+        for x_i in range (0,np.shape(m)[0]):
+            for y_i in range (0,np.shape(m)[1]):
                 if self.test_mesh( (x_i, y_i) ):
                     self.mask[x_i][y_i] = 1
+                    mask_left[x_i+1][0]=1
+                    mask_right[x_i+1][-1]=1
+                    self.mask_external_boundary.update({"Left Edge":mask_left})
+                    self.mask_external_boundary.update({"Right Edge":mask_right})
+                    if self.position ==1:
+                        mask_bottom[self.ey0][y_i+1]=1
+                        self.mask_external_boundary.update({"Bottom Edge": mask_bottom})
+                    if self.position ==3:
+                        mask_top[-1][y_i+1]=1
+                        self.mask_external_boundary.update({"Top Edge": mask_top})
