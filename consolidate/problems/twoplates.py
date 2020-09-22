@@ -6,7 +6,7 @@ class TwoPlates:
     def __init__(self, deck):
         self.set_simulation_parameters(deck)
         self.set_problem_parameters(deck)
-        self.set_domains2(deck)
+        self.set_domains(deck)
         self.set_initialconds(deck)
         # self.set_boundaryconds(deck)
         
@@ -29,7 +29,7 @@ class TwoPlates:
         self.totalNx = nx
         self.total_thickness = t
         
-    def set_domains2(self, deck):
+    def set_domains(self, deck):
         self.domains = []
         mesh = {}
         initialcond = {}
@@ -95,3 +95,4 @@ class TwoPlates:
                 domain.set_field_init_value({field : domain.material[field]})
             domain.set_field_init_value({"dx": domain.dimensions["Lx"]/domain.mesh["Number of Elements in X"] })
             domain.set_field_init_value({"dy": domain.dimensions["Ly"]/domain.mesh["Number of Elements in Y"] })
+
