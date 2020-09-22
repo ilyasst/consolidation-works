@@ -11,9 +11,10 @@ class Field:
     def set_field(self, field, problem):
         value=0
         for domain in problem.domains:
+            # import pdb; pdb.set_trace()
             if field in domain.initial_fields:
                 value = value + domain.mask * domain.initial_fields[field]
-            if field == "External Temperature":
-                for edge in domain.boundary_fields[field]:
-                    value=value+domain.mask_external_boundary[edge]*float(domain.boundary_fields[field][edge]["Temperature"])
+            if field in domain.external_boundary_fields:
+                for edge in domain.external_boundary_fields[field]:
+                    value=value+domain.mask_external_boundary[edge]*float(domain.external_boundary_fields[field][edge]["Temperature"])
         self.value=value
