@@ -16,5 +16,6 @@ class Field:
                 value = value + domain.mask * domain.initial_fields[field]
             if field in domain.external_boundary_fields:
                 for edge in domain.external_boundary_fields[field]:
-                    value=value+domain.mask_external_boundary[edge]*float(domain.external_boundary_fields[field][edge]["Temperature"])
+                    for variable in domain.external_boundary_fields[field][edge]:
+                        value=value+domain.mask_external_boundary[edge]*float(domain.external_boundary_fields[field][edge][variable])
         self.value=value
