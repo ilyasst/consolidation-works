@@ -18,5 +18,5 @@ class Mesher():
 
     def set_intial_condition_fields(self, problem):
         self.fields=[]
-        for fields in problem.required_fields:
+        for fields in set(problem.domains[0].initial_fields) & set(problem.domains[1].initial_fields) & set(problem.domains[2].initial_fields):
             self.fields.append(Field(fields, problem))
