@@ -14,7 +14,7 @@ Domains:
         Mesh:
             Number of Elements in X: 10
             Number of Elements in Y: 10
-        Boundary Condition:
+        External Boundary Condition:
             External Temperature:
                 Left Edge: 
                     Temperature: 30
@@ -22,6 +22,7 @@ Domains:
                     Temperature: 31
                 Right Edge:
                     Temperature: 32
+        Internal Boundary Condition:
             Intimate Contact:
                 Bottom Edge:
                     Horizontal asperity ratio: 3
@@ -42,7 +43,7 @@ Domains:
         Mesh:
             Number of Elements in X: 10
             Number of Elements in Y: 10
-        Boundary Condition:
+        External Boundary Condition:
             External Temperature:
                 Left Edge:
                     Temperature: 10
@@ -50,6 +51,7 @@ Domains:
                     Temperature: 11
                 Right Edge:
                     Temperature: 12
+        Internal Boundary Condition:
             Intimate Contact:
                 Top Edge:
                     Horizontal asperity ratio: 1
@@ -70,12 +72,13 @@ Domains:
         Mesh:
             Number of Elements in X: 10
             Number of Elements in Y: 1
-        Boundary Condition:  
+        External Boundary Condition:  
             External Temperature:
                 Right Edge:
                     Temperature: 50
                 Left Edge:
                     Temperature: 51
+        Internal Boundary Condition:
             Intimate Contact:
                 Top Edge:
                     Horizontal asperity ratio: 2
