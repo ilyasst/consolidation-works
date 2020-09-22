@@ -2,12 +2,8 @@ import numpy as np
 class RectangularDomain:
 
     def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, position, material, initialcondition, boundarycond, mesh ):
-        self.x0 = float(corner0[0])
-        self.y0 = float(corner0[1])
-        self.x1 = float(corner1[0])
-        self.y1 = float(corner1[1])
-        self.Lx = self.x1 - self.x0
-        self.Ly = self.y1 - self.y0
+        self.corners={"X" : [float(corner0[0]), float(corner1[0])], "Y" : [float(corner0[1]),float(corner1[1])]}
+        self.dimensions = {"Lx" : float(corner1[0]) - float(corner0[0]), "Ly" : float(corner1[1])-float(corner0[1])}
         self.name = name
         self.material = material.copy()
         self.mesh = mesh.copy()
@@ -18,16 +14,14 @@ class RectangularDomain:
         self.ey1=ey1
         self.boundary_fields= boundarycond.copy()
         self.position = position
-        # import pdb; pdb.set_trace()
 
-    def test(self, point):
-        if point[0] >= self.x0 and point[0] <= self.x1 and point[1] >= self.y0 and point[1] <= self.y1:
-            return True
-        else:
-            return False
+    # def test(self, point):
+    #     if point[0] >= self.x0 and point[0] <= self.x1 and point[1] >= self.y0 and point[1] <= self.y1:
+    #         return True
+    #     else:
+    #         return False
 
     def test_mesh(self, mesh):
-        # import pdb; pdb.set_trace()
         if mesh[0] >= self.ey0 and mesh[0] <= self.ey1 and mesh[1] >= self.ex0 and mesh[1]<= self.ex1:
             # import pdb; pdb.set_trace()
             return True
