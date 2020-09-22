@@ -79,12 +79,12 @@ class TwoPlates:
             for mesh_dir in deck.doc["Domains"][deck_domain]["Mesh"]:
                 mesh[mesh_dir] = int(deck.doc["Domains"][deck_domain]["Mesh"][mesh_dir])
             
-            for bc in deck.doc["Domains"][deck_domain]["Boundary Condition"]:
+            for bc in deck.doc["Domains"][deck_domain]["External Boundary Condition"]:
                 boundarycond[bc] = {}
-                for edge in deck.doc["Domains"][deck_domain]["Boundary Condition"][bc]:
+                for edge in deck.doc["Domains"][deck_domain]["External Boundary Condition"][bc]:
                     bc_edge[edge]={}
-                    for variable in deck.doc["Domains"][deck_domain]["Boundary Condition"][bc][edge]:
-                        bc_edge[edge].update( {variable:float(deck.doc["Domains"][deck_domain]["Boundary Condition"][bc][edge][variable])})
+                    for variable in deck.doc["Domains"][deck_domain]["External Boundary Condition"][bc][edge]:
+                        bc_edge[edge].update( {variable:float(deck.doc["Domains"][deck_domain]["External Boundary Condition"][bc][edge][variable])})
                     boundarycond[bc].update({edge: bc_edge[edge]} )
                         
             self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, position, material, initialcond, boundarycond, mesh))
