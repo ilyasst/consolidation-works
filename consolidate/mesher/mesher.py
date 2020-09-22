@@ -20,3 +20,5 @@ class Mesher():
         self.fields=[]
         for fields in set(problem.domains[0].initial_fields) & set(problem.domains[1].initial_fields) & set(problem.domains[2].initial_fields):
             self.fields.append(Field(fields, problem))
+        for fields in set(problem.domains[0].external_boundary_fields) & set(problem.domains[1].external_boundary_fields) & set(problem.domains[2].external_boundary_fields):
+            self.fields.append(Field(fields, problem))
