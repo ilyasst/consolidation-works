@@ -12,16 +12,8 @@ class RectangularDomain:
         self.external_boundary_fields= extboundarycond.copy()
         self.position = position
 
-    # def test(self, point):
-    #     if point[0] >= self.x0 and point[0] <= self.x1 and point[1] >= self.y0 and point[1] <= self.y1:
-    #         return True
-    #     else:
-    #         return False
-
     def test_mesh(self, mesh):
         if mesh[0] >= self.elements["Elements in Y"][0] and mesh[0] <= self.elements["Elements in Y"][1] and mesh[1] >= self.elements["Elements in X"][0] and mesh[1]<= self.elements["Elements in X"][1]:
-        # if mesh[0] >= self.ey0 and mesh[0] <= self.ey1 and mesh[1] >= self.ex0 and mesh[1]<= self.ex1:
-            # import pdb; pdb.set_trace()
             return True
         else:
             return False
@@ -53,7 +45,6 @@ class RectangularDomain:
                     self.mask_external_boundary.update({"Right Edge":mask_right})
                     
                     if self.position ==1:
-                        # import pdb; pdb.set_trace()
                         mask_bottom[self.elements["Elements in Y"][0]][y_i+1]=1
                         contact_mask[self.elements["Elements in Y"][1]][y_i] = 1
                         self.mask_external_boundary.update({"Bottom Edge": mask_bottom})
