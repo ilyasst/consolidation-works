@@ -18,7 +18,8 @@ class Mesher():
 
     def set_intial_condition_fields(self, problem):
         self.fields=[]
-        for fields in set(problem.domains[0].initial_fields) & set(problem.domains[1].initial_fields) & set(problem.domains[2].initial_fields):
-            self.fields.append(Field(fields, problem))
-        for fields in set(problem.domains[0].external_boundary_fields) & set(problem.domains[1].external_boundary_fields) & set(problem.domains[2].external_boundary_fields):
-            self.fields.append(Field(fields, problem))
+        for fields in set(problem.domains[0].initial_condition) & set(problem.domains[1].initial_condition) & set(problem.domains[2].initial_condition):
+            self.fields.append(Field(fields, problem)) 
+        for location in set(problem.domains[0].boundary_condition) & set(problem.domains[1].boundary_condition) & set(problem.domains[2].boundary_condition):
+            for fields in set(problem.domains[0].boundary_condition[location]) & set(problem.domains[1].boundary_condition[location]) & set(problem.domains[2].boundary_condition[location]):
+                self.fields.append(Field(fields, problem))

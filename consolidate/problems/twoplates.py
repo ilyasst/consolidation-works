@@ -34,8 +34,12 @@ class TwoPlates:
         mesh = {}
         initialcond = {}
         material ={}
-        boundarycond={}
+        extboundarycond={}
+        intboundarycond={}
         bc_edge={}
+        bc_0={}
+        bc_1={}
+        
         
         for deck_domain in deck.doc["Domains"]:    
             position = int(deck.doc["Domains"][deck_domain]["Geometry"]["Pos"])
@@ -60,8 +64,7 @@ class TwoPlates:
                         ele_y0 = auxeley
                         ele_y1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"])+auxeley-1
                         
-                        
-                        
+
             if position == 3:                
                 corner0 = (0, self.total_thickness-float(deck.doc["Domains"][deck_domain]["Geometry"]["Thickness (Y)"]))
                 corner1 = (float(deck.doc["Domains"][deck_domain]["Geometry"]["Width (X)"]), self.total_thickness)
@@ -70,29 +73,32 @@ class TwoPlates:
                 ele_y0 = int(self.totalNy)-int(float(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"]))
                 ele_y1 = int(self.totalNy)-1
                 
-    
-            
-            for material_prop in deck.doc["Domains"][deck_domain]["Material"]:
-                material[material_prop] = float(deck.doc["Domains"][deck_domain]["Material"][material_prop])                   
+                
             for initcond in deck.doc["Domains"][deck_domain]["Initial Condition"]:
-                initialcond[initcond] = float(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond])   
+                initialcond[initcond] = float(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond])
+                
             for mesh_dir in deck.doc["Domains"][deck_domain]["Mesh"]:
                 mesh[mesh_dir] = int(deck.doc["Domains"][deck_domain]["Mesh"][mesh_dir])
             
-            for bc in deck.doc["Domains"][deck_domain]["External Boundary Condition"]:
-                boundarycond[bc] = {}
-                for edge in deck.doc["Domains"][deck_domain]["External Boundary Condition"][bc]:
-                    bc_edge[edge]={}
-                    for variable in deck.doc["Domains"][deck_domain]["External Boundary Condition"][bc][edge]:
-                        bc_edge[edge].update( {variable:float(deck.doc["Domains"][deck_domain]["External Boundary Condition"][bc][edge][variable])})
-                    boundarycond[bc].update({edge: bc_edge[edge]} )
-                        
-            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, position, material, initialcond, boundarycond, mesh))
+            boundarycond={}
+            for location in deck.doc["Domains"][deck_domain]["Boundary Condition"]:
+                boundarycond[location]={}
+                for var in deck.doc["Domains"][deck_domain]["Boundary Condition"][location]:
+                    bc_edge[var] = {}
+                    for edge in  deck.doc["Domains"][deck_domain]["Boundary Condition"][location][var]:
+                        bc_edge[var].update( {edge:float(deck.doc["Domains"][deck_domain]["Boundary Condition"][location][var][edge])})
+                    boundarycond[location].update({var: bc_edge[var]})
+            self.domains.append(RectangularDomain(deck_domain, corner0, corner1, ele_x0, ele_x1, ele_y0,ele_y1, position, initialcond, mesh,boundarycond))
 
+   
+    
+    
     def set_initialconds(self, deck):
+        
         for domain in self.domains:
-            for field in domain.material:
-                domain.set_field_init_value({field : domain.material[field]})
+            for variable in deck.doc["Domains"][domain.name]["Material"]:
+                domain.set_field_init_value({variable : deck.doc["Domains"][domain.name]["Material"][variable]})
             domain.set_field_init_value({"dx": domain.dimensions["Lx"]/domain.mesh["Number of Elements in X"] })
+            domain.set_field_init_value({"dy": domain.dimensions["Ly"]/domain.mesh["Number of Elements in Y"] })
             domain.set_field_init_value({"dy": domain.dimensions["Ly"]/domain.mesh["Number of Elements in Y"] })
 

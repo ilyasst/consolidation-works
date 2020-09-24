@@ -1,15 +1,14 @@
 import numpy as np
 class RectangularDomain:
 
-    def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, position, material, initialcondition, extboundarycond, mesh ):
+    def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, position, initialcondition, mesh, boundarycond ):
         self.corners={"X" : [float(corner0[0]), float(corner1[0])], "Y" : [float(corner0[1]),float(corner1[1])]}
         self.dimensions = {"Lx" : float(corner1[0]) - float(corner0[0]), "Ly" : float(corner1[1])-float(corner0[1])}
         self.elements = {"Elements in X":[ex0, ex1], "Elements in Y": [ey0,ey1]}
         self.name = name
-        self.material = material.copy()
         self.mesh = mesh.copy()
-        self.initial_fields = initialcondition.copy()
-        self.external_boundary_fields= extboundarycond.copy()
+        self.initial_condition = initialcondition.copy()
+        self.boundary_condition=boundarycond.copy()
         self.position = position
 
     def test_mesh(self, mesh):
@@ -20,7 +19,7 @@ class RectangularDomain:
 
     def set_field_init_value(self, field_dict):
         for key, value in field_dict.items():
-            self.initial_fields[key] = float(value)
+            self.initial_condition[key] = float(value)
 
     def generate_mask(self, totalNy, totalNx):
         m=np.zeros((totalNy, totalNx))

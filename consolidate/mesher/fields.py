@@ -11,11 +11,13 @@ class Field:
     def set_field(self, field, problem):
         value=0
         for domain in problem.domains:
-            # import pdb; pdb.set_trace()
-            if field in domain.initial_fields:
-                value = value + domain.mask * domain.initial_fields[field]
-            if field in domain.external_boundary_fields:
-                for edge in domain.external_boundary_fields[field]:
-                    for variable in domain.external_boundary_fields[field][edge]:
-                        value=value+domain.mask_external_boundary[edge]*float(domain.external_boundary_fields[field][edge][variable])
+            if field in domain.initial_condition:
+                value = value + domain.mask * domain.initial_condition[field]
+            for location in domain.boundary_condition:
+                if field in domain.boundary_condition[location]:
+                    for edge in domain.boundary_condition[location][field]:
+                        if location == "External":
+                            value=value+domain.mask_external_boundary[edge]*float(domain.boundary_condition[location][field][edge])
+                        else:
+                            value=value + domain.mask_contact_interface[edge]*float(domain.boundary_condition[location][field][edge])
         self.value=value

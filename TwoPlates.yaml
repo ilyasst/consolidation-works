@@ -14,22 +14,19 @@ Domains:
         Mesh:
             Number of Elements in X: 10
             Number of Elements in Y: 10
-        External Boundary Condition:
-            External Temperature:
-                Left Edge: 
-                    Temperature: 30
-                Top Edge: 
-                    Temperature: 31
-                Right Edge:
-                    Temperature: 32
-        Internal Boundary Condition:
-            Intimate Contact:
-                Bottom Edge:
-                    Horizontal asperity ratio: 3
-                    Vertical asperity ratio: 3
+        Boundary Condition:
+            External:
+                Temperature: 
+                    Left Edge: 30
+                    Top Edge:  31
+                    Right Edge: 32
+            Internal:
+                Horizontal asperity ratio:
+                    Bottom Edge: 3
+                Vertical asperity ratio: 
+                    Bottom Edge: 3
         Initial Condition:
             Initial Temperature: 3
-        
     Bottom Plate:
         Geometry:
             Thickness (Y): 0.4
@@ -43,22 +40,19 @@ Domains:
         Mesh:
             Number of Elements in X: 10
             Number of Elements in Y: 10
-        External Boundary Condition:
-            External Temperature:
-                Left Edge:
-                    Temperature: 10
-                Bottom Edge:
-                    Temperature: 11
-                Right Edge:
-                    Temperature: 12
-        Internal Boundary Condition:
-            Intimate Contact:
-                Top Edge:
-                    Horizontal asperity ratio: 1
-                    Vertical asperity ratio: 1
+        Boundary Condition:
+            External:
+                Temperature:
+                    Left Edge: 10
+                    Bottom Edge: 11
+                    Right Edge: 12
+            Internal:
+                Horizontal asperity ratio: 
+                    Top Edge: 1
+                Vertical asperity ratio:
+                    Top Edge: 1
         Initial Condition: 
             Initial Temperature: 1
-        
     Middle Plate:
         Geometry:
             Thickness (Y): 0.01
@@ -72,24 +66,21 @@ Domains:
         Mesh:
             Number of Elements in X: 10
             Number of Elements in Y: 1
-        External Boundary Condition:  
-            External Temperature:
-                Right Edge:
-                    Temperature: 50
-                Left Edge:
-                    Temperature: 51
-        Internal Boundary Condition:
-            Intimate Contact:
-                Top Edge:
-                    Horizontal asperity ratio: 2
-                    Vertical asperity ratio: 2
-                Bottom Edge:
-                    Horizontal asperity ratio: 2
-                    Vertical asperity ratio: 2
+        Boundary Condition:  
+            External:
+                Temperature:
+                    Right Edge: 50
+                    Left Edge: 51
+            Internal:
+                Horizontal asperity ratio: 
+                    Top Edge: 2 
+                    Bottom Edge: 2 
+                Vertical asperity ratio: 
+                    Top Edge: 2 
+                    Bottom Edge: 2
         Initial Condition:
             Initial Temperature: 2   
-            Input Power Density: 2            
-
+            Input Power Density: 2
 Simulation:
     Step Time: 0.1
     Number of Steps: 1000
