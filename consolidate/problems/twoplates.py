@@ -1,5 +1,6 @@
 from .domains import RectangularDomain
-from .boundaryconditions import LinearBC
+# from .boundaryconditions import LinearBC
+import numpy as np
 
 class TwoPlates:
 
@@ -42,6 +43,8 @@ class TwoPlates:
         
         
         for deck_domain in deck.doc["Domains"]:    
+            
+            
             position = int(deck.doc["Domains"][deck_domain]["Geometry"]["Pos"])
             if  position == 1:
                 corner0 = (0, 0)
@@ -75,8 +78,16 @@ class TwoPlates:
                 
                 
             for initcond in deck.doc["Domains"][deck_domain]["Initial Condition"]:
-                initialcond[initcond] = float(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond])
-                
+                # 
+                if isinstance(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond], dict) == False:
+                    initialcond[initcond] = float(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond])
+                if isinstance(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond], dict) == True:
+                    par=[]
+                    for param in deck.doc["Domains"][deck_domain]["Initial Condition"][initcond]:
+                        par.append(float(deck.doc["Domains"][deck_domain]["Initial Condition"][initcond][param]))
+                    initialcond[initcond] = par[0]*np.exp(par[1]/float(deck.doc["Domains"][deck_domain]["Initial Condition"]["Initial Temperature"]))
+                    
+
             for mesh_dir in deck.doc["Domains"][deck_domain]["Mesh"]:
                 mesh[mesh_dir] = int(deck.doc["Domains"][deck_domain]["Mesh"][mesh_dir])
             

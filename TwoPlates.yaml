@@ -26,7 +26,10 @@ Domains:
                 Vertical asperity ratio: 
                     Bottom Edge: 3
         Initial Condition:
-            Initial Temperature: 3
+            Initial Temperature: 295
+            Viscosity: 
+                A: 0.00000000000114
+                B: 26300
     Bottom Plate:
         Geometry:
             Thickness (Y): 0.4
@@ -52,7 +55,10 @@ Domains:
                 Vertical asperity ratio:
                     Top Edge: 1
         Initial Condition: 
-            Initial Temperature: 1
+            Initial Temperature: 290
+            Viscosity: 
+                A: 0.00000000000114
+                B: 26300
     Middle Plate:
         Geometry:
             Thickness (Y): 0.01
@@ -79,8 +85,11 @@ Domains:
                     Top Edge: 2 
                     Bottom Edge: 2
         Initial Condition:
-            Initial Temperature: 2   
+            Initial Temperature: 300
             Input Power Density: 2
+            Viscosity: 
+                A: 0.00000000000114
+                B: 26300
 Simulation:
     Step Time: 0.1
     Number of Steps: 1000
