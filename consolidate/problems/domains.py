@@ -117,5 +117,5 @@ class RectangularDomain:
         bc_f={}
         self.boundary_conditions=[]
         for location in deck.doc["Domains"][key]["Boundary Condition"]:
-            self.boundary_conditions.append(BC(deck.doc["Domains"][key]["Boundary Condition"][location], location, self.mesh[0], self.material[0], self.initial_condition[0]))
+            self.boundary_conditions.append(BC(deck.doc["Domains"][key]["Boundary Condition"][location], location))
         
