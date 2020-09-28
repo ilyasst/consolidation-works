@@ -1,9 +1,7 @@
 import numpy as np
 class RectangularDomain:
 
-    def __init__(self, name, corner0, corner1, ex0, ex1, ey0, ey1, position,):
-        self.corners={"X" : [float(corner0[0]), float(corner1[0])], "Y" : [float(corner0[1]),float(corner1[1])]}
-        self.dimensions = {"Lx" : float(corner1[0]) - float(corner0[0]), "Ly" : float(corner1[1])-float(corner0[1])}
+    def __init__(self, name, ex0, ex1, ey0, ey1, position,):
         self.elements = {"Elements in X":[ex0, ex1], "Elements in Y": [ey0,ey1]}
         self.name = name
         self.position = position
@@ -14,9 +12,8 @@ class RectangularDomain:
         else:
             return False
 
-    def set_field_init_value(self, field_dict):
-        for key, value in field_dict.items():
-            self.initial_condition[key] = float(value)
+
+    
 
     def generate_mask(self, totalNy, totalNx):
         m=np.zeros((totalNy, totalNx))
@@ -56,42 +53,74 @@ class RectangularDomain:
                         self.mask_contact_interface.update({"Bottom Edge": contact_mask_middle_bottom})
                         self.mask_contact_interface.update({"Top Edge": contact_mask_middle_top})
                         
-    def set_bc(self,key,deck):
-        bc={}
-        for location in deck.doc["Domains"][key]["Boundary Condition"]:
-            bc[location]={}
-            for edge in deck.doc["Domains"][key]["Boundary Condition"][location]:
-                bc[location][edge]={}
-                for var in deck.doc["Domains"][key]["Boundary Condition"][location][edge]:
-                    bc[location][edge].update({var: float(deck.doc["Domains"][key]["Boundary Condition"][location][edge][var])})
-        self.boundary_conditions=bc
     
-    def set_mesh(self,key,deck):
-        mesh={}
-        for mesh_dir in deck.doc["Domains"][key]["Mesh"]:
-            mesh[mesh_dir] = int(deck.doc["Domains"][key]["Mesh"][mesh_dir])
-        mesh["dx"] = self.dimensions["Lx"]/mesh["Number of Elements in X"]
-        mesh["dy"] = self.dimensions["Ly"]/mesh["Number of Elements in Y"]
-        self.mesh=mesh
+    def set_corners(self, domain_name, deck):
+        # import pdb; 
+        position = int(deck.doc["Domains"][domain_name]["Geometry"]["Pos"])
         
+        if position == 1:
+             corner0 = (0, 0)
+             corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
+        if position == 2:
+            for domain_aux in deck.doc["Domains"]:
+                if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
+                    aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+                    corner0=(0, aux)
+                    corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
+        if position == 3:
+            aux=0
+            for domain_aux in deck.doc["Domains"]:
+                if domain_aux != domain_name:
+                    aux=aux+float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+            corner0 = (0, aux)
+            corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
+        
+        self.corners={"X" : [float(corner0[0]), float(corner1[0])], "Y" : [float(corner0[1]),float(corner1[1])]}
+        self.dimensions={}
+        self.dimensions.update({"lx": float(corner1[0]) - float(corner0[0]), "ly": float(corner1[1]) - (corner0[1])})
+
+            
+    def set_mesh(self,key,deck,dimensions):
+        aux={}
+        mesh=deck.doc["Domains"][key]["Mesh"]
+        for key in mesh.keys():
+            aux[key] = int(mesh[key])
+        aux.update({"dx": dimensions["lx"]/aux["Number of Elements in X"]})
+        aux.update({"dy": dimensions["ly"]/aux["Number of Elements in Y"]})
+        self.mesh=aux
+            
+            
     def set_material(self, key, deck):
-        material={}
-        for mat_dir in deck.doc["Domains"][key]["Material"]:
-            if isinstance(deck.doc["Domains"][key]["Material"][mat_dir],dict) == False:
-                material[mat_dir]=float(deck.doc["Domains"][key]["Material"][mat_dir])
-            if isinstance(deck.doc["Domains"][key]["Material"][mat_dir],dict) == True:
-                material[mat_dir]={}
-                for param in deck.doc["Domains"][key]["Material"][mat_dir]:
-                    material[mat_dir].update({param:float(deck.doc["Domains"][key]["Material"][mat_dir][param])})
-        self.material = material
+        aux={}
+        material=deck.doc["Domains"][key]["Material"]
+        for key in material.keys():
+            if isinstance(material[key],dict)==False:
+                aux[key]=float(material[key])
+            else:
+                aux[key]={}
+                for param in material[key]:
+                    aux[key].update({param: float(material[key][param])})
+        self.material=aux
+        
+        
             
     def set_IC(self, key, deck):
-        ic = {}
-        for ic_dir in deck.doc["Domains"][key]["Initial Condition"]:
-            if isinstance(deck.doc["Domains"][key]["Initial Condition"][ic_dir], dict) == False:
-                ic[ic_dir] = float(deck.doc["Domains"][key]["Initial Condition"][ic_dir])
-            if isinstance(deck.doc["Domains"][key]["Initial Condition"][ic_dir], dict) == True:
-                 ic[ic_dir]={}
-                 for param in deck.doc["Domains"][key]["Initial Condition"][ic_dir]:
-                     ic[ic_dir].update({param: float(deck.doc["Domains"][key]["Initial Condition"][ic_dir][param])})
-        self.initial_conditions=ic
+        aux={}
+        ic = deck.doc["Domains"][key]["Initial Condition"]
+        for key in ic.keys():
+            aux[key]=float(ic[key])
+        self.initial_conditions=aux
+        
+
+
+    def set_bc(self,key,deck):
+        aux={}
+        bc=deck.doc["Domains"][key]["Boundary Condition"]
+        for location in bc:
+            aux[location]={}
+            for edge in bc[location]:
+                aux[location][edge]={}
+                for var in bc[location][edge]:
+                    # import pdb; pdb.set_trace()
+                    aux[location][edge].update({var:float(bc[location][edge][var])})
+        self.boundary_conditions=aux

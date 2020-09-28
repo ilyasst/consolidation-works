@@ -12,7 +12,8 @@ class Mesher():
         self.fields=[]
         self.set_fields_ic(problem)
         self.set_fields_material(problem)
-        # self.set_fields_external_bc(problem)
+        self.set_fields_external_bc(problem)
+        self.set_fields_internal_bc(problem)
 
     def create_masks(self, problem):
         self.meshes=[]
@@ -35,16 +36,13 @@ class Mesher():
             
     def set_fields_external_bc(self,problem):
         count = np.size(self.fields)
-        value={}
-        aux=[]
-        for domain in problem.domains:
-            value[domain.name] = {}
-            
-            for edge in domain.boundary_conditions["External"]:
+        self.fields.append(Field("Equivalente External Temperature"))
+        for i in range (count, np.size(self.fields)):
+            self.fields[i].set_external_bc_field(problem)
                 
-                self.fiel
-                value[domain.name][edge]={}
-                for var in domain.boundary_conditions["External"][edge]:
-                    value[domain.name][edge][var]=domain.boundary_conditions["External"][edge][var]
-                
-                import pdb; pdb.set_trace()
+    def set_fields_internal_bc(self, problem):
+        count = np.size(self.fields)
+        self.fields.append(Field("Intimate Contact"))
+        for i in range (count, np.size(self.fields)):
+            self.fields[i].set_internal_bc_field(problem)
+
