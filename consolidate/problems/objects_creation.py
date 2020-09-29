@@ -16,14 +16,7 @@ class Mesh:
         self.dx = geometry.dimensionX/self.npx
         self.dy = geometry.dimensionY/self.npy
 
-    
-    # def __init__(self, mesh, dimensions):
-    #     aux={}
-    #     for prop in mesh.keys():
-    #         aux[prop]=int(mesh[prop])
-    #     aux.update({"dx": dimensions["lx"]/aux["Number of Elements in X"] })
-    #     aux.update({"dy": dimensions["ly"]/aux["Number of Elements in Y"]})
-    #     self.properties=aux
+
             
 class Material:
     
@@ -37,34 +30,14 @@ class Material:
             viscosity.update({prop: float(material["Viscosity"][prop])})
         self.viscosity=viscosity
         
-# class Material:
-    
-#     def __init__(self, prop,value):
-#         self.property = prop
-#         if isinstance(value, dict) == True:
-#             aux={}
-#             for param in value:
-#                 aux[param]={}
-#                 aux[param] =  float(value[param])
-#         else:
-#             aux=float(value)
-#         self.value=aux
-            
+
 class Initial_Condition:
     
     def __init__ (self, ic):
-        self.temperature = ic["Temperature"]
+        self.temperature = float(ic["Temperature"])
         if "Input Power Density" in ic.keys():
-            self.power_density = ic["Input Power Density"]
+            self.power_density = float(ic["Input Power Density"])
             
-# class Initial_Condition:
-    
-#     def __init__ (self, ic):
-#         aux={}
-#         for variable in ic.keys():
-#             aux[variable] = float(ic[variable])
-#         self.variables=aux
-
         
 class BC:
     
@@ -134,8 +107,6 @@ class Geometry:
 
 
 
-
-
 class Points:
     def __init__(self, deck, keys, position, pointsY):
         if  position == 1:
@@ -160,3 +131,15 @@ class Points:
             p_y1 = int(pointsY)-1
         self.pointsX=[p_x0, p_x1]
         self.pointsY=[p_y0, p_y1]
+        
+class Mask:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+        
+class Field:
+    def __init__ (self, field_name,value):
+        # import pdb; pdb.set_trace()
+        self.field=field_name
+        self.value=value
+        

@@ -8,10 +8,10 @@ class Field:
         self.name=field
 
 
-    def set_initial_conditions_field(self, problem):
+    def set_initial_conditions_field(self, problem,name,i):
         value=0
         for domain in problem.domains:
-            value = value + domain.mask * domain.initial_conditions[self.name]
+            value = value + domain.mask * domain.initial_condition[i].__dict__[name]
         self.value = value
         
     def set_material_field(self, problem):

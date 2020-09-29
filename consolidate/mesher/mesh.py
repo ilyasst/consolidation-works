@@ -20,8 +20,3 @@ class Mesh:
         self.X = X
         self.Y = Y
 
-    def set_create_mask(self, domain, totalNy, totalNx):
-        M=np.zeros((totalNy, totalNx))
-        domain.generate_mask(totalNy,totalNx)
-        initialmask=domain.mask
-        self.mask=initialmask

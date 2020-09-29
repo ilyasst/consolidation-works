@@ -9,23 +9,26 @@ class Mesher():
     def __init__(self,  problem):
         self.totalNx = problem.totalPointsX
         self.totalNy = problem.totalPointsY
-        self.create_masks(problem)
-        self.fields=[]
-        self.set_fields_ic(problem)
-        self.set_fields_material(problem)
+        # self.fields=[]
+        # self.create_fields(problem)
+        # self.set_fields_ic(problem)
+        # self.set_fields_material(problem)
         # self.set_fields_external_bc(problem)
 
-    def create_masks(self, problem):
-        self.meshes=[]
-        for domain in problem.domains:
-            self.meshes.append(Mesh( domain, self.totalNx, self.totalNy))
+    
+            
+    def create_fields(self, problem):
+        for field_name in problem.required_fields:
+            self.fields.append(Field(field_name))
+        
+        
             
     def set_fields_ic(self, problem):
         count=np.size(self.fields)
         for field in set(problem.domains[0].initial_condition[0].__dict__.keys()) & set(problem.domains[0].initial_condition[0].__dict__.keys()) & set(problem.domains[0].initial_condition[0].__dict__.keys()):
             self.fields.append(Field(field))
         for i in range(count, np.size(self.fields)):
-            self.fields[i].set_initial_conditions_field(problem)
+            self.fields[i].set_initial_conditions_field(problem,self.fields[i].__dict__["name"],i)
             
     def set_fields_material(self,problem):
         count=np.size(self.fields)

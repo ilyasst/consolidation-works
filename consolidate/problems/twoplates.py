@@ -14,14 +14,20 @@ class TwoPlates:
         self.set_IC(deck)
         self.set_BC(deck)
         self.set_points(deck)
+        self.set_create_mask(deck)
+        self.fields(deck)
         
         
         
     def set_simulation_parameters(self,deck):
         self.SimulationParameters = {}
-        for par in deck.doc["Simulation"]:
-            self.SimulationParameters[par]= deck.doc["Simulation"][par]
-            
+        par = "Number of Steps"
+        self.SimulationParameters[par] = int(deck.doc["Simulation"][par])
+        par="Step Time"
+        self.SimulationParameters[par] = float(deck.doc["Simulation"][par])
+        self.ProblemType = deck.doc["Problem Type"]["Type"]
+
+        
             
     def set_problem_parameters(self, deck):
         ny = 0
@@ -66,5 +72,20 @@ class TwoPlates:
     def set_IC(self, deck):
         for domain in self.domains:
             domain.set_IC(domain.name, deck)
-                
             
+    
+            
+    def set_create_mask(self, deck):
+        for domain in self.domains:
+            domain.generate_mask(self.totalPointsY,self.totalPointsX)  
+
+
+    def fields(self, deck):
+        if self.ProblemType == "Welding":
+            self.required_fields=["Internal Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact"]
+        if self.ProblemType == "Heat Transfer":
+            self.required_fields = ["Internal Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity","Viscosity", "Equivalent External Temperature", "Power Input Density"]
+       
+        for field_name in self.required_fields:
+            for domain in self.domains:
+                domain.set_fields(domain, field_name)

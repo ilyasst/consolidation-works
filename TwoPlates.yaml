@@ -1,5 +1,5 @@
 Problem Type:
-    Type: TwoPlates
+    Type: Welding
 Domains:
     Top Plate:
         Geometry:
@@ -66,7 +66,7 @@ Domains:
                     Horizontal asperity ratio: 1
                     Vertical asperity ratio: 1
         Initial Condition: 
-            Temperature: 450
+            Temperature: 470
     Middle Plate:
         Geometry:
             Thickness (Y): 0.01
@@ -99,7 +99,7 @@ Domains:
                     Horizontal asperity ratio: 2
                     Vertical asperity ratio: 2
         Initial Condition:
-            Temperature: 450
+            Temperature: 550
             Input Power Density: 2
 Simulation:
     Step Time: 0.1
