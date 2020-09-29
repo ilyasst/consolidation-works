@@ -15,8 +15,8 @@ Domains:
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Number of Elements in X: 10
-            Number of Elements in Y: 10
+            Number of Points in X: 10
+            Number of Points in Y: 10
         Boundary Condition:
             External:
                 Left Edge: 
@@ -48,8 +48,8 @@ Domains:
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Number of Elements in X: 10
-            Number of Elements in Y: 10
+            Number of Points in X: 10
+            Number of Points in Y: 10
         Boundary Condition:
             External:
                 Left Edge: 
@@ -81,8 +81,8 @@ Domains:
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Number of Elements in X: 10
-            Number of Elements in Y: 1
+            Number of Points in X: 10
+            Number of Points in Y: 1
         Boundary Condition:  
             External:
                 Left Edge: 

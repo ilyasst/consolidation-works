@@ -5,16 +5,25 @@ Created on Sun Sep 27 00:47:52 2020
 @author: andre
 """
 
+    
+
 
 class Mesh:
     
-    def __init__(self, mesh, dimensions):
-        aux={}
-        for prop in mesh.keys():
-            aux[prop]=int(mesh[prop])
-        aux.update({"dx": dimensions["lx"]/aux["Number of Elements in X"] })
-        aux.update({"dy": dimensions["ly"]/aux["Number of Elements in Y"]})
-        self.properties=aux
+    def __init__(self, mesh, geometry):
+        self.npx = int(mesh["Number of Points in X"])
+        self.npy = int(mesh["Number of Points in Y"])
+        self.dx = geometry.dimensionX/self.npx
+        self.dy = geometry.dimensionY/self.npy
+
+    
+    # def __init__(self, mesh, dimensions):
+    #     aux={}
+    #     for prop in mesh.keys():
+    #         aux[prop]=int(mesh[prop])
+    #     aux.update({"dx": dimensions["lx"]/aux["Number of Elements in X"] })
+    #     aux.update({"dy": dimensions["ly"]/aux["Number of Elements in Y"]})
+    #     self.properties=aux
             
 class Material:
     
@@ -98,16 +107,56 @@ class BC:
         
 
 
-
-# class BC:
+class Geometry:
     
-#     def __init__(self, bc, location,mesh,material,init_cond):
-#         aux={}
-#         self.location=location
-        
-#         for edge in bc:
-#             aux[edge]={}
-#             for var in bc[edge]:
-#                 aux[edge].update({var:float(bc[edge][var])})
-#         self.edges=aux
+    def __init__(self,deck, key, position):
+        if position == 1:
+             corner0 = (0, 0)
+             corner1 = (float(deck.doc["Domains"][key]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][key]["Geometry"]["Thickness (Y)"]))
+             # import pdb; pdb.set_trace()
+        if position == 2:
+            for domain_aux in deck.doc["Domains"]:
+                if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
+                    aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+                    corner0=(0, aux)
+                    corner1 = (float(deck.doc["Domains"][key]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][key]["Geometry"]["Thickness (Y)"]))
+            # import pdb; pdb.set_trace()
+        if position == 3:
+            aux=0
+            for domain_aux in deck.doc["Domains"]:
+                if domain_aux != key:
+                    aux=aux+float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+            corner0 = (0, aux)
+            corner1 = (float(deck.doc["Domains"][key]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][key]["Geometry"]["Thickness (Y)"]))
+            # import pdb; pdb.set_trace()
+        self.dimensionX = float(corner1[0]) - float(corner0[0])
+        self.dimensionY = float(corner1[1]) - (corner0[1])
 
+
+
+
+
+class Points:
+    def __init__(self, deck, keys, position, pointsY):
+        if  position == 1:
+            p_x0 = 0
+            p_x1 = int(deck.doc["Domains"][keys]["Mesh"]["Number of Points in X"])
+            p_y0 = 0
+            p_y1 = int(deck.doc["Domains"][keys]["Mesh"]["Number of Points in Y"])-1
+                
+        if position == 2:
+            for domain_aux in deck.doc["Domains"]:
+                if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
+                    auxeley=int(deck.doc["Domains"][domain_aux]["Mesh"]["Number of Points in Y"])
+                    p_x0 = 0
+                    p_x1 = int(deck.doc["Domains"][keys]["Mesh"]["Number of Points in X"])
+                    p_y0 = auxeley
+                    p_y1 = int(deck.doc["Domains"][keys]["Mesh"]["Number of Points in Y"])+auxeley-1
+                        
+        if position == 3:
+            p_x0 = 0
+            p_x1 = int(deck.doc["Domains"][keys]["Mesh"]["Number of Points in X"]) -1
+            p_y0 = int(pointsY)-int(float(deck.doc["Domains"][keys]["Mesh"]["Number of Points in Y"]))
+            p_y1 = int(pointsY)-1
+        self.pointsX=[p_x0, p_x1]
+        self.pointsY=[p_y0, p_y1]
