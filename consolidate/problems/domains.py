@@ -98,15 +98,7 @@ class RectangularDomain:
         for location in deck.doc["Domains"][key]["Boundary Condition"]:
             self.boundary_conditions.append(BC(deck.doc["Domains"][key]["Boundary Condition"][location], location))
         
-    # def set_fields(self, domain,field_name):
-        
-    #     if field_name == "Internal Temperature":
-    #         if "temperature" in domain.initial_condition[0].__dict__.keys():
-    #             name="temperature"
-    #         for mask in self.masks:
-    #             if mask.name=="Internal Mask":
-    #                 value = mask.value*domain.initial_condition[0].__dict__[name]        
-    #                 self.local_fields.append(Field(field_name,value))
+
     def set_fields(self, domain,field_name):
         value=0
         for mask in self.masks:
@@ -119,6 +111,26 @@ class RectangularDomain:
                     if "power_density" in domain.initial_condition[0].__dict__.keys():
                         name = "power_density"
                         value=mask.value*domain.initial_condition[0].__dict__[name] 
+                elif field_name == "dx":
+                    name = "dx"
+                    value = mask.value*domain.mesh[0].__dict__[name]
+                elif field_name == "dy":
+                    name = "dy"
+                    value = mask.value*domain.mesh[0].__dict__[name]
                 else:
                     continue
+                    
+                    
+            if mask.name=="External BC":
+                if field_name == "Equivalent External Temperature":
+                    for obj in domain.boundary_conditions:
+                        if obj.location =="External":
+                            aux=0
+                            for edge in obj.bc:
+                                if edge == "Left Edge" or "Right Edge":
+                                    import pdb; pdb.set_trace()
+                                    aux = aux+((-2*domain.mesh[0].dx*domain.boundary_conditions[0].bc[edge]["Convection Coefficient"]/self.material[0].kx)*(self.initial_condition[0].temperature-domain.boundary_conditions[0].bc[edge]["Room Temperature"])+self.initial_condition[0].temperature)*mask.value[edge]
+
+                   
+                
                 self.local_fields.append(Field(field_name,value))

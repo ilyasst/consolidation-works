@@ -31,8 +31,6 @@ class Field:
         value=0
         for domain in problem.domains:
             for edge in domain.boundary_conditions["External"]:
-                # import pdb; pdb.set_trace()
                 value = value + domain.mask_external_boundary[edge]*domain.boundary_conditions["External"][edge]["Equivalent Temperature"]
         self.value=value
         
-    # def set_internal_bc_constants(self, problme)

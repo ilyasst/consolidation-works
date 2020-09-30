@@ -82,9 +82,9 @@ class TwoPlates:
 
     def fields(self, deck):
         if self.ProblemType == "Welding":
-            self.required_fields=["Internal Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact"]
+            self.required_fields=["Internal Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]
         if self.ProblemType == "Heat Transfer":
-            self.required_fields = ["Internal Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity","Viscosity", "Equivalent External Temperature", "Power Input Density"]
+            self.required_fields = ["Internal Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity","Viscosity", "Equivalent External Temperature", "Power Input Density", "dx","dy"]
        
         for field_name in self.required_fields:
             for domain in self.domains:

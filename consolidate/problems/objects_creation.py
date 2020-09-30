@@ -42,43 +42,16 @@ class Initial_Condition:
 class BC:
     
     def __init__(self, bc, location):
-        self.location = location
+        self.location = location        
+        self.bc ={}
+        aux={}
+        for edge in bc:
+            aux[edge]={}
+            for var in bc[edge]:
+                aux[edge].update({var:float(bc[edge][var])})
+        self.bc=aux
         
-        if location == "External":
-            self.room_temperature={}
-            self.h = {}
-            if "Left Edge" in bc.keys():
-                if "Room Temperature" in bc["Left Edge"].keys():
-                    self.room_temperature.update({"Left Edge": float(bc["Left Edge"]["Room Temperature"])})
-                if "Convection Coefficient" in bc["Left Edge"].keys():
-                    self.h.update({"Left Edge": float(bc["Left Edge"]["Convection Coefficient"])})
-                    
-                if "Top Edge" in bc.keys():
-                    if "Room Temperature" in bc["Top Edge"].keys():
-                        self.room_temperature.update({"Top Edge": float(bc["Top Edge"]["Room Temperature"])})
-                    if "Convection Coefficient" in bc["Top Edge"].keys():
-                        self.h.update({"Top Edge": float(bc["Top Edge"]["Convection Coefficient"])})
-                if "Right Edge" in bc.keys():
-                    if "Room Temperature" in bc["Right Edge"].keys():
-                        self.room_temperature.update({"Right Edge": float(bc["Right Edge"]["Room Temperature"])})
-                    if "Convection Coefficient" in bc["Right Edge"].keys():
-                        self.h.update({"Right Edge": float(bc["Right Edge"]["Convection Coefficient"])})
-                if "Left Edge" in bc.keys():
-                    if "Left Temperature" in bc["Left Edge"].keys():
-                        self.room_temperature.update({"Left Edge": float(bc["Left Edge"]["Room Temperature"])})
-                    if "Convection Coefficient" in bc["Left Edge"].keys():
-                        self.h.update({"Left Edge": float(bc["Left Edge"]["Convection Coefficient"])})
-                    
-        if location == "Internal":
-            self.horizontal_ratio = {}
-            self.vertical_ratio = {}
-            for edge in bc.keys():
-                if "Horizontal asperity ratio" in bc[edge].keys():
-                    self.horizontal_ratio.update({edge: float(bc[edge]["Horizontal asperity ratio"])}) 
-                if "Vertical asperity ratio" in bc[edge].keys():
-                    self.vertical_ratio.update({edge: float(bc[edge]["Vertical asperity ratio"])}) 
-        
-
+      
 
 class Geometry:
     
@@ -86,14 +59,12 @@ class Geometry:
         if position == 1:
              corner0 = (0, 0)
              corner1 = (float(deck.doc["Domains"][key]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][key]["Geometry"]["Thickness (Y)"]))
-             # import pdb; pdb.set_trace()
         if position == 2:
             for domain_aux in deck.doc["Domains"]:
                 if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
                     aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
                     corner0=(0, aux)
                     corner1 = (float(deck.doc["Domains"][key]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][key]["Geometry"]["Thickness (Y)"]))
-            # import pdb; pdb.set_trace()
         if position == 3:
             aux=0
             for domain_aux in deck.doc["Domains"]:
@@ -101,7 +72,6 @@ class Geometry:
                     aux=aux+float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
             corner0 = (0, aux)
             corner1 = (float(deck.doc["Domains"][key]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][key]["Geometry"]["Thickness (Y)"]))
-            # import pdb; pdb.set_trace()
         self.dimensionX = float(corner1[0]) - float(corner0[0])
         self.dimensionY = float(corner1[1]) - (corner0[1])
 
@@ -139,7 +109,6 @@ class Mask:
         
 class Field:
     def __init__ (self, field_name,value):
-        # import pdb; pdb.set_trace()
         self.field=field_name
         self.value=value
         
