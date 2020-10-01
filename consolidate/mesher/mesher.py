@@ -45,4 +45,3 @@ class Mesher():
         self.fields.append(Field("Intimate Contact"))
         for i in range (count, np.size(self.fields)):
             self.fields[i].set_internal_bc_field(problem)
-

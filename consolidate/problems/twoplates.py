@@ -2,6 +2,7 @@ from .domains import RectangularDomain
 # from .boundaryconditions import LinearBC
 import numpy as np
 
+
 class TwoPlates:
 
     def __init__(self, deck):
@@ -85,5 +86,3 @@ class TwoPlates:
     def set_IC(self, deck):
         for domain in self.domains:
             domain.set_IC(domain.name, deck)
-                
-            
