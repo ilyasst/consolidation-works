@@ -1,4 +1,5 @@
 import numpy as np
+import importlib
 from .objects_creation import Mesh
 from .objects_creation import Initial_Condition
 from .objects_creation import BC
@@ -61,8 +62,8 @@ class RectangularDomain:
                         contact_mask_middle_top[self.points[0].pointsY[1]][y_i] = 1
                         mask_contact_interface.update({"Bottom Edge": contact_mask_middle_bottom})
                         mask_contact_interface.update({"Top Edge": contact_mask_middle_top})
-        self.masks.append(Mask("Internal Mask", mask))
-        self.masks.append(Mask("External BC", mask_external_boundary))
+        self.masks.append(Mask("Internal", mask))
+        self.masks.append(Mask("External", mask_external_boundary))
         self.masks.append(Mask("Contact", mask_contact_interface))
 
 
@@ -99,38 +100,47 @@ class RectangularDomain:
             self.boundary_conditions.append(BC(deck.doc["Domains"][key]["Boundary Condition"][location], location))
         
 
-    def set_fields(self, domain,field_name):
+    def set_fields(self, domain,field_name,mask):
         value=0
-        for mask in self.masks:
-            if mask.name == "Internal Mask":
-                if field_name == "Internal Temperature":
-                    if "temperature" in domain.initial_condition[0].__dict__.keys():
-                        name="temperature"
-                        value = mask.value*domain.initial_condition[0].__dict__[name]  
-                elif field_name == "Power Input Heat":
-                    if "power_density" in domain.initial_condition[0].__dict__.keys():
-                        name = "power_density"
-                        value=mask.value*domain.initial_condition[0].__dict__[name] 
-                elif field_name == "dx":
-                    name = "dx"
-                    value = mask.value*domain.mesh[0].__dict__[name]
-                elif field_name == "dy":
-                    name = "dy"
-                    value = mask.value*domain.mesh[0].__dict__[name]
-                else:
-                    continue
-                    
-                    
-            if mask.name=="External BC":
-                if field_name == "Equivalent External Temperature":
-                    for obj in domain.boundary_conditions:
-                        if obj.location =="External":
-                            aux=0
-                            for edge in obj.bc:
-                                if edge == "Left Edge" or "Right Edge":
-                                    import pdb; pdb.set_trace()
-                                    aux = aux+((-2*domain.mesh[0].dx*domain.boundary_conditions[0].bc[edge]["Convection Coefficient"]/self.material[0].kx)*(self.initial_condition[0].temperature-domain.boundary_conditions[0].bc[edge]["Room Temperature"])+self.initial_condition[0].temperature)*mask.value[edge]
+        if field_name == "Internal Temperature":
+            value = mask.value*domain.initial_condition[0].temperature
+        elif field_name == "Equivalent External Temperature":
+            for edge in mask.value:
+                for bc_type in domain.boundary_conditions:
+                    if bc_type.location=="External":
+                        room_temperature = bc_type.bc[edge]["Room Temperature"]
+                        cc = bc_type.bc[edge]["Convection Coefficient"]
+                        if edge == "Bottom Edge" or "Top Edge":
+                            value = value + ((-2*domain.mesh[0].dy*cc/self.material[0].ky)*(self.initial_condition[0].temperature - room_temperature)+self.initial_condition[0].temperature)*mask.value[edge]
+                        if edge == "Left Edge" or "Right Edge":
+                            value = value + ((-2*domain.mesh[0].dx*cc/self.material[0].kx)*(self.initial_condition[0].temperature - room_temperature)+self.initial_condition[0].temperature)*mask.value[edge]
+        elif field_name == "Power Input Heat":
+            if "power_density" in domain.initial_condition[0].__dict__.keys():
+                value = mask.value*domain.initial_condition[0].power_density
+        elif field_name == "dx":
+            value = mask.value*domain.mesh[0].dx
+        elif field_name == "dy":
+            value = mask.value*domain.mesh[0].dy
+        elif field_name == "Thermal Conductivity X":
+            value=mask.value*domain.material[0].kx
+        elif field_name == "Thermal Conductivity Y":
+            value=mask.value*domain.material[0].ky
+        elif field_name == "Density":
+            value=mask.value*domain.material[0].density
+        elif field_name == "Heat Capacity":
+            value=mask.value*domain.material[0].cp
+        elif field_name == "Viscosity":
+            aux=[]
+            for param in domain.material[0].viscosity:
+                aux.append(domain.material[0].viscosity[param])
+            value = aux[0]*np.exp(aux[1]/(8.314*domain.initial_condition[0].temperature))*mask.value
+        elif field_name == "Intimate Contact":
+            for edge in mask.value:
+                for bc_type in domain.boundary_conditions:
+                    if bc_type.location=="Internal":
+                        aux=[]
+                        for param in bc_type.bc[edge]:
+                            aux.append(bc_type.bc[edge][param])
+            value=1/(1+aux[0])*mask.value[edge]
+        self.local_fields.append(Field(field_name, value))
 
-                   
-                
-                self.local_fields.append(Field(field_name,value))

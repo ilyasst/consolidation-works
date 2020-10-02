@@ -15,7 +15,8 @@ class TwoPlates:
         self.set_BC(deck)
         self.set_points(deck)
         self.set_create_mask(deck)
-        self.fields(deck)
+        self.create_fields(deck)
+        self.populate_fields_locally()
         
         
         
@@ -36,11 +37,9 @@ class TwoPlates:
             ny = ny + int(deck.doc["Domains"][domain]["Mesh"]["Number of Points in Y"])
             nx = int(deck.doc["Domains"][domain]["Mesh"]["Number of Points in X"])
             t = t + float(deck.doc["Domains"][domain]["Geometry"]["Thickness (Y)"])
-            
         self.totalPointsY = ny
         self.totalPointsX = nx
         self.total_thickness = t
-        import pdb; pdb.set_trace
 
     def set_domains(self, deck):
         self.domains = []
@@ -72,20 +71,30 @@ class TwoPlates:
     def set_IC(self, deck):
         for domain in self.domains:
             domain.set_IC(domain.name, deck)
-            
-    
-            
+
     def set_create_mask(self, deck):
         for domain in self.domains:
             domain.generate_mask(self.totalPointsY,self.totalPointsX)  
 
-
-    def fields(self, deck):
+    def create_fields(self, deck):
         if self.ProblemType == "Welding":
             self.required_fields=["Internal Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]
         if self.ProblemType == "Heat Transfer":
             self.required_fields = ["Internal Temperature", "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity","Viscosity", "Equivalent External Temperature", "Power Input Density", "dx","dy"]
        
+    def populate_fields_locally(self):
         for field_name in self.required_fields:
             for domain in self.domains:
-                domain.set_fields(domain, field_name)
+                if field_name == "Equivalent External Temperature":
+                    for mask in domain.masks:
+                        if mask.name == "External":
+                            domain.set_fields(domain, field_name, mask)
+                elif field_name == "Intimate Contact":
+                    for mask in domain.masks:
+                        if mask.name == "Contact":
+                            domain.set_fields(domain, field_name, mask)
+                else:
+                    for mask in domain.masks:
+                        if "Internal" in mask.__dict__.values():
+                            domain.set_fields(domain, field_name, mask)
+                            

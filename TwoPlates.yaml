@@ -20,13 +20,13 @@ Domains:
         Boundary Condition:
             External:
                 Left Edge: 
-                    Room Temperature: 100
+                    Room Temperature: 300
                     Convection Coefficient: 101
                 Right Edge:
-                    Room Temperature: 110
+                    Room Temperature: 310
                     Convection Coefficient: 111
                 Top Edge:
-                    Room Temperature: 120
+                    Room Temperature: 320
                     Convection Coefficient: 121
             Internal:
                 Bottom Edge:
@@ -53,13 +53,13 @@ Domains:
         Boundary Condition:
             External:
                 Left Edge: 
-                    Room Temperature: 200
+                    Room Temperature: 301
                     Convection Coefficient: 201
                 Right Edge:
-                    Room Temperature: 210
+                    Room Temperature: 311
                     Convection Coefficient: 211
                 Bottom Edge:
-                    Room Temperature: 220
+                    Room Temperature: 321
                     Convection Coefficient: 221
             Internal:
                 Top Edge:                    
@@ -86,11 +86,11 @@ Domains:
         Boundary Condition:  
             External:
                 Left Edge: 
-                    Room Temperature: 300
-                    Convection Coefficient: 301
+                    Room Temperature: 302
+                    Convection Coefficient: 312
                 Right Edge:
                     Room Temperature: 310
-                    Convection Coefficient: 311
+                    Convection Coefficient: 322
             Internal:
                 Top Edge:
                     Horizontal asperity ratio: 2

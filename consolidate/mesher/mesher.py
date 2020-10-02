@@ -1,56 +1,20 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from .mesh import Mesh
 from .fields import Field
 from .constants import Constants
 
 class Mesher():
 
     def __init__(self,  problem):
-        self.totalNx = problem.totalPointsX
-        self.totalNy = problem.totalPointsY
-        # self.fields=[]
-        # self.create_fields(problem)
-        # self.set_fields_ic(problem)
-        # self.set_fields_material(problem)
-        # self.set_fields_external_bc(problem)
-
-    
-            
-    def create_fields(self, problem):
-        for field_name in problem.required_fields:
-            self.fields.append(Field(field_name))
-        
-        
-            
-    def set_fields_ic(self, problem):
-        count=np.size(self.fields)
-        for field in set(problem.domains[0].initial_condition[0].__dict__.keys()) & set(problem.domains[0].initial_condition[0].__dict__.keys()) & set(problem.domains[0].initial_condition[0].__dict__.keys()):
-            self.fields.append(Field(field))
-        for i in range(count, np.size(self.fields)):
-            self.fields[i].set_initial_conditions_field(problem,self.fields[i].__dict__["name"],i)
-            
-    def set_fields_material(self,problem):
-        count=np.size(self.fields)
-        for field in set(problem.domains[0].material[0].__dict__.keys()) & set(problem.domains[0].material[0].__dict__.keys()) & set(problem.domains[0].material[0].__dict__.keys()):
-            self.fields.append(Field(field))
-        for i in range(count, np.size(self.fields)):
-            self.fields[i].set_material_field(problem)
-            
-    def set_fields_external_bc(self,problem):
-        count = np.size(self.fields)
-        switch=[]
-        for domain in problem.domains:
-            for edge in domain.boundary_conditions["External"]:
-                for var in domain.boundary_conditions["External"][edge]:
-                    switch=[]
-                    for i in range (np.size(self.fields)):
-                        switch.append(var in self.fields[i].name)
-                    if any(switch) == False:
-                        self.fields.append(Field(var))        
-        for i in range (count, np.size(self.fields)):
-                self.fields[i].set_external_bc_field(problem)
-                
-            
+        self.fields=[]
+        self.merge_fields(problem)
 
 
+    def merge_fields(self, problem):
+        i=0
+        while i<np.size(problem.required_fields):
+            value=0
+            for domain in problem.domains:
+                value = value + domain.local_fields[i].value
+            self.fields.append(Field(domain.local_fields[i].field, value))
+            i+=1
