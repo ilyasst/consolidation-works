@@ -123,9 +123,13 @@ class RectangularDomain:
                     aux[location][edge].update({var:float(bc[location][edge][var])})
         self.boundary_conditions=aux
 
-    def set_fields(self, values,field_name,mask):
-        import pdb; pdb.set_trace()
+    def set_eet(self, values,field_name,mask,domain):
+        aux={}
         value=0
         for edge in mask:
-            value = value + values[edge]["Room Temperature"]*mask[edge]
+            aux[edge]={}
+            for param in values[edge]:
+                aux[edge].update({param: values[edge][param]})
+            if edge == "Bottom Edge" or "Top Edge":
+                value = value + ((-2*domain.mesh["dy"]*aux[edge]["Convection Coefficient"]/self.material["Thermal Conductivity Y"])*(self.initial_conditions["Temperature"] - aux[edge]["Room Temperature"])+self.initial_conditions["Temperature"])*mask[edge]
         self.local_fields.update({field_name: value})
