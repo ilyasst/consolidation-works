@@ -123,7 +123,7 @@ class RectangularDomain:
                     aux[location][edge].update({var:float(bc[location][edge][var])})
         self.boundary_conditions=aux
 
-    def set_eet(self, values,field_name,mask,domain):
+    def set_eet(self, values,field_name,mask,dx,dy,ky,kx,temp):
         aux={}
         value=0
         for edge in mask:
@@ -131,5 +131,17 @@ class RectangularDomain:
             for param in values[edge]:
                 aux[edge].update({param: values[edge][param]})
             if edge == "Bottom Edge" or "Top Edge":
-                value = value + ((-2*domain.mesh["dy"]*aux[edge]["Convection Coefficient"]/self.material["Thermal Conductivity Y"])*(self.initial_conditions["Temperature"] - aux[edge]["Room Temperature"])+self.initial_conditions["Temperature"])*mask[edge]
+                value = value + ((-2*dy*aux[edge]["Convection Coefficient"]/ky)*(temp - aux[edge]["Room Temperature"])+temp)*mask[edge]
+            else:
+                value = value + ((-2*dx*aux[edge]["Convection Coefficient"]/kx)*(temp - aux[edge]["Room Temperature"])+temp)*mask[edge]
         self.local_fields.update({field_name: value})
+        
+    def set_ibc(self, values, field_name, mask):
+        aux={}
+        value=0
+        for edge in mask:
+            aux[edge]={}
+            for param in values[edge]:
+                aux[edge].update({param: values[edge][param]})
+            value = value+ 1/(1+aux[edge]["Horizontal asperity ratio"])*mask[edge]
+            self.local_fields.update({field_name: value})

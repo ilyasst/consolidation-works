@@ -103,9 +103,9 @@ class TwoPlates:
         for field_name in self.required_fields:
             for domain in self.domains:
                 if field_name == "Equivalent External Temperature":
-                    domain.set_eet(domain.boundary_conditions["External"], field_name, domain.mask_external_boundary,domain)
-                # elif field_name == "Intimate Contact":
-                #     import pdb; pdb.set_trace()
+                    domain.set_eet(domain.boundary_conditions["External"], field_name, domain.mask_external_boundary,domain.mesh["dy"], domain.mesh["dx"], domain.material["Thermal Conductivity Y"], domain.material["Thermal Conductivity X"], domain.initial_conditions["Temperature"])
+                elif field_name == "Intimate Contact":
+                    domain.set_ibc(domain.boundary_conditions["Internal"], field_name, domain.mask_contact_interface)
                 #     domain.set_fields(domain.boundary_conditions["Internal"], field_name, domain.mask_contact_interface)
                     
                 # elif field_name == "Intimate Contact":
