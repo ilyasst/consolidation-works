@@ -14,6 +14,9 @@ class TwoPlates:
         self.set_material(deck)
         self.set_IC(deck)
         self.set_BC(deck)
+        self.set_create_mask(deck)
+        self.create_fields(deck)
+        self.populate_fields_locally()
         
         
         
@@ -86,3 +89,27 @@ class TwoPlates:
     def set_IC(self, deck):
         for domain in self.domains:
             domain.set_IC(domain.name, deck)
+            
+    
+    
+    def set_create_mask(self, deck):
+        for domain in self.domains:
+            domain.generate_mask(self.totalNy,self.totalNx)
+    
+    def create_fields(self, deck):
+            self.required_fields=["Internal Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]
+    
+    def populate_fields_locally(self):
+        for field_name in self.required_fields:
+            for domain in self.domains:
+                if field_name == "Equivalent External Temperature":
+                    domain.set_fields(domain.boundary_conditions["External"], field_name, domain.mask_external_boundary)
+                elif field_name == "Intimate Contact":
+                    domain.set_fields(domain.boundary_conditions["Internal"], field_name, domain.mask_contact_interface)
+                    
+                # elif field_name == "Intimate Contact":
+                    
+                # else:
+                #     for mask in domain.masks:
+                #         if "Internal" in mask.__dict__.values():
+                #             domain.set_fields(domain, field_name, mask)

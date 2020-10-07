@@ -5,6 +5,7 @@ class RectangularDomain:
         self.elements = {"Elements in X":[ex0, ex1], "Elements in Y": [ey0,ey1]}
         self.name = name
         self.position = position
+        self.local_fields={}
 
     def test_mesh(self, mesh):
         if mesh[0] >= self.elements["Elements in Y"][0] and mesh[0] <= self.elements["Elements in Y"][1] and mesh[1] >= self.elements["Elements in X"][0] and mesh[1]<= self.elements["Elements in X"][1]:
@@ -52,10 +53,8 @@ class RectangularDomain:
                         contact_mask_middle_top[self.elements["Elements in Y"][1]][y_i] = 1
                         self.mask_contact_interface.update({"Bottom Edge": contact_mask_middle_bottom})
                         self.mask_contact_interface.update({"Top Edge": contact_mask_middle_top})
-                        
     
     def set_corners(self, domain_name, deck):
-        # import pdb; 
         position = int(deck.doc["Domains"][domain_name]["Geometry"]["Pos"])
         
         if position == 1:
@@ -121,6 +120,12 @@ class RectangularDomain:
             for edge in bc[location]:
                 aux[location][edge]={}
                 for var in bc[location][edge]:
-                    # import pdb; pdb.set_trace()
                     aux[location][edge].update({var:float(bc[location][edge][var])})
         self.boundary_conditions=aux
+
+    def set_fields(self, values,field_name,mask):
+        import pdb; pdb.set_trace()
+        value=0
+        for edge in mask:
+            value = value + values[edge]["Room Temperature"]*mask[edge]
+        self.local_fields.update({field_name: value})
