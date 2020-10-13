@@ -1,22 +1,23 @@
 from .domains import RectangularDomain
-# from .boundaryconditions import LinearBC
 import numpy as np
 
 
 class TwoPlates:
 
     def __init__(self, deck):
+        self.deck=deck
         self.set_simulation_parameters(deck)
         self.set_problem_parameters(deck)
         self.set_domains(deck)
-        self.set_corner(deck)
-        self.set_mesh(deck)
-        self.set_material(deck)
-        self.set_IC(deck)
-        self.set_BC(deck)
+        # self.set_corner(deck)
+        # self.set_mesh(deck)
+        # self.set_material(deck)
+        # self.set_IC(deck)
+        # self.set_BC(deck)
         self.set_create_mask(deck)
         self.create_fields(deck)
-        self.populate_fields_locally()
+        self.populate_fields_locally2(deck)
+        
         
         
         
@@ -76,8 +77,6 @@ class TwoPlates:
         for domain in self.domains:
             domain.set_mesh(domain.name, deck, domain.dimensions)
 
-
-
     def set_BC(self, deck):
         for domain in self.domains:
             domain.set_bc(domain.name, deck)
@@ -89,28 +88,84 @@ class TwoPlates:
     def set_IC(self, deck):
         for domain in self.domains:
             domain.set_IC(domain.name, deck)
-            
-    
-    
+
     def set_create_mask(self, deck):
         for domain in self.domains:
             domain.generate_mask(self.totalNy,self.totalNx)
-    
+
     def create_fields(self, deck):
-            self.required_fields=["Internal Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Heat Capacity", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]
-    
-    def populate_fields_locally(self):
+            self.required_fields=["Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]
+
+    # def populate_fields_locally(self):
+    #     for field_name in self.required_fields:
+    #         for domain in self.domains:
+    #             if field_name == "Equivalent External Temperature":
+    #                 domain.set_field_eet(domain.boundary_conditions["External"], field_name, domain.mask_external_boundary,domain)
+    #             elif field_name == "Intimate Contact":
+    #                 domain.set_field_ic(domain.boundary_conditions["Internal"], field_name, domain.mask_contact_interface)
+    #             elif field_name == "dx" or field_name == "dy":
+    #                 domain.set_field_mesh(field_name, domain.mesh[field_name], domain.mask)
+    #             elif field_name == "Viscosity":
+    #                 domain.set_field_viscosity(field_name, domain.material[field_name]["A"], domain.material[field_name]["Ea"],domain.initial_conditions["Temperature"],domain.mask)
+
+
+    def populate_fields_locally2(self,deck):
         for field_name in self.required_fields:
             for domain in self.domains:
-                if field_name == "Equivalent External Temperature":
-                    domain.set_eet(domain.boundary_conditions["External"], field_name, domain.mask_external_boundary,domain)
-                # elif field_name == "Intimate Contact":
-                #     import pdb; pdb.set_trace()
-                #     domain.set_fields(domain.boundary_conditions["Internal"], field_name, domain.mask_contact_interface)
-                    
-                # elif field_name == "Intimate Contact":
-                    
-                # else:
-                #     for mask in domain.masks:
-                #         if "Internal" in mask.__dict__.values():
-                #             domain.set_fields(domain, field_name, mask)
+                domain_dir = deck.doc["Domains"][domain.name]
+                if field_name == "dx":
+                    inc = float(domain_dir["Geometry"]["Width (X)"])/int(domain_dir["Mesh"]["Number of Elements in X"])
+                    value = inc*domain.mask
+                    domain.set_field(field_name, value)
+                elif field_name == "dy":
+                    inc = float(domain_dir["Geometry"]["Thickness (Y)"])/int(domain_dir["Mesh"]["Number of Elements in Y"])
+                    value = inc*domain.mask
+                    domain.set_field(field_name, value)
+                elif field_name == "Equivalent External Temperature":
+                    temp = float(domain_dir["Initial Condition"]["Temperature"])
+                    value=0
+                    for edge in domain_dir["Boundary Condition"]["External"]:
+                        if edge == "Top Edge" or "Bototm Edge":
+                            inc = float(domain_dir["Geometry"]["Thickness (Y)"])/int(domain_dir["Mesh"]["Number of Elements in Y"])
+                            k = float(domain_dir["Material"]["Thermal Conductivity Y"])
+                            roomtemp = float (domain_dir["Boundary Condition"]["External"][edge]["Room Temperature"])
+                            value =value+-2*inc*((float(domain_dir["Boundary Condition"]["External"][edge]["Convection Coefficient"])/k)*(temp-roomtemp) + temp)*(domain.mask_external_boundary[edge])
+                        if edge == "Left Edge" or "Right Edge":
+                            inc = float(domain_dir["Geometry"]["Width (X)"])/int(domain_dir["Mesh"]["Number of Elements in X"])
+                            k = float(domain_dir["Material"]["Thermal Conductivity X"])
+                            roomtemp = float (domain_dir["Boundary Condition"]["External"][edge]["Room Temperature"])
+                            value =value+-2*inc*((float(domain_dir["Boundary Condition"]["External"][edge]["Convection Coefficient"])/k)*(temp-roomtemp) + temp)*(domain.mask_external_boundary[edge])
+                    domain.set_field(field_name, value)
+                elif field_name == "Intimate Contact":
+                    value=0
+                    for edge in domain_dir["Boundary Condition"]["Internal"]:
+                        har = float(domain_dir["Boundary Condition"]["Internal"][edge]["Horizontal asperity ratio"])
+                        value = value + har*domain.mask_contact_interface[edge]
+                        domain.set_field(field_name, value)
+                elif field_name == "Viscosity":
+                    a = float (domain_dir["Material"]["Viscosity"]["A"])
+                    b = float( domain_dir["Material"]["Viscosity"]["Ea"])
+                    temp = float(domain_dir["Initial Condition"]["Temperature"])
+                    value = a*np.exp(b/temp)*domain.mask
+                    domain.set_field(field_name, value)
+                elif field_name == "Temperature":
+                    aux = float(domain_dir["Initial Condition"]["Temperature"])
+                    value = aux*domain.mask
+                    domain.set_field(field_name, value)
+                elif field_name == "Power Input Heat":
+                    value = 0
+                    if "Input Power Density" in domain_dir["Initial Condition"]:
+                        value = value+float(domain_dir["Initial Condition"]["Input Power Density"])*domain.mask
+                    else:
+                        value = value + 0*domain.mask
+                    domain.set_field(field_name, value)
+                else:
+                    aux = float(domain_dir["Material"][field_name])
+                    value = aux*domain.mask
+                    domain.set_field(field_name, value)
+                    # print("Hello")
+# ((-2*domain.mesh["dy"]*aux[edge]["Convection Coefficient"]/self.material["Thermal Conductivity Y"])*(self.initial_conditions["Temperature"] - aux[edge]["Room Temperature"])+self.initial_conditions["Temperature"])*mask[edge]
+                    # domain.set_field_eet2(field_name, roomtemp, convcoeff,mask)
+                #     domain.set_field_mesh(field_name, domain.mesh[field_name], domain.mask)
+                # elif field_name == "Viscosity":
+                #     domain.set_field_viscosity(field_name, domain.material[field_name]["A"], domain.material[field_name]["Ea"],domain.initial_conditions["Temperature"],domain.mask)

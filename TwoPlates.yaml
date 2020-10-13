@@ -82,7 +82,7 @@ Domains:
                 Ea: 74400
         Mesh:
             Number of Elements in X: 10
-            Number of Elements in Y: 1
+            Number of Elements in Y: 2
         Boundary Condition:  
             External:
                 Left Edge: 

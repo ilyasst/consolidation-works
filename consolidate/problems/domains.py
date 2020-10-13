@@ -54,82 +54,104 @@ class RectangularDomain:
                         self.mask_contact_interface.update({"Bottom Edge": contact_mask_middle_bottom})
                         self.mask_contact_interface.update({"Top Edge": contact_mask_middle_top})
     
-    def set_corners(self, domain_name, deck):
-        position = int(deck.doc["Domains"][domain_name]["Geometry"]["Pos"])
+    # def set_corners(self, domain_name, deck):
+    #     position = int(deck.doc["Domains"][domain_name]["Geometry"]["Pos"])
         
-        if position == 1:
-             corner0 = (0, 0)
-             corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
-        if position == 2:
-            for domain_aux in deck.doc["Domains"]:
-                if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
-                    aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
-                    corner0=(0, aux)
-                    corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
-        if position == 3:
-            aux=0
-            for domain_aux in deck.doc["Domains"]:
-                if domain_aux != domain_name:
-                    aux=aux+float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
-            corner0 = (0, aux)
-            corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
+    #     if position == 1:
+    #          corner0 = (0, 0)
+    #          corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
+    #     if position == 2:
+    #         for domain_aux in deck.doc["Domains"]:
+    #             if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
+    #                 aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+    #                 corner0=(0, aux)
+    #                 corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
+    #     if position == 3:
+    #         aux=0
+    #         for domain_aux in deck.doc["Domains"]:
+    #             if domain_aux != domain_name:
+    #                 aux=aux+float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
+    #         corner0 = (0, aux)
+    #         corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
         
-        self.corners={"X" : [float(corner0[0]), float(corner1[0])], "Y" : [float(corner0[1]),float(corner1[1])]}
-        self.dimensions={}
-        self.dimensions.update({"lx": float(corner1[0]) - float(corner0[0]), "ly": float(corner1[1]) - (corner0[1])})
+    #     self.corners={"X" : [float(corner0[0]), float(corner1[0])], "Y" : [float(corner0[1]),float(corner1[1])]}
+    #     self.dimensions={}
+    #     self.dimensions.update({"lx": float(corner1[0]) - float(corner0[0]), "ly": float(corner1[1]) - (corner0[1])})
 
             
-    def set_mesh(self,key,deck,dimensions):
-        aux={}
-        mesh=deck.doc["Domains"][key]["Mesh"]
-        for key in mesh.keys():
-            aux[key] = int(mesh[key])
-        aux.update({"dx": dimensions["lx"]/aux["Number of Elements in X"]})
-        aux.update({"dy": dimensions["ly"]/aux["Number of Elements in Y"]})
-        self.mesh=aux
+    # def set_mesh(self,key,deck,dimensions):
+    #     aux={}
+    #     mesh=deck.doc["Domains"][key]["Mesh"]
+    #     for key in mesh.keys():
+    #         aux[key] = int(mesh[key])
+    #     aux.update({"dx": dimensions["lx"]/aux["Number of Elements in X"]})
+    #     aux.update({"dy": dimensions["ly"]/aux["Number of Elements in Y"]})
+    #     self.mesh=aux
             
             
-    def set_material(self, key, deck):
-        aux={}
-        material=deck.doc["Domains"][key]["Material"]
-        for key in material.keys():
-            if isinstance(material[key],dict)==False:
-                aux[key]=float(material[key])
-            else:
-                aux[key]={}
-                for param in material[key]:
-                    aux[key].update({param: float(material[key][param])})
-        self.material=aux
+    # def set_material(self, key, deck):
+    #     aux={}
+    #     material=deck.doc["Domains"][key]["Material"]
+    #     for key in material.keys():
+    #         if isinstance(material[key],dict)==False:
+    #             aux[key]=float(material[key])
+    #         else:
+    #             aux[key]={}
+    #             for param in material[key]:
+    #                 aux[key].update({param: float(material[key][param])})
+    #     self.material=aux
         
         
             
-    def set_IC(self, key, deck):
-        aux={}
-        ic = deck.doc["Domains"][key]["Initial Condition"]
-        for key in ic.keys():
-            aux[key]=float(ic[key])
-        self.initial_conditions=aux
+    # def set_IC(self, key, deck):
+    #     aux={}
+    #     ic = deck.doc["Domains"][key]["Initial Condition"]
+    #     for key in ic.keys():
+    #         aux[key]=float(ic[key])
+    #     self.initial_conditions=aux
         
 
+    # def set_bc(self,key,deck):
+    #     aux={}
+    #     bc=deck.doc["Domains"][key]["Boundary Condition"]
+    #     for location in bc:
+    #         aux[location]={}
+    #         for edge in bc[location]:
+    #             aux[location][edge]={}
+    #             for var in bc[location][edge]:
+    #                 aux[location][edge].update({var:float(bc[location][edge][var])})
+    #     self.boundary_conditions=aux
 
-    def set_bc(self,key,deck):
-        aux={}
-        bc=deck.doc["Domains"][key]["Boundary Condition"]
-        for location in bc:
-            aux[location]={}
-            for edge in bc[location]:
-                aux[location][edge]={}
-                for var in bc[location][edge]:
-                    aux[location][edge].update({var:float(bc[location][edge][var])})
-        self.boundary_conditions=aux
-
-    def set_eet(self, values,field_name,mask,domain):
+    # def set_field_eet(self, values,field_name,mask,domain):
+    #     aux={}
+    #     value=0
+    #     for edge in mask:
+    #         aux[edge]={}
+    #         for param in values[edge]:
+    #             aux[edge].update({param: values[edge][param]})
+    #         if edge == "Bottom Edge" or "Top Edge":
+    #             value = value + ((-2*domain.mesh["dy"]*aux[edge]["Convection Coefficient"]/self.material["Thermal Conductivity Y"])*(self.initial_conditions["Temperature"] - aux[edge]["Room Temperature"])+self.initial_conditions["Temperature"])*mask[edge]
+    #     self.local_fields.update({field_name: value})
+        
+    def set_field(self, field_name, value):
+        self.local_fields.update({field_name: value})
+    
+    def set_field_ic(self, values, field_name,mask):
         aux={}
         value=0
         for edge in mask:
             aux[edge]={}
             for param in values[edge]:
-                aux[edge].update({param: values[edge][param]})
-            if edge == "Bottom Edge" or "Top Edge":
-                value = value + ((-2*domain.mesh["dy"]*aux[edge]["Convection Coefficient"]/self.material["Thermal Conductivity Y"])*(self.initial_conditions["Temperature"] - aux[edge]["Room Temperature"])+self.initial_conditions["Temperature"])*mask[edge]
+                aux[edge].update({param:values[edge][param]})
+            value = value + 1/(1+aux[edge]["Horizontal asperity ratio"])*mask[edge]
         self.local_fields.update({field_name: value})
+    
+    # def set_field_mesh(self, field_name, values, mask):
+    #     value=0
+    #     value = value + values*mask
+    #     self.local_fields.update({field_name:value})
+        
+    # def set_field_viscosity(self, field_name, constA, constB, temp, mask):
+    #     value = constA*np.exp(constB/temp)
+    #     self.local_fields.update({field_name:value})
+        
