@@ -91,7 +91,7 @@ class TwoPlates:
 
     def set_create_mask(self, deck):
         for domain in self.domains:
-            domain.generate_mask(self.totalNy,self.totalNx)
+            domain.generate_mask(self.totalNy,self.totalNx, domain.position)
 
     def create_fields(self, deck):
             self.required_fields=["Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]

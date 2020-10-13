@@ -2,21 +2,19 @@ import numpy as np
 class RectangularDomain:
 
     def __init__(self, name, ex0, ex1, ey0, ey1, position,):
-        self.elements = {"Elements in X":[ex0, ex1], "Elements in Y": [ey0,ey1]}
+        self.elementsX = [ex0,ex1]
+        self.elementsY = [ey0, ey1]
         self.name = name
         self.position = position
         self.local_fields={}
 
     def test_mesh(self, mesh):
-        if mesh[0] >= self.elements["Elements in Y"][0] and mesh[0] <= self.elements["Elements in Y"][1] and mesh[1] >= self.elements["Elements in X"][0] and mesh[1]<= self.elements["Elements in X"][1]:
+        if mesh[0] >= self.elementsY[0] and mesh[0] <= self.elementsY[1] and mesh[1] >= self.elementsX[0] and mesh[1]<= self.elementsX[1]:
             return True
         else:
             return False
 
-
-    
-
-    def generate_mask(self, totalNy, totalNx):
+    def generate_mask(self, totalNy, totalNx, position):
         m=np.zeros((totalNy, totalNx))
         maux=np.zeros((totalNy+2, totalNx+2))
         self.mask = m.copy()
@@ -38,19 +36,19 @@ class RectangularDomain:
                     self.mask_external_boundary.update({"Left Edge":mask_left})
                     self.mask_external_boundary.update({"Right Edge":mask_right})
                     
-                    if self.position ==1:
-                        mask_bottom[self.elements["Elements in Y"][0]][y_i+1]=1
-                        contact_mask[self.elements["Elements in Y"][1]][y_i] = 1
+                    if position ==1:
+                        mask_bottom[self.elementsY[0]][y_i+1]=1
+                        contact_mask[self.elementsY[1]][y_i] = 1
                         self.mask_external_boundary.update({"Bottom Edge": mask_bottom})
                         self.mask_contact_interface.update({"Top Edge": contact_mask})
-                    if self.position ==3:
+                    if position ==3:
                         mask_top[-1][y_i+1]=1
                         self.mask_external_boundary.update({"Top Edge": mask_top})
-                        contact_mask[self.elements["Elements in Y"][0]][y_i] = 1
+                        contact_mask[self.elementsY[0]][y_i] = 1
                         self.mask_contact_interface.update({"Bottom Edge": contact_mask})
-                    if self.position ==2:
-                        contact_mask_middle_bottom[self.elements["Elements in Y"][0]][y_i] = 1
-                        contact_mask_middle_top[self.elements["Elements in Y"][1]][y_i] = 1
+                    if position ==2:
+                        contact_mask_middle_bottom[self.elementsY[0]][y_i] = 1
+                        contact_mask_middle_top[self.elementsY[1]][y_i] = 1
                         self.mask_contact_interface.update({"Bottom Edge": contact_mask_middle_bottom})
                         self.mask_contact_interface.update({"Top Edge": contact_mask_middle_top})
     
