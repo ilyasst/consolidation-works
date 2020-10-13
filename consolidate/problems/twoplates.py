@@ -16,7 +16,7 @@ class TwoPlates:
         # self.set_BC(deck)
         self.set_create_mask(deck)
         self.create_fields(deck)
-        self.populate_fields_locally2(deck)
+        self.populate_fields_locally(deck)
         
         
         
@@ -68,26 +68,26 @@ class TwoPlates:
 
             self.domains.append(RectangularDomain(deck_domain, ele_x0, ele_x1, ele_y0,ele_y1, position))
 
-    def set_corner(self, deck):
-        for domain in self.domains:
-            domain.set_corners(domain.name, deck)
+    # def set_corner(self, deck):
+    #     for domain in self.domains:
+    #         domain.set_corners(domain.name, deck)
             
-    def set_mesh(self, deck):
-        aux={}
-        for domain in self.domains:
-            domain.set_mesh(domain.name, deck, domain.dimensions)
+    # def set_mesh(self, deck):
+    #     aux={}
+    #     for domain in self.domains:
+    #         domain.set_mesh(domain.name, deck, domain.dimensions)
 
-    def set_BC(self, deck):
-        for domain in self.domains:
-            domain.set_bc(domain.name, deck)
+    # def set_BC(self, deck):
+    #     for domain in self.domains:
+    #         domain.set_bc(domain.name, deck)
 
-    def set_material(self, deck):
-        for domain in self.domains:
-            domain.set_material(domain.name, deck)
+    # def set_material(self, deck):
+    #     for domain in self.domains:
+    #         domain.set_material(domain.name, deck)
 
-    def set_IC(self, deck):
-        for domain in self.domains:
-            domain.set_IC(domain.name, deck)
+    # def set_IC(self, deck):
+    #     for domain in self.domains:
+    #         domain.set_IC(domain.name, deck)
 
     def set_create_mask(self, deck):
         for domain in self.domains:
@@ -109,7 +109,7 @@ class TwoPlates:
     #                 domain.set_field_viscosity(field_name, domain.material[field_name]["A"], domain.material[field_name]["Ea"],domain.initial_conditions["Temperature"],domain.mask)
 
 
-    def populate_fields_locally2(self,deck):
+    def populate_fields_locally(self,deck):
         for field_name in self.required_fields:
             for domain in self.domains:
                 domain_dir = deck.doc["Domains"][domain.name]
@@ -163,9 +163,5 @@ class TwoPlates:
                     aux = float(domain_dir["Material"][field_name])
                     value = aux*domain.mask
                     domain.set_field(field_name, value)
-                    # print("Hello")
-# ((-2*domain.mesh["dy"]*aux[edge]["Convection Coefficient"]/self.material["Thermal Conductivity Y"])*(self.initial_conditions["Temperature"] - aux[edge]["Room Temperature"])+self.initial_conditions["Temperature"])*mask[edge]
-                    # domain.set_field_eet2(field_name, roomtemp, convcoeff,mask)
-                #     domain.set_field_mesh(field_name, domain.mesh[field_name], domain.mask)
-                # elif field_name == "Viscosity":
-                #     domain.set_field_viscosity(field_name, domain.material[field_name]["A"], domain.material[field_name]["Ea"],domain.initial_conditions["Temperature"],domain.mask)
+
+

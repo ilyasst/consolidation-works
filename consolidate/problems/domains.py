@@ -122,6 +122,7 @@ class RectangularDomain:
     #                 aux[location][edge].update({var:float(bc[location][edge][var])})
     #     self.boundary_conditions=aux
 
+
     # def set_field_eet(self, values,field_name,mask,domain):
     #     aux={}
     #     value=0
@@ -136,22 +137,3 @@ class RectangularDomain:
     def set_field(self, field_name, value):
         self.local_fields.update({field_name: value})
     
-    def set_field_ic(self, values, field_name,mask):
-        aux={}
-        value=0
-        for edge in mask:
-            aux[edge]={}
-            for param in values[edge]:
-                aux[edge].update({param:values[edge][param]})
-            value = value + 1/(1+aux[edge]["Horizontal asperity ratio"])*mask[edge]
-        self.local_fields.update({field_name: value})
-    
-    # def set_field_mesh(self, field_name, values, mask):
-    #     value=0
-    #     value = value + values*mask
-    #     self.local_fields.update({field_name:value})
-        
-    # def set_field_viscosity(self, field_name, constA, constB, temp, mask):
-    #     value = constA*np.exp(constB/temp)
-    #     self.local_fields.update({field_name:value})
-        
