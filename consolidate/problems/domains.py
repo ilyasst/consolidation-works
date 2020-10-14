@@ -1,22 +1,47 @@
 import numpy as np
 class RectangularDomain:
 
-    def __init__(self, name, ex0, ex1, ey0, ey1, position,):
-        self.elementsX = [ex0,ex1]
-        self.elementsY = [ey0, ey1]
+    def __init__(self, name):
         self.name = name
-        self.position = position
         self.local_fields={}
 
     def test_mesh(self, mesh):
-        if mesh[0] >= self.elementsY[0] and mesh[0] <= self.elementsY[1] and mesh[1] >= self.elementsX[0] and mesh[1]<= self.elementsX[1]:
+        if mesh[0] >= self.py[0] and mesh[0] <= self.py[1] and mesh[1] >= self.px[0] and mesh[1]<= self.px[1]:
+            return True
+        else:
+            return False
+        
+    def test_mesh_bottom(self, mesh):
+        if mesh[0] == self.elementsY[0] and mesh[1] >= self.elementsX[0] and mesh[1]<= self.elementsX[1]:
+            return True
+        else:
+            return False
+    def test_mesh_top(self, mesh):
+        if mesh[0] == self.elementsY[1] and mesh[1] >= self.elementsX[0] and mesh[1]<= self.elementsX[1]:
+            return True
+        else:
+            return False
+    def test_mesh_left(self, mesh):
+        if mesh[0] >= self.elementsY[0] and mesh[0] <= self.elementsY[1] and mesh[1] == self.elementsX[0]:
+            return True
+        else:
+            return False
+    def test_mesh_right(self, mesh):
+        if mesh[0] >= self.elementsY[0] and mesh[0] <= self.elementsY[1] and mesh[1] == self.elementsX[1]:
             return True
         else:
             return False
 
-    def generate_mask(self, totalNy, totalNx, position):
-        m=np.zeros((totalNy, totalNx))
-        maux=np.zeros((totalNy+2, totalNx+2))
+    # @property
+    # def is_top_plate(self):
+    #     return int(self.name[-1]) == 1
+    # @property
+    # def is_bottom_plate(self):
+    #     return int(self.name[-1]) == self.max_plates
+
+    def generate_mask(self, totalpy, totalpx, dimen_y, total_thickness):
+        m=np.zeros((totalpy, totalpx))
+        maux=np.zeros((totalpy+2, totalpx+2))
         self.mask = m.copy()
         self.mask_external_boundary={}
         self.mask_contact_interface={}
@@ -35,103 +60,25 @@ class RectangularDomain:
                     mask_right[x_i+1][-1]=1
                     self.mask_external_boundary.update({"Left Edge":mask_left})
                     self.mask_external_boundary.update({"Right Edge":mask_right})
-                    
-                    if position ==1:
-                        mask_bottom[self.elementsY[0]][y_i+1]=1
-                        contact_mask[self.elementsY[1]][y_i] = 1
+                    if dimen_y[0] == 0:
+                        mask_bottom[self.py[0]][y_i+1]=1
+                        contact_mask[self.py[1]-1][y_i] = 1
                         self.mask_external_boundary.update({"Bottom Edge": mask_bottom})
                         self.mask_contact_interface.update({"Top Edge": contact_mask})
-                    if position ==3:
+                    if dimen_y[1] == total_thickness:
                         mask_top[-1][y_i+1]=1
                         self.mask_external_boundary.update({"Top Edge": mask_top})
-                        contact_mask[self.elementsY[0]][y_i] = 1
+                        contact_mask[self.py[0]][y_i] = 1
                         self.mask_contact_interface.update({"Bottom Edge": contact_mask})
-                    if position ==2:
-                        contact_mask_middle_bottom[self.elementsY[0]][y_i] = 1
-                        contact_mask_middle_top[self.elementsY[1]][y_i] = 1
+                    if dimen_y[0] != 0 and dimen_y[1] != total_thickness:
+                        contact_mask_middle_bottom[self.py[0]][y_i] = 1
+                        contact_mask_middle_top[self.py[1]-1][y_i] = 1
                         self.mask_contact_interface.update({"Bottom Edge": contact_mask_middle_bottom})
                         self.mask_contact_interface.update({"Top Edge": contact_mask_middle_top})
-    
-    # def set_corners(self, domain_name, deck):
-    #     position = int(deck.doc["Domains"][domain_name]["Geometry"]["Pos"])
-        
-    #     if position == 1:
-    #          corner0 = (0, 0)
-    #          corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
-    #     if position == 2:
-    #         for domain_aux in deck.doc["Domains"]:
-    #             if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
-    #                 aux=float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
-    #                 corner0=(0, aux)
-    #                 corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
-    #     if position == 3:
-    #         aux=0
-    #         for domain_aux in deck.doc["Domains"]:
-    #             if domain_aux != domain_name:
-    #                 aux=aux+float(deck.doc["Domains"][domain_aux]["Geometry"]["Thickness (Y)"])
-    #         corner0 = (0, aux)
-    #         corner1 = (float(deck.doc["Domains"][domain_name]["Geometry"]["Width (X)"]), aux + float(deck.doc["Domains"][domain_name]["Geometry"]["Thickness (Y)"]))
-        
-    #     self.corners={"X" : [float(corner0[0]), float(corner1[0])], "Y" : [float(corner0[1]),float(corner1[1])]}
-    #     self.dimensions={}
-    #     self.dimensions.update({"lx": float(corner1[0]) - float(corner0[0]), "ly": float(corner1[1]) - (corner0[1])})
 
-            
-    # def set_mesh(self,key,deck,dimensions):
-    #     aux={}
-    #     mesh=deck.doc["Domains"][key]["Mesh"]
-    #     for key in mesh.keys():
-    #         aux[key] = int(mesh[key])
-    #     aux.update({"dx": dimensions["lx"]/aux["Number of Elements in X"]})
-    #     aux.update({"dy": dimensions["ly"]/aux["Number of Elements in Y"]})
-    #     self.mesh=aux
-            
-            
-    # def set_material(self, key, deck):
-    #     aux={}
-    #     material=deck.doc["Domains"][key]["Material"]
-    #     for key in material.keys():
-    #         if isinstance(material[key],dict)==False:
-    #             aux[key]=float(material[key])
-    #         else:
-    #             aux[key]={}
-    #             for param in material[key]:
-    #                 aux[key].update({param: float(material[key][param])})
-    #     self.material=aux
-        
-        
-            
-    # def set_IC(self, key, deck):
-    #     aux={}
-    #     ic = deck.doc["Domains"][key]["Initial Condition"]
-    #     for key in ic.keys():
-    #         aux[key]=float(ic[key])
-    #     self.initial_conditions=aux
-        
-
-    # def set_bc(self,key,deck):
-    #     aux={}
-    #     bc=deck.doc["Domains"][key]["Boundary Condition"]
-    #     for location in bc:
-    #         aux[location]={}
-    #         for edge in bc[location]:
-    #             aux[location][edge]={}
-    #             for var in bc[location][edge]:
-    #                 aux[location][edge].update({var:float(bc[location][edge][var])})
-    #     self.boundary_conditions=aux
-
-
-    # def set_field_eet(self, values,field_name,mask,domain):
-    #     aux={}
-    #     value=0
-    #     for edge in mask:
-    #         aux[edge]={}
-    #         for param in values[edge]:
-    #             aux[edge].update({param: values[edge][param]})
-    #         if edge == "Bottom Edge" or "Top Edge":
-    #             value = value + ((-2*domain.mesh["dy"]*aux[edge]["Convection Coefficient"]/self.material["Thermal Conductivity Y"])*(self.initial_conditions["Temperature"] - aux[edge]["Room Temperature"])+self.initial_conditions["Temperature"])*mask[edge]
-    #     self.local_fields.update({field_name: value})
-        
     def set_field(self, field_name, value):
         self.local_fields.update({field_name: value})
-    
+
+    def set_points_domains(self, p_x0, p_x1, p_y0, p_y1):
+        self.px = [p_x0, p_x1]
+        self.py = [p_y0, p_y1]

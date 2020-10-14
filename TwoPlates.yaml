@@ -1,22 +1,24 @@
 Problem Type:
-    Type: TwoPlates
+    Type: Welding
+    Total Plates: 3
 Domains:
-    Top Plate:
+    Plate 1:
         Geometry:
-            Thickness (Y): 0.4
-            Width (X): 10.0
-            Pos: 3
+            y0: 0
+            y1: 0.4
+            x0: 0
+            x1: 1.0
         Material:
-            Thermal Conductivity X: 0.6
-            Thermal Conductivity Y: 0.6
+            kx: 0.6
+            ky: 0.6
             Density: 1500
-            Specific Heat: 900
+            Cp: 900
             Viscosity:
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Number of Elements in X: 10
-            Number of Elements in Y: 10
+            Points in X: 10
+            Points in Y: 10
         Boundary Condition:
             External:
                 Left Edge: 
@@ -25,64 +27,33 @@ Domains:
                 Right Edge:
                     Room Temperature: 271
                     Convection Coefficient: 101
-                Top Edge:
+                Bottom Edge:
                     Room Temperature: 272
                     Convection Coefficient: 102
             Internal:
-                Bottom Edge:
+                Top Edge:
                     Horizontal asperity ratio: 4
                     Vertical asperity ratio: 4
         Initial Condition:
             Temperature: 270
-    Bottom Plate:
+    
+    Plate 2:
         Geometry:
-            Thickness (Y): 0.4
-            Width (X): 10.0
-            Pos: 1
-        Material: 
-            Thermal Conductivity X: 0.7
-            Thermal Conductivity Y: 0.7
-            Density: 1600
-            Specific Heat: 910
-            Viscosity:
-                A: 0.0056
-                Ea: 74400
-        Mesh:
-            Number of Elements in X: 10
-            Number of Elements in Y: 10
-        Boundary Condition:
-            External:
-                Left Edge: 
-                    Room Temperature: 280
-                    Convection Coefficient: 110
-                Right Edge:
-                    Room Temperature: 281
-                    Convection Coefficient: 111
-                Bottom Edge:
-                    Room Temperature: 282
-                    Convection Coefficient: 112
-            Internal:
-                Top Edge:                    
-                    Horizontal asperity ratio: 1
-                    Vertical asperity ratio: 1
-        Initial Condition: 
-            Temperature: 280
-    Middle Plate:
-        Geometry:
-            Thickness (Y): 0.01
-            Width (X): 10.0
-            Pos: 2
+            y0: 0.4
+            y1: 0.42
+            x0: 0
+            x1: 1.0           
         Material:
-            Thermal Conductivity X: 0.8
-            Thermal Conductivity Y: 0.8
+            kx: 0.8
+            ky: 0.8
             Density: 2000
-            Specific Heat: 700        
+            Cp: 700        
             Viscosity: 
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Number of Elements in X: 10
-            Number of Elements in Y: 2
+            Points in X: 10
+            Points in Y: 2
         Boundary Condition:  
             External:
                 Left Edge: 
@@ -101,6 +72,40 @@ Domains:
         Initial Condition:
             Temperature: 450
             Input Power Density: 2
+    Plate 3:
+        Geometry:
+            y0: 0.42
+            y1: 0.82
+            x0: 0
+            x1: 1.0
+        Material: 
+            kx: 0.7
+            ky: 0.7
+            Density: 1600
+            Cp: 910
+            Viscosity:
+                A: 0.0056
+                Ea: 74400
+        Mesh:
+            Points in X: 10
+            Points in Y: 10
+        Boundary Condition:
+            External:
+                Left Edge: 
+                    Room Temperature: 280
+                    Convection Coefficient: 110
+                Right Edge:
+                    Room Temperature: 281
+                    Convection Coefficient: 111
+                Top Edge:
+                    Room Temperature: 282
+                    Convection Coefficient: 112
+            Internal:
+                Bottom Edge:                    
+                    Horizontal asperity ratio: 1
+                    Vertical asperity ratio: 1
+        Initial Condition: 
+            Temperature: 280
 Simulation:
     Step Time: 0.1
     Number of Steps: 1000

@@ -1,32 +1,42 @@
 Problem Type:
-    Type: OnePlate
-
-Geometry:
-    Length (X): 10.0
-    Width (Y): 10.0
+    Type: Heat Transfer
+    Total Plates: 1
+Domains:
+    Plate 1:
+        Geometry:
+            y0: 0
+            y1: 0.4
+            x0: 0
+            x1: 1.0
+        Material:
+            kx: 0.6
+            ky: 0.6
+            Density: 1500
+            Cp: 900
+            Viscosity:
+                A: 0.0056
+                Ea: 74400
+        Mesh:
+            Points in X: 10
+            Points in Y: 10
+        Boundary Condition:
+            External:
+                Left Edge: 
+                    Room Temperature: 270
+                    Convection Coefficient: 100
+                Right Edge:
+                    Room Temperature: 271
+                    Convection Coefficient: 101
+                Bottom Edge:
+                    Room Temperature: 272
+                    Convection Coefficient: 102
+                Top Edge:
+                    Room Temperature: 273
+                    Convection Coefficient: 103            
+        Initial Condition:
+            Temperature: 270
+            Input Power Density: 2
     
-Mesh:
-  Plate:
-    Number of Elements in X: 10
-    Number of Elements in Y: 10
-
-Materials:
-    Plate:
-        Thermal Conductivity X: 0.65
-        Thermal Conductivity Y: 0.65
-        Density: 1598
-        Specific Heat Capacity: 930
-
-Boundary Conditions:
-    Top:
-      Models: Heat Transfer
-      Initial Temperature: 293
-    Bottom:
-      Models: Heat Transfer
-      Initial Temperature: 293
-    Left:
-      Models: Heat Transfer
-      Initial Temperature: 293
-    Right:
-      Models: Heat Transfer
-      Initial Temperature: 293
+Simulation:
+    Step Time: 0.1
+    Number of Steps: 1000

@@ -5,134 +5,118 @@ import numpy as np
 class TwoPlates:
 
     def __init__(self, deck):
-        self.deck=deck
+        self.total_plates=int(deck.doc["Problem Type"]["Total Plates"])
         self.set_simulation_parameters(deck)
         self.set_problem_parameters(deck)
         self.set_domains(deck)
-        # self.set_corner(deck)
-        # self.set_mesh(deck)
-        # self.set_material(deck)
-        # self.set_IC(deck)
-        # self.set_BC(deck)
+        self.set_elements(deck)
         self.set_create_mask(deck)
         self.create_fields(deck)
         self.populate_fields_locally(deck)
-        
-        
-        
-        
+
+
     def set_simulation_parameters(self,deck):
         self.SimulationParameters = {}
         for par in deck.doc["Simulation"]:
-            self.SimulationParameters[par]= deck.doc["Simulation"][par]
-            
-            
+            self.SimulationParameters[par] = deck.doc["Simulation"][par]
+
     def set_problem_parameters(self, deck):
         ny = 0
-        t = 0
+        thickness = 0
         for domain in deck.doc["Domains"]:
-            ny = ny + int(deck.doc["Domains"][domain]["Mesh"]["Number of Elements in Y"])
-            nx = int(deck.doc["Domains"][domain]["Mesh"]["Number of Elements in X"])
-            t = t + float(deck.doc["Domains"][domain]["Geometry"]["Thickness (Y)"])
+            domain_dir = deck.doc["Domains"][domain]
+            ny = ny + int(domain_dir["Mesh"]["Points in Y"])
+            nx = int(domain_dir["Mesh"]["Points in X"])
+            current_thickness = float(domain_dir["Geometry"]["y1"])
+            if current_thickness > thickness:
+                thickness = current_thickness
             
-        self.totalNy = ny
-        self.totalNx = nx
-        self.total_thickness = t
-        
+        self.totalpy = ny
+        self.totalpx = nx
+        self.totalthickness = thickness
+
+    def is_top_plate(self,y1,totalthickness):
+        return y1 == totalthickness
+
+    def is_bottom_plate(self,y0):
+        return y0 == 0
+
     def set_domains(self, deck):
         self.domains = []
-        
-        for deck_domain in deck.doc["Domains"]:
-            position = int(deck.doc["Domains"][deck_domain]["Geometry"]["Pos"])
+        for domain_name in deck.doc["Domains"]:
+            self.domains.append(RectangularDomain(domain_name))
+
+    def set_elements(self, deck):
+        for domain in self.domains:
+            dimen_y0 = float(deck.doc["Domains"][domain.name]["Geometry"]["y0"])
+            dimen_y1 = float(deck.doc["Domains"][domain.name]["Geometry"]["y1"])
+            if self.is_top_plate(dimen_y1,self.totalthickness):
+                p_x0 =  0
+                p_x1 = int(deck.doc["Domains"][domain.name]["Mesh"]["Points in X"])-1
+                p_y1 = self.totalpy
+                p_y0 = p_y1 - int(deck.doc["Domains"][domain.name]["Mesh"]["Points in Y"])
+            elif self.is_bottom_plate(dimen_y0):
+                p_x0 = 0
+                p_x1 = int(deck.doc["Domains"][domain.name]["Mesh"]["Points in X"])-1
+                p_y0 = 0
+                p_y1= int(deck.doc["Domains"][domain.name]["Mesh"]["Points in Y"])-1
+            else:
+                aux=0
+                for i in range (1, int(domain.name[-1])):
+                    aux = aux +  int(deck.doc["Domains"]["Plate " + str(i)]["Mesh"]["Points in X"])
+                p_x0 = 0
+                p_x1 = int(deck.doc["Domains"][domain.name]["Mesh"]["Points in X"])-1
+                p_y0 = aux
+                p_y1 = aux + int(deck.doc["Domains"][domain.name]["Mesh"]["Points in Y"])-1
             
-            if  position == 1:
-                ele_x0 = 0
-                ele_x1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in X"])
-                ele_y0 = 0
-                ele_y1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"])-1
-                
-            if position == 2:
-                for domain_aux in deck.doc["Domains"]:
-                    if deck.doc["Domains"][domain_aux]["Geometry"]["Pos"] == "1":
-                        auxeley=int(deck.doc["Domains"][domain_aux]["Mesh"]["Number of Elements in Y"])
-                        ele_x0 = 0
-                        ele_x1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in X"])
-                        ele_y0 = auxeley
-                        ele_y1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"])+auxeley-1
-                        
-            if position == 3:
-                ele_x0 = 0
-                ele_x1 = int(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in X"])
-                ele_y0 = int(self.totalNy)-int(float(deck.doc["Domains"][deck_domain]["Mesh"]["Number of Elements in Y"]))
-                ele_y1 = int(self.totalNy)-1
-
-            self.domains.append(RectangularDomain(deck_domain, ele_x0, ele_x1, ele_y0,ele_y1, position))
-
-    # def set_corner(self, deck):
-    #     for domain in self.domains:
-    #         domain.set_corners(domain.name, deck)
-            
-    # def set_mesh(self, deck):
-    #     aux={}
-    #     for domain in self.domains:
-    #         domain.set_mesh(domain.name, deck, domain.dimensions)
-
-    # def set_BC(self, deck):
-    #     for domain in self.domains:
-    #         domain.set_bc(domain.name, deck)
-
-    # def set_material(self, deck):
-    #     for domain in self.domains:
-    #         domain.set_material(domain.name, deck)
-
-    # def set_IC(self, deck):
-    #     for domain in self.domains:
-    #         domain.set_IC(domain.name, deck)
+            domain.set_points_domains(p_x0, p_x1, p_y0, p_y1)
 
     def set_create_mask(self, deck):
         for domain in self.domains:
-            domain.generate_mask(self.totalNy,self.totalNx, domain.position)
+            dimen_y = [float(deck.doc["Domains"][domain.name]["Geometry"]["y0"]), float(deck.doc["Domains"][domain.name]["Geometry"]["y1"])]
+            domain.generate_mask(self.totalpy,self.totalpx, dimen_y, self.totalthickness)
 
     def create_fields(self, deck):
-            self.required_fields=["Temperature",  "Thermal Conductivity X", "Thermal Conductivity Y", "Density", "Specific Heat", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]
-
-    # def populate_fields_locally(self):
-    #     for field_name in self.required_fields:
-    #         for domain in self.domains:
-    #             if field_name == "Equivalent External Temperature":
-    #                 domain.set_field_eet(domain.boundary_conditions["External"], field_name, domain.mask_external_boundary,domain)
-    #             elif field_name == "Intimate Contact":
-    #                 domain.set_field_ic(domain.boundary_conditions["Internal"], field_name, domain.mask_contact_interface)
-    #             elif field_name == "dx" or field_name == "dy":
-    #                 domain.set_field_mesh(field_name, domain.mesh[field_name], domain.mask)
-    #             elif field_name == "Viscosity":
-    #                 domain.set_field_viscosity(field_name, domain.material[field_name]["A"], domain.material[field_name]["Ea"],domain.initial_conditions["Temperature"],domain.mask)
-
+        if deck.doc["Problem Type"]["Type"] == "Welding":
+            self.required_fields=["Temperature", "kx", "ky", "Density", "Cp", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "Intimate Contact", "dx","dy"]
+        if deck.doc["Problem Type"]["Type"] == "Heat Transfer":
+            self.required_fields=["Temperature", "kx", "ky", "Density", "Cp", "Viscosity", "Equivalent External Temperature", "Power Input Heat", "dx","dy"]
+    def create_external_mask(self, deck):
+        for domain in self.domains:
+            self.mask_external_boundary = {}
+            deck_dir = deck.doc["Domains"][domain.name]
+            bc_ext = {}
+            for edge in deck_dir["Boundary Condition"]["External"]:
+                bc_ext[edge] = np.zeros((self.totalNy+2, self.totalNx+2))
 
     def populate_fields_locally(self,deck):
         for field_name in self.required_fields:
             for domain in self.domains:
                 domain_dir = deck.doc["Domains"][domain.name]
                 if field_name == "dx":
-                    inc = float(domain_dir["Geometry"]["Width (X)"])/int(domain_dir["Mesh"]["Number of Elements in X"])
+                    delta = float(domain_dir["Geometry"]["x1"]) - float(domain_dir["Geometry"]["x0"])
+                    inc = delta/int(domain_dir["Mesh"]["Points in X"])
                     value = inc*domain.mask
                     domain.set_field(field_name, value)
                 elif field_name == "dy":
-                    inc = float(domain_dir["Geometry"]["Thickness (Y)"])/int(domain_dir["Mesh"]["Number of Elements in Y"])
+                    delta = float(domain_dir["Geometry"]["y1"]) - float(domain_dir["Geometry"]["y0"])
+                    inc = delta/int(domain_dir["Mesh"]["Points in Y"])
                     value = inc*domain.mask
                     domain.set_field(field_name, value)
                 elif field_name == "Equivalent External Temperature":
                     temp = float(domain_dir["Initial Condition"]["Temperature"])
                     value=0
                     for edge in domain_dir["Boundary Condition"]["External"]:
-                        if edge == "Top Edge" or "Bototm Edge":
-                            inc = float(domain_dir["Geometry"]["Thickness (Y)"])/int(domain_dir["Mesh"]["Number of Elements in Y"])
-                            k = float(domain_dir["Material"]["Thermal Conductivity Y"])
+                        if edge == "Top Edge" or edge == "Bottom Edge":
+                            delta = float(domain_dir["Geometry"]["y1"]) - float(domain_dir["Geometry"]["y0"])
+                            inc = delta/int(domain_dir["Mesh"]["Points in Y"])
+                            k = float(domain_dir["Material"]["ky"])
                             roomtemp = float (domain_dir["Boundary Condition"]["External"][edge]["Room Temperature"])
                             value =value+-2*inc*((float(domain_dir["Boundary Condition"]["External"][edge]["Convection Coefficient"])/k)*(temp-roomtemp) + temp)*(domain.mask_external_boundary[edge])
-                        if edge == "Left Edge" or "Right Edge":
-                            inc = float(domain_dir["Geometry"]["Width (X)"])/int(domain_dir["Mesh"]["Number of Elements in X"])
-                            k = float(domain_dir["Material"]["Thermal Conductivity X"])
+                        if edge == "Left Edge" or edge =="Right Edge":
+                            delta = float(domain_dir["Geometry"]["x1"]) - float(domain_dir["Geometry"]["x0"])
+                            inc = delta/int(domain_dir["Mesh"]["Points in X"])
+                            k = float(domain_dir["Material"]["kx"])
                             roomtemp = float (domain_dir["Boundary Condition"]["External"][edge]["Room Temperature"])
                             value =value+-2*inc*((float(domain_dir["Boundary Condition"]["External"][edge]["Convection Coefficient"])/k)*(temp-roomtemp) + temp)*(domain.mask_external_boundary[edge])
                     domain.set_field(field_name, value)
@@ -143,8 +127,8 @@ class TwoPlates:
                         value = value + har*domain.mask_contact_interface[edge]
                         domain.set_field(field_name, value)
                 elif field_name == "Viscosity":
-                    a = float (domain_dir["Material"]["Viscosity"]["A"])
-                    b = float( domain_dir["Material"]["Viscosity"]["Ea"])
+                    a = float(domain_dir["Material"]["Viscosity"]["A"])
+                    b = float(domain_dir["Material"]["Viscosity"]["Ea"])
                     temp = float(domain_dir["Initial Condition"]["Temperature"])
                     value = a*np.exp(b/temp)*domain.mask
                     domain.set_field(field_name, value)
@@ -163,5 +147,3 @@ class TwoPlates:
                     aux = float(domain_dir["Material"][field_name])
                     value = aux*domain.mask
                     domain.set_field(field_name, value)
-
-
