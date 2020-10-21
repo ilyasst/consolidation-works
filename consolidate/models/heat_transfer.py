@@ -1,22 +1,59 @@
-
+import numpy as np
 
 class HeatTransfer:
 
-    def __init__(self, deck,meshes):
-        self.dt = float(deck.doc["Simulation"]["Time Step"])
-        self.dx2 = meshes.dx*meshes.dx
-        self.dy2 = meshes.dy*meshes.dy
-        self.rho=meshes.RhoTotal
-        self.cp=meshes.CpTotal
-        self.k=meshes.KtotalX
+    def __init__(self, mesh, problem):
+        fields ={}
+        for aux in mesh.fields:
+            fields[aux.name]= aux.value
+        self.dt = float(problem.SimulationParameters["Step Time"])
+        self.dx = fields["dx"]
+        self.dy = fields["dy"]
+        self.dx2 = fields["dx"] * fields["dx"]
+        self.dy2 = fields["dy"] * fields["dy"]
+        self.rho = fields["Density"]
+        self.cp = fields["Cp"]
+        self.kx = fields["kx"]
+        self.ky = fields["ky"]
+        self.Q = fields["Power Input Heat"]
+        self.rt = fields["Room Temperature"]
+        self.h = fields ["Convection Coefficient"]
+        self.calc_diffusivity()
         
-# -------------- BEGIN HEAT TRANSFER CALCULATION---------- 
-    def do_timestep(self, u0, u, Diffx, Diffy,Q):
-        # Propagate with forward-difference in time, central-difference in space
-        u[1:-1, 1:-1] = u0[1:-1, 1:-1] + Diffy[1:-1, 1:-1]* self.dt * ((u0[2:, 1:-1] - 2*u0[1:-1, 1:-1] + u0[:-2, 1:-1])/self.dy2 ) + Diffx[1:-1, 1:-1]* self.dt * ( (u0[1:-1, 2:] - 2*u0[1:-1, 1:-1] + u0[1:-1, :-2])/self.dx2 ) + self.dt*Q[1:-1,1:-1]/(self.cp[1:-1,1:-1]*self.rho[1:-1,1:-1])
 
-        u0 = u.copy()
+    def calc_diffusivity(self):
+        aux = self.rho*self.cp 
+        self.diffy=np.zeros(np.shape(aux))
+        self.diffx=np.zeros(np.shape(aux))
+        self.diffy[1:-1,1:-1] = self.ky[1:-1,1:-1]/ aux[1:-1,1:-1]
+        self.diffx[1:-1,1:-1] = self.kx[1:-1,1:-1]/ aux[1:-1,1:-1]
+
+    # def do_timestep(self, u):
+    #     u[1:-1, 1:-1] = u[1:-1, 1:-1] + self.diffy[1:-1, 1:-1]* self.dt * ((u[2:, 1:-1] - 2*u[1:-1, 1:-1] + u[:-2, 1:-1])/self.dy2[1:-1, 1:-1] ) + self.diffx[1:-1, 1:-1]* self.dt * ( (u[1:-1, 2:] - 2*u[1:-1, 1:-1] + u[1:-1, :-2])/self.dx2[1:-1, 1:-1] ) + self.dt*self.Q[1:-1,1:-1]/(self.cp[1:-1,1:-1]*self.rho[1:-1,1:-1])
+    #     return u
+
+    def do_timestep_cond_conv(self, uu,uuold):
         
-        return u0, u
-    
-# -------------- END HEAT TRANSFER CALCULATION---------- 
+        # ---------------------------------------------------------------------------------------------------------
+        # -- ORDER 1 SOLVER --
+        uu[0,1:-1] = uu[0,1:-1] - 2*self.dy[1,1:-1]*self.h[0,1:-1]*(uu[0,1:-1] - uu[1,1:-1])/self.ky[1,1:-1] 
+        uu[-1,1:-1] = uu[-1,1:-1] - 2*self.dy[1,1:-1]*self.h[-1,1:-1]*(uu[-1,1:-1] - uu[-2,1:-1])/self.ky[-2,1:-1] 
+        uu[1:-1,0] = uu[1:-1,0] - 2*self.dx[1:-1,1]*self.h[1:-1,0]*(uu[1:-1,0] - uu[1:-1,1])/self.kx[1:-1,1] 
+        uu[1:-1,-1] = uu[1:-1,-1] - 2*self.dx[1:-1,-2]*self.h[1:-1,-1]*(uu[1:-1,-1] - uu[1:-1,-2])/self.kx[1:-1,-2] 
+        uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + (self.dt*self.ky[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1])) * ((uuold[0:-2, 1:-1] - 2*uuold[1:-1, 1:-1] + uuold[2:, 1:-1])/self.dy2[1:-1, 1:-1]) + (self.dt*self.kx[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1]))*((uuold[1:-1, 0:-2] - 2*uuold[1:-1, 1:-1] + uuold[1:-1, 2:])/self.dx2[1:-1, 1:-1]) + self.dt*self.Q[1:-1,1:-1]/(self.rho[1:-1, 1:-1] * self.cp[1:-1, 1:-1])
+
+        # Border correction
+        # uu[0,1:-1] = uu[1,1:-1] + (self.dt*self.ky[1,1:-1]/(self.rho[1, 1:-1]*self.cp[1, 1:-1]))*((uuold[0,1:-1] - 2*uuold[1,1:-1] +uuold[2,1:-1])/self.dy2[1, 1:-1]) + (self.dt*self.kx[1, 1:-1]/(self.rho[1, 1:-1]*self.cp[1, 1:-1]))*((uuold[0, 1:-1] - 2*uuold[1, 1:-1] + uuold[2, 1:-1])/self.dx2[1, 1:-1]) 
+        # uu[-1,1:-1] = uu[-1,1:-1] + (self.dt*self.ky[-2,1:-1]/(self.rho[-2, 1:-1]*self.cp[-2, 1:-1]))*((uuold[-1,1:-1] - 2*uuold[-2,1:-1] +uuold[-3,1:-1])/self.dy2[-2, 1:-1]) + (self.dt*self.kx[-2,1:-1]/(self.rho[-2,1:-1]*self.cp[-2,1:-1]))*((uuold[-1, 1:-1] - 2*uuold[-2, 1:-1] + uuold[-3, 1:-1])/self.dx2[-2,1:-1]) 
+        # uu[1:-1,0] = uu[1:-1,0] + (self.dt*self.ky[1:-1,1]/(self.rho[1:-1,1]*self.cp[1:-1,1]))*((uuold[1:-1,0] - 2*uuold[1:-1,1] +uuold[1:-1,2])/self.dy2[1:-1,1]) + (self.dt*self.kx[1:-1,1]/(self.rho[1:-1,1]*self.cp[1:-1,1]))*((uuold[1:-1,0] - 2*uuold[1:-1,1] + uuold[1:-1, 2])/self.dx2[1:-1,1]) 
+        # uu[1:-1,-1] = uu[1:-1,-1] + (self.dt*self.ky[1:-1,-2]/(self.rho[1:-1,-2]*self.cp[1:-1,-2]))*((uuold[1:-1,-1] - 2*uuold[1:-1,-2] +uuold[1:-1,-3])/self.dy2[1:-1,-2]) + (self.dt*self.kx[1:-1,-2]/(self.rho[1:-1,-2]*self.cp[1:-1,-2]))*((uuold[1:-1,-1] - 2*uuold[1:-1,-2] + uuold[1:-1,-3])/self.dx2[1:-1,-2]) 
+        # ---------------------------------------------------------------------------------------------------------
+
+        # ---------------------------------------------------------------------------------------------------------
+        # -- ORDER 2 SOLVER --
+        # uu[2:-2, 2:-2] = uuold[2:-2, 2:-2] + (self.dt*self.ky[2:-2,2:-2]/(self.rho[2:-2,2:-2]*self.cp[2:-2,2:-2])) * ((-(1/12)*uuold[0:-4,2:-2] + (4/3)*uuold[1:-3,2:-2] - (5/2)*uuold[2:-2,2:-2] + (4/3)*uuold[3:-1,2:-2] - (1/12)*uuold[4:,2:-2] )/self.dy2[2:-2,2:-2]) + (self.dt*self.kx[2:-2,2:-2]/(self.rho[2:-2,2:-2]*self.cp[2:-2,2:-2]))*((-(1/12)*uuold[2:-2,0:-4] +(4/3)*uuold[2:-2,1:-3] - (5/2)*uuold[2:-2, 2:-2] + (4/3)*uuold[2:-2,3:-1] - (1/12)*uuold[2:-2,4:])/self.dx2[2:-2,2:-2]) + self.dt*self.Q[2:-2,2:-2]/(self.rho[2:-2,2:-2] * self.cp[2:-2,2:-2])
+        # ---------------------------------------------------------------------------------------------------------
+
+        return uu
+
+

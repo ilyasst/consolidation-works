@@ -1,42 +1,45 @@
 Problem Type:
     Type: Heat Transfer
     Total Plates: 1
+    Length: 0.1
 Domains:
     Plate 1:
         Geometry:
-            y0: 0
-            y1: 0.4
+            y0: 0.004
+            y1: 0.006
             x0: 0
-            x1: 1.0
-        Material:
-            kx: 0.6
-            ky: 0.6
-            Density: 1500
-            Cp: 900
-            Viscosity:
+            x1: 0.1           
+        Material: 
+            kx: 0.658
+            ky: 0.658
+            Density: 1600
+            Cp: 930     
+            Viscosity: 
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Points in X: 10
-            Points in Y: 10
-        Boundary Condition:
-            External:
-                Left Edge: 
-                    Room Temperature: 270
-                    Convection Coefficient: 100
-                Right Edge:
-                    Room Temperature: 271
-                    Convection Coefficient: 101
-                Bottom Edge:
-                    Room Temperature: 272
-                    Convection Coefficient: 102
-                Top Edge:
-                    Room Temperature: 273
-                    Convection Coefficient: 103            
+            Points in X: 100
+            Points in Y: 80
+        Boundary Condition:  
+            Thermal:
+                Convection:
+                    Left Edge: 
+                        Room Temperature: 293
+                        Convection Coefficient: 100
+                    Right Edge:
+                        Room Temperature: 293
+                        Convection Coefficient: 100
+            Mechanical:
+                Intimate Contact:
+                    Top Edge:
+                        Horizontal asperity ratio: 2
+                        Vertical asperity ratio: 2
+                    Bottom Edge:
+                        Horizontal asperity ratio: 2
+                        Vertical asperity ratio: 2
         Initial Condition:
-            Temperature: 270
-            Input Power Density: 2
-    
+            Temperature: 293
+            Power Generation: 200
 Simulation:
-    Step Time: 0.1
-    Number of Steps: 1000
+    Step Time: 0.0005
+    Number of Steps: 360000
