@@ -24,11 +24,16 @@ Domains:
             Thermal:
                 Convection:
                     Left Edge: 
-                        Room Temperature: 293
-                        Convection Coefficient: 100
+                        Room Temperature: 0
+                        Convection Coefficient: 0
                     Right Edge:
-                        Room Temperature: 293
-                        Convection Coefficient: 100
+                        Room Temperature: 0
+                        Convection Coefficient: 0
+                Fixed Temperature:
+                    Bottom Edge:
+                        Temperature: 0
+                    Top Edge: 
+                        Temperature: 0
             Mechanical:
                 Intimate Contact:
                     Top Edge:
@@ -42,4 +47,4 @@ Domains:
             Power Generation: 200
 Simulation:
     Step Time: 0.0005
-    Number of Steps: 360000
+    Number of Steps: 10000

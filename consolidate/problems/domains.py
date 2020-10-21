@@ -110,6 +110,7 @@ class RectangularDomain:
                         self.mask["Top Edge External"] = mask_top_external
                         self.mask_contact["Top Edge"] = contact_mask_top
                     if dimen_y[1] == total_thickness:
+                        self.mask["Bottom Edge External"] = mask_bottom_external
                         self.mask["Bottom Edge"] = mask_bottom
                         self.mask_contact["Bottom Edge"] = contact_mask_bottom
                         self.mask["Top Edge"] = mask_top

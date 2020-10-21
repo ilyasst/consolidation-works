@@ -184,7 +184,7 @@ class TwoPlates:
                                     value = value + float(domain_dir["Boundary Condition"]["Thermal"][kind][location]["Temperature"])*domain.mask[location + " External"]
                     domain.set_field(field_name, value)
                 elif field_name == "Power Input Heat":
-                    value = 0
+                    value=np.zeros((self.totalpy+2, self.totalpx+2))
                     if "Power Generation" in domain_dir["Initial Condition"]:
                         deltax = float(domain_dir["Geometry"]["x1"]) - float(domain_dir["Geometry"]["x0"])
                         deltay = float(domain_dir["Geometry"]["y1"]) - float(domain_dir["Geometry"]["y0"])
