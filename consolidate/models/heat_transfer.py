@@ -16,7 +16,6 @@ class HeatTransfer:
         self.kx = fields["kx"]
         self.ky = fields["ky"]
         self.Q = fields["Power Input Heat"]
-        self.rt = fields["Room Temperature"]
         self.h = fields ["Convection Coefficient"]
         self.calc_diffusivity()
         
@@ -36,12 +35,37 @@ class HeatTransfer:
         
         # ---------------------------------------------------------------------------------------------------------
         # -- ORDER 1 SOLVER --
-        uu[0,1:-1] = uu[0,1:-1] - 2*self.dy[1,1:-1]*self.h[0,1:-1]*(uu[0,1:-1] - uu[1,1:-1])/self.ky[1,1:-1] 
-        uu[-1,1:-1] = uu[-1,1:-1] - 2*self.dy[1,1:-1]*self.h[-1,1:-1]*(uu[-1,1:-1] - uu[-2,1:-1])/self.ky[-2,1:-1] 
-        uu[1:-1,0] = uu[1:-1,0] - 2*self.dx[1:-1,1]*self.h[1:-1,0]*(uu[1:-1,0] - uu[1:-1,1])/self.kx[1:-1,1] 
-        uu[1:-1,-1] = uu[1:-1,-1] - 2*self.dx[1:-1,-2]*self.h[1:-1,-1]*(uu[1:-1,-1] - uu[1:-1,-2])/self.kx[1:-1,-2] 
+        # import pdb; pdb.set_trace()
         
-        uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + (self.dt*self.ky[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1])) * ((uuold[0:-2, 1:-1] - 2*uuold[1:-1, 1:-1] + uuold[2:, 1:-1])/self.dy2[1:-1, 1:-1]) + (self.dt*self.kx[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1]))*((uuold[1:-1, 0:-2] - 2*uuold[1:-1, 1:-1] + uuold[1:-1, 2:])/self.dx2[1:-1, 1:-1]) + self.dt*self.Q[1:-1,1:-1]/(self.rho[1:-1, 1:-1] * self.cp[1:-1, 1:-1])
+        # dU/dy = (uuold[2:,1:-1] - uuold[0:-2,1:-1]])/deltaY
+        
+        # kdU/dy = kUpred/DeltaY - KUafter/DeltaY
+        
+        # d(kdU/dy)/dy = dk/dy(dU/dy) + K*(d^u/dy^2)
+        
+        
+        # d(dU/dy)/dy = d (u)
+        
+        uu[0,1:-1] = uu[0,1:-1] - 2*self.dy[1,1:-1]*self.h[0,1:-1]*(uu[0,1:-1] - uu[1,1:-1])/self.ky[1,1:-1] 
+        uu[-1,1:-1] = uu[-1,1:-1] - 2*self.dy[1,1:-1]*self.h[-1,1:-1]*(uu[-1,1:-1] - uu[-2,1:-1])/self.ky[-2,1:-1]
+        uu[1:-1,0] = uu[1:-1,0] - 2*self.dx[:-1,1]*self.h[1:-1,0]*(uu[1:-1,0] - uu[1:-1,1])/self.kx[1:-1,1] 
+        uu[1:-1,-1] = uu[1:-1,-1] - 2*self.dx[:-1,-2]*self.h[1:-1,-1]*(uu[1:-1,-1] - uu[1:-1,-2])/self.kx[1:-1,-2]
+        
+
+        
+        # uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + self.dt*(((self.ky[0:-2, 1:-1]/(self.rho[0:-2, 1:-1]*self.cp[0:-2, 1:-1]))*(0.5*uuold[0:-2, 1:-1]-uuold[1:-1, 1:-1]+0.5*uuold[2:, 1:-1])/self.dy2[:-1,1:-1]) + ((self.ky[2:, 1:-1]/(self.rho[2:, 1:-1]*self.cp[2:, 1:-1]))*(0.5*uuold[0:-2, 1:-1]-uuold[1:-1, 1:-1]+0.5*uuold[2:, 1:-1])/self.dy2[0:-1,1:-1]))
+        # ORIGINAL WITHOUT INTERFACE
+        # uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + (self.dt*self.ky[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1])) * ((uuold[0:-2, 1:-1] - 2*uuold[1:-1, 1:-1] + uuold[2:, 1:-1])/self.dy2[1:-1, 1:-1]) + (self.dt*self.kx[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1]))*((uuold[1:-1, 0:-2] - 2*uuold[1:-1, 1:-1] + uuold[1:-1, 2:])/self.dx2[1:-1, 1:-1]) + self.dt*self.Q[1:-1,1:-1]/(self.rho[1:-1, 1:-1] * self.cp[1:-1, 1:-1])
+        # uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + (self.dt*self.ky[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1])) * ((uuold[0:-2, 1:-1] - 2*uuold[1:-1, 1:-1] + uuold[2:, 1:-1])/self.dy2[1:, 1:-1])  + (self.dt*self.kx[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1]))*((uuold[1:-1, 0:-2] - 2*uuold[1:-1, 1:-1] + uuold[1:-1, 2:])/self.dx2[:-1, 1:-1])
+        # import pdb; pdb.set_trace()
+        # uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + self.dt * (((self.ky[0:-2,1:-1]/(self.rho[0:-2,1:-1]*self.cp[0:-2,1:-1]))*uuold[0:-2,1:-1])-2*((self.ky[1:-1,1:-1]/(self.rho[1:-1,1:-1]*self.cp[1:-1,1:-1]))*uuold[1:-1,1:-1])+((self.ky[2:,1:-1]/(self.rho[2:,1:-1]*self.cp[2:,1:-1]))*uuold[2:,1:-1]))/(self.dy2[0:-1,1:-1])
+
+        uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + (self.dt/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1]*self.dy[:-1, 1:-1]))*(((self.ky[2:, 1:-1] - self.ky[:-2, 1:-1])/2)*((uuold[2:,1:-1]-uuold[:-2,1:-1])/2) + self.ky[1:-1, 1:-1]*(uuold[0:-2, 1:-1] - 2*uuold[1:-1, 1:-1] + uuold[2:, 1:-1])) + (self.dt*self.kx[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1]))*((uuold[1:-1, 0:-2] - 2*uuold[1:-1, 1:-1] + uuold[1:-1, 2:])/self.dx2[0:-1, 1:-1])
+        
+        # + (self.dt*self.kx[1:-1,1:-1]/(self.rho[1:-1, 1:-1]*self.cp[1:-1, 1:-1]))*((uuold[1:-1, 0:-2] - 2*uuold[1:-1, 1:-1] + uuold[1:-1, 2:])/self.dx2[0:-1, 1:-1])
+        
+        # uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + (self.dt/(self.dy2[1:,1:-1]))*((self.ky[0:-2,1:-1]*uuold[0:-2,1:-1]/(self.rho[0:-2,1:-1]*self.cp[0:-2,1:-1]))- 2*(self.ky[1:-1,1:-1]*uuold[1:-1,1:-1]/(self.rho[1:-1,1:-1]*self.cp[1:-1,1:-1]))+(self.ky[2:,1:-1]*uuold[2:,1:-1]/(self.rho[2:,1:-1]*self.cp[2:,1:-1])))
+        
 
         # Border correction
         # uu[0,1:-1] = uu[1,1:-1] + (self.dt*self.ky[1,1:-1]/(self.rho[1, 1:-1]*self.cp[1, 1:-1]))*((uuold[0,1:-1] - 2*uuold[1,1:-1] +uuold[2,1:-1])/self.dy2[1, 1:-1]) + (self.dt*self.kx[1, 1:-1]/(self.rho[1, 1:-1]*self.cp[1, 1:-1]))*((uuold[0, 1:-1] - 2*uuold[1, 1:-1] + uuold[2, 1:-1])/self.dx2[1, 1:-1]) 

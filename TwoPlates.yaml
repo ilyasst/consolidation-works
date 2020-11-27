@@ -1,5 +1,5 @@
 Problem Type:
-    Type: Welding
+    Type: Heat Transfer
     Total Plates: 3
     Length: 0.001
 Domains:
@@ -12,30 +12,30 @@ Domains:
         Material:
             kx: 0.658
             ky: 0.658
-            Density: 1600
+            Density: 1598
             Cp: 930
             Viscosity:
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Points in X: 100
-            Points in Y: 4
+            Points in X: 101
+            Points in Y: 11
         Boundary Condition:
             Thermal:
-                Fixed Temperature:
+                Fixed Boundary:
                     Bottom Edge:
-                        Temperature: 0
+                        Temperature: 100
                     Left Edge:
-                        Temperature: 0
+                        Temperature: 100
                     Right Edge:
-                        Temperature: 0
+                        Temperature: 100
             Mechanical:
                 Intimate Contact:
                     Top Edge:
                         Horizontal asperity ratio: 4
                         Vertical asperity ratio: 4
         Initial Condition:
-            Temperature: 293
+            Temperature: 30
     Plate 2:
         Geometry:
             y0: 0.004
@@ -46,20 +46,20 @@ Domains:
             kx: 27.1
             ky: 27.1
             Density: 7875
-            Cp: 515  
+            Cp: 515
             Viscosity: 
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Points in X: 100
-            Points in Y: 2
+            Points in X: 101
+            Points in Y: 6
         Boundary Condition:  
             Thermal:
-                Fixed Temperature:
+                Fixed Boundary:
                     Left Edge: 
-                        Temperature: 0
+                        Temperature: 100
                     Right Edge:
-                        Temperature: 0
+                        Temperature: 100
             Mechanical:
                 Intimate Contact:
                     Top Edge:
@@ -69,8 +69,9 @@ Domains:
                         Horizontal asperity ratio: 2
                         Vertical asperity ratio: 2
         Initial Condition:
-            Temperature: 293
-            Power Generation: 200
+            Temperature: 700
+            Power Input:
+                All: 1000 
     Plate 3:
         Geometry:
             y0: 0.006
@@ -80,30 +81,30 @@ Domains:
         Material: 
             kx: 0.658
             ky: 0.658
-            Density: 1600
+            Density: 1598
             Cp: 930
             Viscosity:
                 A: 0.0056
                 Ea: 74400
         Mesh:
-            Points in X: 100
-            Points in Y: 4
+            Points in X: 101
+            Points in Y: 11
         Boundary Condition:
             Thermal:
-                Fixed Temperature:
-                    Left Edge: 
-                        Temperature: 0
+                Fixed Boundary:
                     Right Edge:
-                        Temperature: 0
+                        Temperature: 100
                     Top Edge:
-                        Temperature: 0
+                        Temperature: 100
+                    Left Edge:
+                        Temperature: 100
             Mechanical:
                 Intimate Contact:
                     Bottom Edge:                    
                         Horizontal asperity ratio: 1
                         Vertical asperity ratio: 1
         Initial Condition: 
-            Temperature: 293
+            Temperature: 30
 Simulation:
-    Step Time: 0.0005
-    Number of Steps: 20000
+    Step Time: 0.01
+    Number of Steps: 2000

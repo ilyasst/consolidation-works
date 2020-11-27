@@ -5,8 +5,8 @@ from .fields import Field
 class Mesher():
 
     def __init__(self,  problem):
-        self.totalNx = problem.totalpx
-        self.totalNy = problem.totalpy
+        # self.totalNx = problem.totalpx
+        # self.totalNy = problem.totalpy
         self. set_fields(problem)
 
     def set_fields(self, problem):
