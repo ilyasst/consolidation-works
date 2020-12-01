@@ -18,8 +18,17 @@ class SolvesTwoPlates:
     def do_solver(self,problem, model_HT, model_visc,mesh):
         
         for m in range(int(problem.SimulationParameters["Number of Steps"])):
-            self.Told = self.dir_T.value.copy()
-            self.dir_T.value = model_HT.do_timestep_cond_conv( self.dir_T.value, self.Told)
+            if m==0:
+                import pdb; pdb.set_trace()
+                self.Told = self.dir_T.value.copy()
+                self.dir_T.value = model_HT.do_timestep_cond_conv( self.dir_T.value.copy(), self.Told.copy())
+                self.Tcurrent = self.dir_T.value.copy()
+            else:
+                self.Toldold = self.Told.copy()
+                self.Told = self.dir_T.value.copy()
+                self.dir_T.value = model_HT.do_timestep_cond_conv_tg1( self.dir_T.value.copy(), self.Told.copy(), self.Toldold.copy())
+                self.Tcurrent = self.dir_T.value.copy()
+            
             # self.dir_Visc.value = model_visc.do_timestep(self.dir_Visc.value, self.dir_T.value)
 
 # # -------------- CALCULATE VISCOSITY FOR EACH STEP INCREMENT----------             

@@ -16,3 +16,5 @@ class Mesher():
             for domain in problem.domains:
                 field_value = field_value + domain.local_fields[field_name]
             self.fields.append(Field(field_name, field_value))
+            if field_name== "Temperature":
+                self.fields.append(Field("Toldold", field_value))

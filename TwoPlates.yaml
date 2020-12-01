@@ -9,11 +9,11 @@ Domains:
             y1: 0.004
             x0: 0
             x1: 0.1
-        Material:
-            kx: 0.658
-            ky: 0.658
-            Density: 1598
-            Cp: 930
+        Material: 
+            kx: 1.
+            ky: 1.
+            Density: 1500
+            Cp: 1000
             Viscosity:
                 A: 0.0056
                 Ea: 74400
@@ -24,11 +24,11 @@ Domains:
             Thermal:
                 Fixed Boundary:
                     Bottom Edge:
-                        Temperature: 100
+                        Temperature: 25
                     Left Edge:
-                        Temperature: 100
+                        Temperature: 25
                     Right Edge:
-                        Temperature: 100
+                        Temperature: 25
             Mechanical:
                 Intimate Contact:
                     Top Edge:
@@ -43,10 +43,10 @@ Domains:
             x0: 0
             x1: 0.1           
         Material: 
-            kx: 27.1
-            ky: 27.1
-            Density: 7875
-            Cp: 515
+            kx: 3.
+            ky: 3.
+            Density: 1500
+            Cp: 1000
             Viscosity: 
                 A: 0.0056
                 Ea: 74400
@@ -57,9 +57,9 @@ Domains:
             Thermal:
                 Fixed Boundary:
                     Left Edge: 
-                        Temperature: 100
+                        Temperature: 25
                     Right Edge:
-                        Temperature: 100
+                        Temperature: 25
             Mechanical:
                 Intimate Contact:
                     Top Edge:
@@ -79,10 +79,10 @@ Domains:
             x0: 0
             x1: 0.1
         Material: 
-            kx: 0.658
-            ky: 0.658
-            Density: 1598
-            Cp: 930
+            kx: 1.
+            ky: 1.
+            Density: 1500
+            Cp: 1000
             Viscosity:
                 A: 0.0056
                 Ea: 74400
@@ -93,11 +93,11 @@ Domains:
             Thermal:
                 Fixed Boundary:
                     Right Edge:
-                        Temperature: 100
+                        Temperature: 25
                     Top Edge:
-                        Temperature: 100
+                        Temperature: 25
                     Left Edge:
-                        Temperature: 100
+                        Temperature: 25
             Mechanical:
                 Intimate Contact:
                     Bottom Edge:                    
