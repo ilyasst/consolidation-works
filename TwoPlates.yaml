@@ -43,11 +43,11 @@ Domains:
             x0: 0
             x1: 0.1           
         Material: 
-            kx: 3.
-            ky: 3.
+            kx: 1.
+            ky: 5.
             Density: 1500
             Cp: 1000
-            Viscosity: 
+            Viscosity:
                 A: 0.0056
                 Ea: 74400
         Mesh:

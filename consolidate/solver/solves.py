@@ -9,25 +9,31 @@ class SolvesTwoPlates:
         for field_dir in mesh.fields:
             if field_dir.name =="Temperature":
                 self.dir_T=field_dir
+                self.Told = field_dir.value.copy()
+                self.Tnew = field_dir.value.copy()
             if field_dir.name == "Equivalent External Temperature":
                 self.dir_Tout = field_dir
             if field_dir.name == "Viscosity":
                 self.dir_Visc = field_dir
+        # self.T=
         self.do_solver(problem, model_HT, model_visc,mesh)
         
     def do_solver(self,problem, model_HT, model_visc,mesh):
         
         for m in range(int(problem.SimulationParameters["Number of Steps"])):
             if m==0:
-                import pdb; pdb.set_trace()
-                self.Told = self.dir_T.value.copy()
-                self.dir_T.value = model_HT.do_timestep_cond_conv( self.dir_T.value.copy(), self.Told.copy())
-                self.Tcurrent = self.dir_T.value.copy()
+                # import pdb; pdb.set_trace()
+                self.Tnew = model_HT.do_timestep_cond_conv( self.Tnew.copy(), self.Told.copy())
+                self.Toldold=self.Told.copy()
+                self.Told = self.Tnew.copy()
             else:
+                self.Tnew = model_HT.do_timestep_cond_conv_tg1( self.Tnew.copy(), self.Told.copy(), self.Toldold.copy())
                 self.Toldold = self.Told.copy()
-                self.Told = self.dir_T.value.copy()
-                self.dir_T.value = model_HT.do_timestep_cond_conv_tg1( self.dir_T.value.copy(), self.Told.copy(), self.Toldold.copy())
-                self.Tcurrent = self.dir_T.value.copy()
+                self.Told = self.Tnew.copy()
+                
+
+            
+            
             
             # self.dir_Visc.value = model_visc.do_timestep(self.dir_Visc.value, self.dir_T.value)
 
