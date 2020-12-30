@@ -10,7 +10,7 @@ Domains:
             x0: 0
             x1: 0.1
         Material: 
-            kx: 1.
+            kx: 0.
             ky: 1.
             Density: 1500
             Cp: 1000
@@ -43,9 +43,9 @@ Domains:
             x0: 0
             x1: 0.1           
         Material: 
-            kx: 1.
-            ky: 5.
-            Density: 1500
+            kx: 0
+            ky: 30
+            Density: 15000
             Cp: 1000
             Viscosity:
                 A: 0.0056
@@ -79,7 +79,7 @@ Domains:
             x0: 0
             x1: 0.1
         Material: 
-            kx: 1.
+            kx: 0.
             ky: 1.
             Density: 1500
             Cp: 1000

@@ -11,6 +11,6 @@ mesh = Mesher( problem )
 
 model_HT = HeatTransfer(mesh, problem)
 
-model_visc =  ViscosityCalculation(problem, mesh)
+# model_visc =  ViscosityCalculation(problem, mesh)
 
-solves = SolvesTwoPlates( problem,model_HT,model_visc,mesh)
+solves = SolvesTwoPlates( problem,model_HT,mesh)

@@ -5,7 +5,7 @@ import numpy as np
 
 class SolvesTwoPlates:
     
-    def __init__(self, problem,model_HT, model_visc,mesh):
+    def __init__(self, problem,model_HT,mesh):
         for field_dir in mesh.fields:
             if field_dir.name =="Temperature":
                 self.dir_T=field_dir
@@ -16,20 +16,19 @@ class SolvesTwoPlates:
             if field_dir.name == "Viscosity":
                 self.dir_Visc = field_dir
         # self.T=
-        self.do_solver(problem, model_HT, model_visc,mesh)
+        self.do_solver(problem, model_HT,mesh)
         
-    def do_solver(self,problem, model_HT, model_visc,mesh):
+    def do_solver(self,problem, model_HT,mesh):
         
         for m in range(int(problem.SimulationParameters["Number of Steps"])):
-            if m==0:
-                # import pdb; pdb.set_trace()
+            # if m==0:
                 self.Tnew = model_HT.do_timestep_cond_conv( self.Tnew.copy(), self.Told.copy())
-                self.Toldold=self.Told.copy()
+                # self.Toldold=self.Told.copy()
                 self.Told = self.Tnew.copy()
-            else:
-                self.Tnew = model_HT.do_timestep_cond_conv_tg1( self.Tnew.copy(), self.Told.copy(), self.Toldold.copy())
-                self.Toldold = self.Told.copy()
-                self.Told = self.Tnew.copy()
+            # else:
+            #     self.Tnew = model_HT.do_timestep_cond_conv_tg1( self.Tnew.copy(), self.Told.copy(), self.Toldold.copy())
+            #     self.Toldold = self.Told.copy()
+            #     self.Told = self.Tnew.copy()
                 
 
             

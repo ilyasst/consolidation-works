@@ -30,38 +30,36 @@ class LocalFields:
                     domain.set_field(field_name, value)
                     
                 elif field_name == "Temperature":
-                    if domain.nodes[1][0] == 0 or domain.nodes[1][1] == problem.totalnodes[1]-1:
-                        value = domain.initial_temperature*domain.mask["Inner"]
-                        h=np.zeros((problem.totalnodes[1], problem.totalnodes[0]))
-                    else:
-                        value = domain.initial_temperature*domain.mask["Inner"]
-                        h=np.zeros((problem.totalnodes[1], problem.totalnodes[0]))
+                    value = domain.initial_condition["Temperature"]*domain.mask["Inner"]
+                    h=np.zeros((problem.totalnodes[1], problem.totalnodes[0]))
                     for kind in domain.boundary_condition["Thermal"]:
                         for edge in domain.boundary_condition["Thermal"][kind]:
+                            import pdb; pdb.set_trace()
                             extTemp = extTemp + domain.boundary_condition["Thermal"][kind][edge]["Temperature"]*domain.mask_out[edge]
                             if kind == "Fixed Boundary":
+                                
                                 value = value + domain.boundary_condition["Thermal"][kind][edge]["Temperature"]*domain.mask[edge]
                                 h=h
                             elif kind == "Convection":
                                 value = value + domain.boundary_condition["Thermal"][kind][edge]["Temperature"]*domain.mask[edge]
                                 h = h + domain.boundary_condition["Thermal"][kind][edge]["Convection Coefficient"]*(domain.mask[edge])
                     for edge in domain.mask_interface:
-                        value = value + domain.initial_temperature*domain.mask_interface[edge]
+                        value = value + domain.initial_condition["Temperature"]*domain.mask_interface[edge]
                     domain.set_field(field_name, value)
                     domain.set_field("Convection Coefficient", h)
                     domain.set_field("Outer Temperature", extTemp)
                     
                 elif field_name in domain.material:
                     if isinstance(domain.material[field_name], float):
-                        if domain.nodes[1][0] == 0 or domain.nodes[1][1] == problem.totalnodes[1]-1:
-                            value = domain.material[field_name] * domain.mask["AllMinusInterface"]
-                        else:
-                            value = domain.material[field_name] * domain.mask["All"]
+                        # if domain.nodes[1][0] == 0 or domain.nodes[1][1] == problem.totalnodes[1]-1:
+                        value = domain.material[field_name] * domain.maskprop
+                        # else:
+                        #     value = domain.material[field_name] * domain.mask["All"]
                         domain.set_field(field_name, value)
                     else:
                         a = domain.material[field_name]["A"]
                         b = domain.material[field_name]["Ea"]
-                        temp = domain.initial_temperature
+                        temp = domain.initial_condition["Temperature"]
                         
                         if domain.nodes[1][0] == 0 or domain.nodes[1][1] == problem.totalnodes[1]-1:
                             value = a*np.exp(b/temp)* domain.mask["AllMinusInterface"]

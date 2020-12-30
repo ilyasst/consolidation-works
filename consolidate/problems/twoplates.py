@@ -1,6 +1,5 @@
 from .domains import RectangularDomain
 from .local_mesh import LocalFields
-from .material import Material
 from .bc import BoundaryCondition
 from .power import PowerInput
 import numpy as np
@@ -13,24 +12,26 @@ class TwoPlates:
         self.create_fields(deck)
         self.set_problem_parameters(deck)
         self.set_domains(deck)
-        self.set_create_mask(deck)
         
-        self.material(deck)
-        self.bc(deck)
-        self.power(deck)
-        self.populate_fields_locally()
+        self.set_material(deck)
+        self.set_initial_cond(deck)
+        self.set_bc_cond(deck)
+        self.set_create_mask(deck)
+        self.populate_fields_locally(deck)
 
 
     def set_simulation_parameters(self,deck):
         self.SimulationParameters = {}
         for par in deck.doc["Simulation"]:
             self.SimulationParameters[par] = deck.doc["Simulation"][par]
-    
+
+
     def create_fields(self, deck):
         if deck.doc["Problem Type"]["Type"] == "Welding":
-            self.required_fields=["Temperature", "kx", "ky", "Density", "Cp", "Viscosity",  "Power Input Heat", "Intimate Contact", "dx","dy","Convection Coefficient", "Outer Temperature"]
+            self.required_fields=["Temperature", "kx", "ky", "Density", "Cp",  "Power Input Heat", "Intimate Contact", "dx","dy","Convection Coefficient", "Outer Temperature"]
         if deck.doc["Problem Type"]["Type"] == "Heat Transfer":
-            self.required_fields=["Temperature", "kx", "ky", "Density", "Cp", "Viscosity", "Power Input Heat", "dx","dy", "Convection Coefficient", "Outer Temperature"]
+            self.required_fields=["Temperature", "kx", "ky", "Density", "Cp", "Power Input Heat", "dx","dy", "Convection Coefficient", "Outer Temperature"]
+
 
     def set_problem_parameters(self, deck):
         ny = 0
@@ -55,23 +56,23 @@ class TwoPlates:
     def is_top_plate(self,y1,totalthickness):
         return y1 == totalthickness
 
+
     def is_bottom_plate(self,y0):
         return y0 == 0
+
 
     def set_domains(self, deck):
         self.domains = []
         count=0
         for domain_name in deck.doc["Domains"]:
             bc ={}
-            dimen_x0 = float(deck.doc["Domains"][domain_name]["Geometry"]["x0"])
-            dimen_x1 = float(deck.doc["Domains"][domain_name]["Geometry"]["x1"])
-            dimen_y0 = float(deck.doc["Domains"][domain_name]["Geometry"]["y0"])
-            dimen_y1 = float(deck.doc["Domains"][domain_name]["Geometry"]["y1"])
-            temperature = float(deck.doc["Domains"][domain_name]["Initial Condition"]["Temperature"])
-
-            dormain_dir = deck.doc["Domains"][domain_name]
-            dimen_y0 = float(deck.doc["Domains"][domain_name]["Geometry"]["y0"])
-            dimen_y1 = float(deck.doc["Domains"][domain_name]["Geometry"]["y1"])
+            domain_dir = deck.doc["Domains"][domain_name]
+            dimen_x0 = float(domain_dir["Geometry"]["x0"])
+            dimen_x1 = float(domain_dir["Geometry"]["x1"])
+            dimen_y0 = float(domain_dir["Geometry"]["y0"])
+            dimen_y1 = float(domain_dir["Geometry"]["y1"])
+            dimen_y0 = float(domain_dir["Geometry"]["y0"])
+            dimen_y1 = float(domain_dir["Geometry"]["y1"])
             count=1
             if self.is_bottom_plate(dimen_y0):
                 p_x0 = 0
@@ -88,31 +89,148 @@ class TwoPlates:
                 p_y1 = aux + int(deck.doc["Domains"][domain_name]["Mesh"]["Points in Y"])-1*count
                 count=count+1
             nodes=[[p_x0,p_x1],[p_y0, p_y1]]
-            
-            
-            self.domains.append(RectangularDomain(domain_name, dimen_x0, dimen_x1, dimen_y0, dimen_y1, nodes, temperature))
-            
+
+
+            material={}
+            for param in domain_dir["Material"]:
+                if isinstance(domain_dir["Material"][param], str):
+                    material[param] = float(domain_dir["Material"][param])
+                else:
+                    material[param]={}
+                    for aux in domain_dir["Material"][param]:
+                        material[param].update({aux: float(domain_dir["Material"][param][aux])})
+
+            power = {}
+            for cond_name in domain_dir["Initial Condition"]:
+                if cond_name == "Power Input":
+                    for location in domain_dir["Initial Condition"]["Power Input"]:
+                        power.update({location : float(domain_dir["Initial Condition"]["Power Input"][location])})
+
+
+            self.domains.append(RectangularDomain(domain_name, dimen_x0, dimen_x1, dimen_y0, dimen_y1, nodes, power))
+
 
     def set_create_mask(self, deck):
         for i,domain in enumerate(self.domains):
             domain.generate_mask(i,self.totalnodes[1],self.totalnodes[0], self.thickness)
-            
-    def initial_temperature(self, deck):
-        for domain in self.domains:
-            temperature = float(domain_dir["Initial Condition"]["Temperature"])
-            domain.set_temperature(temperature)
 
-    def populate_fields_locally(self):
-        LocalFields(self)
-        
-    def material(self,deck):
-        Material(self,deck)
-    
-    def bc(self,deck):
-        BoundaryCondition(self, deck)
-        
-    def power(self, deck):
-        PowerInput(self,deck)
-        
-    
-        
+
+    def set_material(self, deck):
+        for domain in self.domains:
+            material ={}
+            domain_dir = deck.doc["Domains"][domain.name]["Material"]
+            for param in domain_dir:
+                if isinstance(domain_dir[param], str):
+                    material[param] = float(domain_dir[param])
+                else:
+                    material[param]={}
+                    for aux in domain_dir[param]:
+                        material[param].update({aux: float(domain_dir[param][aux])})
+            domain.set_material(material)
+
+
+    def set_initial_cond(self, deck):
+        for domain in self.domains:
+            initial_cond ={}
+            domain_dir = deck.doc["Domains"][domain.name]["Initial Condition"]
+            for cond_name in domain_dir:
+                if isinstance(domain_dir[cond_name], str):
+                    initial_cond.update({cond_name: float(domain_dir[cond_name])})
+                else:
+                    initial_cond[cond_name] = {}
+                    for location in domain_dir[cond_name]:
+                        initial_cond[cond_name].update({location: float(domain_dir[cond_name][location])})
+            domain.set_initial_cond(initial_cond)
+
+
+    def set_bc_cond(self, deck):
+        for domain in self.domains:
+            domain_dir = deck.doc["Domains"][domain.name]["Boundary Condition"]
+            bc ={}
+            h={}
+            for bc_type in domain_dir:
+                bc[bc_type]={}
+                for kind in domain_dir[bc_type]:
+                    bc[bc_type][kind]={}
+                    for edge in domain_dir[bc_type][kind]:
+                        bc[bc_type][kind][edge]={}
+                        for param in domain_dir[bc_type][kind][edge]:
+                            bc[bc_type][kind][edge].update({param : float(domain_dir[bc_type][kind][edge][param])})
+                            if kind == "Constant Temperature":
+                                bc[bc_type][kind][edge].update({"h" : 0})
+            domain.set_bc(bc)
+
+
+    def populate_fields_locally(self, deck):
+        for domain in self.domains:
+            for field_name in self.required_fields:
+                value=0
+                extTemp=0
+                if field_name == "dx":
+                    deltaX = domain.dimensions[0][1] - domain.dimensions[0][0]
+                    incX = deltaX/(domain.nodes[0][1] - domain.nodes[0][0])
+                    value = incX*domain.mask_inter_nodes
+                    domain.set_field(field_name, value)
+
+                elif field_name == "dy":
+                    deltaY = domain.dimensions[1][1] - domain.dimensions[1][0]
+                    incY = deltaY/(domain.nodes[1][1] - domain.nodes[1][0])
+                    value = incY*domain.mask_inter_nodes
+                    domain.set_field(field_name, value)
+                    
+                # elif field_name == "Temperature":
+                #     value = domain.initial_condition["Temperature"]*domain.mask_nodes["Inner"]
+                #     h=np.zeros((self.totalnodes[1], self.totalnodes[0]))
+
+
+                elif field_name == "Temperature":
+                    value = domain.initial_condition["Temperature"]*domain.mask_nodes["Inner"]
+                    h=np.zeros((self.totalnodes[1], self.totalnodes[0]))
+                    for kind in domain.boundary_condition["Thermal"]:
+                        for edge in domain.boundary_condition["Thermal"][kind]:
+                            extTemp = extTemp + domain.boundary_condition["Thermal"][kind][edge]["Temperature"]*domain.mask_out[edge]
+                            if kind == "Fixed Boundary":
+                                value = value + domain.boundary_condition["Thermal"][kind][edge]["Temperature"]*domain.mask_nodes[edge]
+                                h=h
+                    #         elif kind == "Convection":
+                    #             value = value + domain.boundary_condition["Thermal"][kind][edge]["Temperature"]*domain.mask[edge]
+                    #             h = h + domain.boundary_condition["Thermal"][kind][edge]["Convection Coefficient"]*(domain.mask[edge])
+                    if domain.nodes[1][0] !=0 and domain.nodes[1][1] != self.totalnodes[1]-1:
+                        for edge in domain.mask_interface:
+                            value = value + domain.initial_condition["Temperature"]*domain.mask_interface[edge]
+                    domain.set_field(field_name, value)
+                    domain.set_field("Convection Coefficient", h)
+                    domain.set_field("Outer Temperature", extTemp)
+                    
+                elif field_name in domain.material:
+                    if isinstance(domain.material[field_name], float):
+                        # if domain.nodes[1][0] == 0 or domain.nodes[1][1] == problem.totalnodes[1]-1:
+                        value = domain.material[field_name] * domain.mask_inter_nodes
+                        # else:
+                        #     value = domain.material[field_name] * domain.mask["All"]
+                        domain.set_field(field_name, value)
+                    
+                    
+                elif field_name == "Power Input Heat":
+                    value = np.zeros((self.totalnodes[1], self.totalnodes[0]))
+                    if bool(domain.power):
+                        for location in domain.power:
+                            value = value + domain.power[location]*domain.mask_nodes[location]
+                    else:
+                        value = value
+                    domain.set_field(field_name, value)
+
+
+
+
+
+                        
+                    domain.set_field(field_name, value)
+                    # domain.set_field("Convection Coefficient", h)
+                    # domain.set_field("Outer Temperature", extTemp)
+
+    # def populate_fields_locally(self):
+    #     LocalFields(self)
+
+
+
