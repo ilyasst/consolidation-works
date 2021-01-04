@@ -10,8 +10,8 @@ Domains:
             x0: 0
             x1: 0.1
         Material: 
-            kx: 0.
-            ky: 1.
+            kx: 1
+            ky: 1
             Density: 1500
             Cp: 1000
             Viscosity:
@@ -43,8 +43,8 @@ Domains:
             x0: 0
             x1: 0.1           
         Material: 
-            kx: 0
-            ky: 30
+            kx: 50
+            ky: 27
             Density: 15000
             Cp: 1000
             Viscosity:
@@ -71,7 +71,7 @@ Domains:
         Initial Condition:
             Temperature: 700
             Power Input:
-                All: 1000 
+                Inner: 1000 
     Plate 3:
         Geometry:
             y0: 0.006
@@ -79,8 +79,8 @@ Domains:
             x0: 0
             x1: 0.1
         Material: 
-            kx: 0.
-            ky: 1.
+            kx: 1
+            ky: 1
             Density: 1500
             Cp: 1000
             Viscosity:

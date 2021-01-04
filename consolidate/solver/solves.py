@@ -11,18 +11,21 @@ class SolvesTwoPlates:
                 self.dir_T=field_dir
                 self.Told = field_dir.value.copy()
                 self.Tnew = field_dir.value.copy()
+                self.Tnodes = np.zeros((np.shape(self.Tnew)[0]-1, np.shape(self.Tnew)[1]-1))
             if field_dir.name == "Equivalent External Temperature":
                 self.dir_Tout = field_dir
             if field_dir.name == "Viscosity":
                 self.dir_Visc = field_dir
+                
         # self.T=
         self.do_solver(problem, model_HT,mesh)
         
     def do_solver(self,problem, model_HT,mesh):
         
         for m in range(int(problem.SimulationParameters["Number of Steps"])):
+            # import pdb; pdb.set_trace()
             # if m==0:
-                self.Tnew = model_HT.do_timestep_cond_conv( self.Tnew.copy(), self.Told.copy())
+                self.Tnew, self.Tnodes = model_HT.do_timestep_cond_conv( self.Tnew.copy(), self.Told.copy(), self.Tnodes.copy())
                 # self.Toldold=self.Told.copy()
                 self.Told = self.Tnew.copy()
             # else:

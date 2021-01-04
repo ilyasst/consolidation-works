@@ -8,7 +8,6 @@ class Mesher():
         # self.totalNx = problem.totalpx
         # self.totalNy = problem.totalpy
         self.set_fields(problem)
-        self.set_interfaces(problem)
 
     def set_fields(self, problem):
         self.fields=[]
@@ -20,11 +19,3 @@ class Mesher():
             if field_name== "Temperature":
                 self.fields.append(Field("Toldold", field_value))
                 
-    def set_interfaces(self, problem):
-        mask_interface=np.zeros((problem.totalnodes[1], problem.totalnodes[0]))
-        for domain_name in problem.domains:
-            # import pdb; pdb.set_trace()
-            for edge in domain_name.mask_interface:
-                mask_interface= mask_interface+domain_name.mask_interface[edge]
-            # import pdb; pdb.set_trace()
-        self.mask_interface= mask_interface
