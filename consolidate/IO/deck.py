@@ -12,4 +12,11 @@ class Deck():
             with open(inputhpath,'r') as f:
                 ## Container of the tags parsed from the yaml file
                 self.doc = yaml.load(f, Loader=yaml.BaseLoader)
-        # self.type=self.doc["Problem Type"]["Type"]
+        self.create_folder_structure()
+        
+        
+    def create_folder_structure(self):
+        self.plot_dirTemp = self.doc["Plot"]["Temp Output Folder"]
+        check_folder_Temp = os.path.isdir(self.plot_dirTemp)
+        if not check_folder_Temp:
+              os.makedirs(self.plot_dirTemp)

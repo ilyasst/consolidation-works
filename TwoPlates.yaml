@@ -12,13 +12,13 @@ Domains:
         Material Properties: 
             Density: 1600            
             Thermal:
-                kx: 0.658
+                kx: 0
                 ky: 0.658
                 Cp: 930
             Viscosity:
-                Tg: 300
-                A: 0.0056
-                Ea: 74400
+                Tg: 450
+                A: 1.14e-12
+                Ea: 26300
         Mesh:
             Points in X: 101
             Points in Y: 11
@@ -31,13 +31,21 @@ Domains:
                         Temperature: 25
                     Right Edge:
                         Temperature: 25
-            Mechanical:
-                Intimate Contact:
-                    Top Edge:
-                        Horizontal asperity ratio: 4
-                        Vertical asperity ratio: 4
         Initial Condition:
             Temperature: 30
+    Interface 1:
+        Initial Condition:
+            Temperature: 700
+            Roughness:
+                Horizontal asperity ratio: 4
+                Vertical asperity ratio: 4
+        Boundary Condition:
+            Thermal:
+                Fixed Boundary:
+                    Left Edge:
+                        Temperature: 30
+                    Right Edge:
+                        Temperature: 30
     Plate 2:
         Geometry:
             y0: 0.004
@@ -47,13 +55,13 @@ Domains:
         Material Properties:
             Density: 7875
             Thermal:
-                kx: 27.54
+                kx: 0
                 ky: 27.54
                 Cp: 515
             Viscosity:
-                Tg: 300
-                A: 0.0056
-                Ea: 74400
+                Tg: 450
+                A: 1.14e-12
+                Ea: 26300
         Mesh:
             Points in X: 101
             Points in Y: 6
@@ -75,7 +83,20 @@ Domains:
         Initial Condition:
             Temperature: 700
             Power Input:
-                Inner: 1000 
+                All: 1000 
+    Interface 2:
+        Initial Condition:
+            Temperature: 700
+            Roughness:
+                Horizontal asperity ratio: 4
+                Vertical asperity ratio: 4
+        Boundary Condition:
+            Thermal:
+                Fixed Boundary:
+                    Left Edge:
+                        Temperature: 30
+                    Right Edge:
+                        Temperature: 30
     Plate 3:
         Geometry:
             y0: 0.006
@@ -85,13 +106,13 @@ Domains:
         Material Properties:
             Density: 1600           
             Thermal:
-                kx: 0.658
+                kx: 0
                 ky: 0.658
                 Cp: 930
             Viscosity:
-                Tg: 300
-                A: 0.0056
-                Ea: 74400
+                Tg: 450
+                A: 1.14e-12
+                Ea: 26300
         Mesh:
             Points in X: 101
             Points in Y: 11
@@ -114,3 +135,11 @@ Domains:
 Simulation:
     Step Time: 0.01
     Number of Steps: 2000
+Plot:
+    Temp Output Folder: "./output/Temperature/"
+    Dic Output Folder: "./output/Dic/"
+    figure temperature name: Temperature
+    figure dic name: Dic
+    Color Interpolation: 50
+    Color Map: "inferno"
+    plot interval: 100

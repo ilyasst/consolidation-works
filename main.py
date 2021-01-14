@@ -7,10 +7,14 @@ deck = Deck( cwd + "/twoplates.yaml" )
 
 problem = TwoPlates(deck)
 
-mesh = Mesher( problem )
+local_mesh = LocalMesher(problem)
 
-model_HT = HeatTransfer(mesh, problem)
+global_mesh = Mesher(local_mesh)
+
+model_HT = HeatTransfer(global_mesh, problem)
 
 # model_visc =  ViscosityCalculation(problem, mesh)
 
-solves = SolvesTwoPlates( problem,model_HT,mesh)
+plots = Plot(problem, global_mesh, deck)
+
+solves = SolvesTwoPlates( problem, model_HT, global_mesh, plots)

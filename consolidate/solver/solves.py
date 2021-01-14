@@ -5,26 +5,24 @@ import numpy as np
 
 class SolvesTwoPlates:
     
-    def __init__(self, problem,model_HT,mesh):
-        for field_dir in mesh.fields:
-            if field_dir.name =="Temperature":
-                Told = field_dir.value.copy()
-                self.Tnew = field_dir.value.copy()
-                self.Tnodes = np.zeros((np.shape(self.Tnew)[0]-1, np.shape(self.Tnew)[1]-1))
-            if field_dir.name == "Equivalent External Temperature":
-                self.dir_Tout = field_dir
-            if field_dir.name == "Viscosity":
-                self.dir_Visc = field_dir
-                
-        # self.T=
+    def __init__(self, problem,model_HT,mesh,plots):
+        self.plots = plots
+        Told = mesh.fields["Temperature"].copy()
+        self.Tnew = mesh.fields["Temperature"].copy()
         self.do_solver(problem, model_HT,mesh, Told)
         
     def do_solver(self,problem, model_HT,mesh, Told):
-        
+        # import pdb; pdb.set_trace()
+        ViscNew = np.zeros((np.shape(self.Tnew)[0]+1, np.shape(self.Tnew)[1]+1))
+        Tinter = np.zeros((np.shape(self.Tnew)[0]-1, np.shape(self.Tnew)[1]-1))
         for m in range(int(problem.SimulationParameters["Number of Steps"])):
 
-                self.Tnew, self.Tnodes = model_HT.do_timestep_cond_conv( self.Tnew.copy(), Told.copy())
-                Told = self.Tnew.copy()
+            self.Tnew, Tinter = model_HT.do_timestep_cond_conv( self.Tnew.copy(), Told.copy(), Tinter)
+            Told = self.Tnew.copy()
+            self.ViscNew = model_HT.do_timestep_viscosity( Tinter)
+            if m in self.plots.mfig:
+                self.plots.update_T(self.Tnew)
+                self.plots.do_plots(m)
 
             # self.dir_Visc.value = model_visc.do_timestep(self.dir_Visc.value, self.dir_T.value)
 
