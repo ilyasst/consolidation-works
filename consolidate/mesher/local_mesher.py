@@ -13,7 +13,7 @@ class LocalMesher():
     
     def __init__(self,  problem):
         self.problem = problem
-        self.plates = []
+        self.parts = []
         self.interfaces = []
         self.set_domains(problem)
         self.populate_fields_locally(problem)
@@ -25,8 +25,8 @@ class LocalMesher():
         
         
     def set_domains(self, problem):
-        for plate in problem.plates:
-            self.plates.append(RectangularMesh(plate.name))
+        for part in problem.parts:
+            self.parts.append(RectangularMesh(part.name))
         for interface in problem.interfaces:
             self.interfaces.append(RectangularMesh(interface.name))
 
@@ -37,9 +37,9 @@ class LocalMesher():
             value=0
             value_dict ={}
             extTemp=0
-            for plate in self.plates:
-                for domain in problem.plates:
-                    if plate.name == domain.name:
+            for part in self.parts:
+                for domain in problem.parts:
+                    if part.name == domain.name:
                         if field_name == "increments":
                             deltaX = domain.dimensions[0][1] - domain.dimensions[0][0]
                             incX = deltaX/(domain.nodes[0][1] - domain.nodes[0][0])
@@ -50,7 +50,7 @@ class LocalMesher():
                             incY = deltaY/(domain.nodes[1][1] - domain.nodes[1][0])
                             valueY = incY*domain.mask_inter_nodes["All"]
                             value_dict["dy"] = valueY
-                            plate.set_field(field_name, value_dict.copy())
+                            part.set_field(field_name, value_dict.copy())
                             
                         elif field_name == "Temperature":
                             value = domain.initial_condition["Temperature"]*domain.mask_nodes["Inner"]
@@ -66,9 +66,9 @@ class LocalMesher():
                                         h = h + domain.boundary_condition["Thermal"][kind][edge]["Convection Coefficient"]*(domain.mask_nodes[edge]) 
                                         value = value + domain.initial_condition["Temperature"]*domain.mask_nodes[edge]
                                         Text = Text + domain.boundary_condition["Thermal"][kind][edge]["Temperature"]*domain.mask_nodes_out[edge]
-                            plate.set_field(field_name, value.copy())
-                            plate.set_field("Convection Coefficient", h.copy())
-                            plate.set_field("External Temperature", Text.copy())
+                            part.set_field(field_name, value.copy())
+                            part.set_field("Convection Coefficient", h.copy())
+                            part.set_field("External Temperature", Text.copy())
                             
                         elif field_name in domain.material:
                             if isinstance(domain.material[field_name], float):
@@ -77,7 +77,7 @@ class LocalMesher():
                                 value ={}
                                 for var in domain.material[field_name].keys():
                                     value.update({var: domain.material[field_name][var]*domain.mask_inter_nodes["All"] })
-                            plate.set_field(field_name, value)
+                            part.set_field(field_name, value)
 
                         elif field_name == "Power Input Heat":
                             value = np.zeros((problem.totalnodes[1], problem.totalnodes[0]))
@@ -86,7 +86,7 @@ class LocalMesher():
                                     value = value + domain.power[location]*domain.mask_nodes[location]
                             else:
                                 value = value
-                            plate.set_field(field_name, value)
+                            part.set_field(field_name, value)
 
             for interface in self.interfaces:
                 for domain in problem.interfaces:
@@ -123,7 +123,7 @@ class LocalMesher():
        extTemp=0
        h=np.zeros((problem.totalnodes[1], problem.totalnodes[0]))
        Text= np.zeros((problem.totalnodes[1]+2, problem.totalnodes[0]+2))
-       for domain in (problem.plates + problem.interfaces):
+       for domain in (problem.parts + problem.interfaces):
             value = value + domain.initial_condition["Temperature"]*domain.mask_nodes["Inner"]
             for kind in domain.boundary_condition["Thermal"]:
                 for edge in domain.boundary_condition["Thermal"][kind]:

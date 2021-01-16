@@ -13,7 +13,6 @@ class RectangularDomain:
         
 
 
-        
     def test_grid_inter_nodes(self, mesh):
         if mesh[0] >= self.nodes[1][0] and mesh[0] <= self.nodes[1][1]-1 and mesh[1] >= self.nodes[0][0] and mesh[1]<= self.nodes[0][1]:
             return True
@@ -31,10 +30,6 @@ class RectangularDomain:
             return True
         else:
              return False
-         
-
-
-
 
 
     def set_field(self, field_name, value):
@@ -57,18 +52,13 @@ class RectangularDomain:
         self.initial_condition.update(init_cond)
 
 
-
-
     def generate_mask(self, i, totalpy, totalpx, total_thickness):
-
-
 
         self.mask_nodes = {}
         self.mask_inter_nodes = {}
         self.mask_nodes_out ={}
 
 
-        # if N nodes, it creates N-1 internodes. Adding +1, creates 2 out-of-doomain phantom nodes
         mnodes = np.zeros((totalpy, totalpx))
         minter_nodes = np.zeros((totalpy -1, totalpx -1))
         mnodes_out = np.zeros((totalpy+2, totalpx+2))
@@ -83,24 +73,13 @@ class RectangularDomain:
         mnodes_right2 = mnodes.copy()
 
         minter_nodes_all = minter_nodes.copy()
-        minter_nodes_left = minter_nodes.copy()
-        minter_nodes_right = minter_nodes.copy()
-        minter_nodes_inner = minter_nodes.copy()
 
 
         for x_i in range (0,np.shape(minter_nodes)[0]):
             for y_i in range (0,np.shape(minter_nodes)[1]):
                 if self.test_grid_inter_nodes( (x_i, y_i)):
                     minter_nodes_all[x_i][y_i] = 1
-                    minter_nodes_left[x_i][0] = 1
-                    minter_nodes_right[x_i][-1] = 1
-                if self.test_grid_nodes_inner((x_i, y_i)):
-                    minter_nodes_inner[x_i][y_i] = 1
-
         self.mask_inter_nodes["All"] = minter_nodes_all.copy()
-        self.mask_inter_nodes["Right Edge"] = minter_nodes_right.copy()
-        self.mask_inter_nodes["Left Edge"] = minter_nodes_right.copy()
-        self.mask_inter_nodes["Left Edge"] = minter_nodes_inner.copy()
 
 
         for x_i in range (0,np.shape(mnodes)[0]):
@@ -121,13 +100,10 @@ class RectangularDomain:
         self.mask_nodes["Left Edge"] = mnodes_left2.copy()
         self.mask_nodes["Inner"] = mnodes_inner.copy()
 
-
         self.mask_nodes_out["Left Edge"] = mnodes_out.copy()
         self.mask_nodes_out["Left Edge"][1:-1, :-2] = mnodes_left.copy()
         self.mask_nodes_out["Right Edge"] = mnodes_out.copy()
         self.mask_nodes_out["Right Edge"] [1:-1, 2:] = mnodes_right.copy()
-
-
 
         if self.nodes[1][0] == 0:
             self.mask_nodes["Bottom Edge"] = mnodes_bottom.copy()
@@ -148,13 +124,4 @@ class RectangularDomain:
             self.mask_nodes_out["Left Edge"][self.nodes[1][1]+1] = 0
             self.mask_nodes_out["Right Edge"][self.nodes[1][0]+1] = 0
             self.mask_nodes_out["Right Edge"][self.nodes[1][1]+1] = 0
-
-
-
-
-
-
-
-
-
 

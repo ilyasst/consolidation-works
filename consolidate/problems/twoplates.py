@@ -36,7 +36,7 @@ class TwoPlates:
         thickness = 0
         count = 0
         for domain_name in deck.doc["Domains"]:
-            if "Plate" in domain_name:
+            if "Part" in domain_name:
                 domain_dir = deck.doc["Domains"][domain_name]
                 if count == 0:
                     ny = int((domain_dir["Mesh"]["Points in Y"]))
@@ -61,10 +61,10 @@ class TwoPlates:
 
 
     def set_plates(self, deck):
-        self.plates = []
+        self.parts = []
         count=0
         for domain_name in deck.doc["Domains"]:
-            if "Plate" in domain_name:
+            if "Part" in domain_name:
                 bc ={}
                 domain_dir = deck.doc["Domains"][domain_name]
                 dimen_x0 = float(domain_dir["Geometry"]["x0"])
@@ -82,7 +82,7 @@ class TwoPlates:
                 else:
                     aux=0
                     for i in range (1, int(domain_name[-1])):
-                        aux = aux +  int(deck.doc["Domains"]["Plate " + str(i)]["Mesh"]["Points in Y"])-1
+                        aux = aux +  int(deck.doc["Domains"]["Part " + str(i)]["Mesh"]["Points in Y"])-1
                     p_x0 = 0
                     p_x1 = int(deck.doc["Domains"][domain_name]["Mesh"]["Points in X"])-1*count
                     p_y0 = aux
@@ -104,7 +104,7 @@ class TwoPlates:
                     if cond_name == "Power Input":
                         for location in domain_dir["Initial Condition"]["Power Input"]:
                             power.update({location : float(domain_dir["Initial Condition"]["Power Input"][location])})
-                self.plates.append(RectangularDomain(domain_name, dimen_x0, dimen_x1, dimen_y0, dimen_y1, nodes, power))
+                self.parts.append(RectangularDomain(domain_name, dimen_x0, dimen_x1, dimen_y0, dimen_y1, nodes, power))
 
 
     def set_interfaces(self, deck):
@@ -116,14 +116,14 @@ class TwoPlates:
 
 
     def set_create_mask(self, deck):
-        for i,domain in enumerate(self.plates):
+        for i,domain in enumerate(self.parts):
             domain.generate_mask(i,self.totalnodes[1],self.totalnodes[0], self.thickness)
         for interfaces in self.interfaces:
-            interfaces.generate_mask(self.plates, self.totalnodes[1],self.totalnodes[0])
+            interfaces.generate_mask(self.parts, self.totalnodes[1],self.totalnodes[0])
 
 
     def set_material(self, deck):
-        for domain in self.plates:
+        for domain in self.parts:
             material ={}
             domain_dir = deck.doc["Domains"][domain.name]["Material Properties"]
             for param in domain_dir:
@@ -137,7 +137,7 @@ class TwoPlates:
 
 
     def set_initial_cond(self, deck):
-        for domain in self.plates:
+        for domain in self.parts:
             initial_cond ={}
             domain_dir = deck.doc["Domains"][domain.name]["Initial Condition"]
             for cond_name in domain_dir:
@@ -162,7 +162,7 @@ class TwoPlates:
             interface.set_initial_cond(initial_cond)
 
     def set_bc_cond(self, deck):
-        for domain in self.plates:
+        for domain in self.parts:
             domain_dir = deck.doc["Domains"][domain.name]["Boundary Condition"]
             bc ={}
             h={}

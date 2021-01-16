@@ -70,43 +70,42 @@ class HeatTransfer:
         # uu[1:-1,-1] = 2*self.Text[1:-1,-1] - uuold[1:-1,-2]
 
 
-        # if not self.disc:
-        #     uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + self.dt*(self.wy[1:-1, 1:-1])*(uuold[2:, 1:-1]-2*uuold[1:-1, 1:-1] + uuold[:-2,1:-1]) + self.dt*(self.wx[1:-1, 1:-1])*(uuold[1:-1, 2:]-2*uuold[1:-1, 1:-1] + uuold[1:-1, :-2])
-        # else:
-        #     for i in range (0, np.size(self.disc)):
-        #         if i < np.size(self.disc)-1:
-        #             uu[self.disc[i]+1: self.disc[i+1], 1:-1] = uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + self.dt*(self.diffy[self.disc[i]+1: self.disc[i+1], :-1]/self.dy2[self.disc[i]+1: self.disc[i+1], :-1] )*(uuold[self.disc[i]+2: self.disc[i+1]+1, 1:-1] -2*uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + uuold[self.disc[i]: self.disc[i+1]-1, 1:-1]) + self.dt*(self.wx[self.disc[i]+1: self.disc[i+1], 0:-1])*(uuold[self.disc[i]+1: self.disc[i+1], 2:]-2*uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + uuold[self.disc[i]+1: self.disc[i+1], :-2]) 
-        #         if i==0:
-        #             uu[1:self.disc[i],1:-1] = uuold[1:self.disc[i],1:-1] + self.dt*(self.diffy[1:self.disc[i], 0:-1]/self.dy2[1:self.disc[i], 0:-1])*(uuold[2:self.disc[i]+1 ,1:-1] -2*uuold[1:self.disc[i],1:-1] + uuold[0:self.disc[i]-1,1:-1]) + self.dt*(self.wx[1:self.disc[i], :-1])*(uuold[1:self.disc[i],2:] -2*uuold[1:self.disc[i],1:-1] + uuold[1:self.disc[i],:-2])
-        #             uu[self.disc[i], 1:-1]  = (self.ky[self.disc[i]+1, 0:-1] * uuold[self.disc[i]+1, 1:-1]/self.dy[self.disc[i]+1, 0:-1] + self.ky[self.disc[i]-1, 0:-1] * uuold[self.disc[i]-1, 1:-1]/self.dy[self.disc[i]-1, 0:-1]) / (self.ky[self.disc[i]-1, 0:-1]/self.dy[self.disc[i]-1, 0:-1] + self.ky[self.disc[i]+1, 0:-1]/self.dy[self.disc[i]+1, 0:-1]) 
-        #         if i == np.size(self.disc) -1:
-        #             uu[self.disc[i], 1:-1]  = (self.ky[self.disc[i]+1, :-1] * uuold[self.disc[i]+1, 1:-1]/self.dy[self.disc[i]+1, :-1] + self.ky[self.disc[i]-1, :-1] * uuold[self.disc[i]-1, 1:-1]/self.dy[self.disc[i]-1, :-1]) / (self.ky[self.disc[i]-1, :-1]/self.dy[self.disc[i]-1, :-1] + self.ky[self.disc[i]+1, :-1]/self.dy[self.disc[i]+1, :-1])
-        #             uu[self.disc[i] +1:-1, 1:-1] = uuold[self.disc[i] +1:-1, 1:-1] + self.dt*(self.diffy[self.disc[i]: -1, :-1]/self.dy2[self.disc[i]: -1, :-1])*(uuold[self.disc[i] +2 :, 1:-1] -2*uuold[self.disc[i] +1:-1, 1:-1] + uuold[self.disc[i]:-2, 1:-1]) + self.dt*(self.wx[self.disc[i]:-1, :-1])*(uuold[self.disc[i] +1:-1, 2:] -2*uuold[self.disc[i] +1:-1, 1:-1] + uuold[self.disc[i] +1:-1, :-2])
 
-        # uu_inter = (uu[0,:-1] + uu[0, 1:] + uu[1, :-1] + uu[1,1:])/4
-        # return uu, uu_inter
-        
-        
-        
         if not self.disc:
-            uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + self.dt*(self.wy[0:-1, 0:-1])*(uuold[2:, 1:-1]-2*uuold[1:-1, 1:-1] + uuold[:-2,1:-1]) + self.dt*(self.wx[0:-1, 0:-1])*(uuold[1:-1, 2:]-2*uuold[1:-1, 1:-1] + uuold[1:-1, :-2])
+            uu[1:-1, 1:-1] = uuold[1:-1, 1:-1] + self.dt*(self.wy[0:-1, 0:-1])*(uuold[2:, 1:-1]-2*uuold[1:-1, 1:-1] + uuold[:-2,1:-1]) + self.dt*(self.wx[0:-1, 0:-1])*(uuold[1:-1, 2:]-2*uuold[1:-1, 1:-1] + uuold[1:-1, :-2]) + self.dt*self.Q[1:-1, 1:-1]/(self.rho[1:-1, 0:-1]*self.cp[0:-1, 0:-1])
         else:
             for i in range (0, np.size(self.disc)):
                 # calculating the temperature at the discontinuity
-                uu[self.disc[i], 1:-1]  = (self.ky[self.disc[i]+1, :-1] * uuold[self.disc[i]+1, 1:-1]/self.dy[self.disc[i]+1, :-1] + self.ky[self.disc[i]-1, :-1] * uuold[self.disc[i]-1, 1:-1]/self.dy[self.disc[i]-1, :-1]) / (self.ky[self.disc[i]-1, :-1]/self.dy[self.disc[i]-1, :-1] + self.ky[self.disc[i]+1, :-1]/self.dy[self.disc[i]+1, :-1])
+                # firt order (can be desabled) - Accuracy 2
+                # uu[self.disc[i], 1:-1] = (self.ky[self.disc[i]+1, :-1] * uuold[self.disc[i]+1, 1:-1]/self.dy[self.disc[i]+1, :-1] + self.ky[self.disc[i]-1, :-1] * uuold[self.disc[i]-1, 1:-1]/self.dy[self.disc[i]-1, :-1]) / (self.ky[self.disc[i]-1, :-1]/self.dy[self.disc[i]-1, :-1] + self.ky[self.disc[i]+1, :-1]/self.dy[self.disc[i]+1, :-1])
+                # second order (better accuracty than first order) - Accuracy 4
+                uu[self.disc[i], 1:-1] = 2/3 * (self.ky[self.disc[i]-1, :-1]/self.dy[self.disc[i]-1, :-1]*(2*uuold[self.disc[i]-1, 1:-1] - 1/2*uuold[self.disc[i]-2, 1:-1]) + self.ky[self.disc[i]+1, :-1]/self.dy[self.disc[i]+1, :-1]*(2*uuold[self.disc[i]+1, 1:-1] - 1/2*uuold[self.disc[i]+2, 1:-1]))/((self.ky[self.disc[i]-1, 0:-1]/self.dy[self.disc[i]-1, 0:-1])+ (self.ky[self.disc[i]+1, 0:-1]/self.dy[self.disc[i]+1, 0:-1]))
                 if i < np.size(self.disc)-1:
-                    uu[self.disc[i]+1: self.disc[i+1], 1:-1] = uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + self.dt*(self.diffy[self.disc[i]+1: self.disc[i+1], :-1]/self.dy2[self.disc[i]+1: self.disc[i+1], :-1] )*(uuold[self.disc[i]+2: self.disc[i+1]+1, 1:-1] -2*uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + uuold[self.disc[i]: self.disc[i+1]-1, 1:-1]) + self.dt*(self.wx[self.disc[i]+1: self.disc[i+1], 0:-1])*(uuold[self.disc[i]+1: self.disc[i+1], 2:]-2*uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + uuold[self.disc[i]+1: self.disc[i+1], :-2]) 
+                    # calculating for the inner domains
+                    # first order - Accuracy 2
+                    uu[self.disc[i]+1: self.disc[i+1], 1:-1] = uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + self.dt*(self.diffy[self.disc[i]+1: self.disc[i+1], :-1]/self.dy2[self.disc[i]+1: self.disc[i+1], :-1] )*(uuold[self.disc[i]+2: self.disc[i+1]+1, 1:-1] -2*uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + uuold[self.disc[i]: self.disc[i+1]-1, 1:-1]) + self.dt*(self.wx[self.disc[i]+1: self.disc[i+1], 0:-1])*(uuold[self.disc[i]+1: self.disc[i+1], 2:]-2*uuold[self.disc[i]+1: self.disc[i+1], 1:-1] + uuold[self.disc[i]+1: self.disc[i+1], :-2]) + self.dt*self.Q[self.disc[i]+1: self.disc[i+1], 1:-1] /(self.rho[self.disc[i]+1: self.disc[i+1], :-1] *self.cp[self.disc[i]+1: self.disc[i+1], :-1] )
+                    # second order (better accuracy) - Accuracy 4
+                    uu[self.disc[i]+2: self.disc[i+1]-1, 1:-1] = uuold[self.disc[i]+2: self.disc[i+1]-1, 1:-1] + self.dt*(self.diffy[self.disc[i]+2: self.disc[i+1]-1, :-1]/self.dy2[self.disc[i]+2: self.disc[i+1]-1, :-1] )*(-1/12*uuold[self.disc[i]: self.disc[i+1]-3, 1:-1] +4/3*uuold[self.disc[i]+1: self.disc[i+1]-2, 1:-1] -5/2* uuold[self.disc[i]+2: self.disc[i+1]-1, 1:-1] +4/3*uuold[self.disc[i]+3: self.disc[i+1], 1:-1] -1/12*uuold[self.disc[i]+4: self.disc[i+1]+1, 1:-1]  ) + self.dt*(self.wx[self.disc[i]+2: self.disc[i+1]-1, :-1])*(uuold[self.disc[i]+2: self.disc[i+1]-1, 2:]-2*uuold[self.disc[i]+2: self.disc[i+1]-1, 1:-1] + uuold[self.disc[i]+2: self.disc[i+1]-1, :-2]) + self.dt*self.Q[self.disc[i]+2: self.disc[i+1]-1, 1:-1] /(self.rho[self.disc[i]+2: self.disc[i+1]-1, :-1] *self.cp[self.disc[i]+2: self.disc[i+1]-1, :-1] )
+
                 if i==0:
                     # calculating the temperature within the FIRST DOMAIN
-                    uu[1:self.disc[i],1:-1] = uuold[1:self.disc[i],1:-1] + self.dt*(self.diffy[:self.disc[i]-1, 0:-1]/self.dy2[:self.disc[i]-1, 0:-1])*(uuold[2:self.disc[i]+1 ,1:-1] -2*uuold[1:self.disc[i],1:-1] + uuold[0:self.disc[i]-1,1:-1]) + self.dt*(self.wx[:self.disc[i]-1, :-1])*(uuold[1:self.disc[i],2:] -2*uuold[1:self.disc[i],1:-1] + uuold[1:self.disc[i],:-2])
+                    # first order - Accuracy 2
+                    uu[1:self.disc[i],1:-1] = uuold[1:self.disc[i],1:-1] + self.dt*(self.diffy[:self.disc[i]-1, 0:-1]/self.dy2[:self.disc[i]-1, 0:-1])*(uuold[2:self.disc[i]+1 ,1:-1] -2*uuold[1:self.disc[i],1:-1] + uuold[0:self.disc[i]-1,1:-1]) + self.dt*(self.wx[:self.disc[i]-1, :-1])*(uuold[1:self.disc[i],2:] -2*uuold[1:self.disc[i],1:-1] + uuold[1:self.disc[i],:-2]) + self.dt*self.Q[1:self.disc[i],1:-1]/(self.rho[1:self.disc[i], :-1]*self.cp[1:self.disc[i], :-1])
+                    # second order (better accuracy) - Accuracy 4
+                    uu[2:self.disc[i],1:-1] = uuold[2:self.disc[i],1:-1] + self.dt*(self.diffy[2:self.disc[i],:-1] /self.dy2[2:self.disc[i],:-1]  )*(-1/12*uuold[:self.disc[i]-2,1:-1] +4/3*uuold[1:self.disc[i]-1,1:-1] -5/2* uuold[2:self.disc[i],1:-1] +4/3*uuold[3:self.disc[i]+1,1:-1] -1/12*uuold[4:self.disc[i]+2,1:-1]) + self.dt*(self.wx[2:self.disc[i], :-1])*(uuold[2:self.disc[i], 2:] -2*uuold[2:self.disc[i], 1:-1] + uuold[2:self.disc[i], :-2]) + self.dt*self.Q[2:self.disc[i],1:-1]/(self.rho[2:self.disc[i], :-1]*self.cp[2:self.disc[i], :-1])
+
                 if i == np.size(self.disc) -1:
                     # calculating the temperature within the LAST domain
-                    uu[self.disc[i] +1:-1, 1:-1] = uuold[self.disc[i] +1:-1, 1:-1] + self.dt*(self.diffy[self.disc[i]+1: , :-1]/self.dy2[self.disc[i]+1: , :-1])*(uuold[self.disc[i] +2 :, 1:-1] -2*uuold[self.disc[i] +1:-1, 1:-1] + uuold[self.disc[i]:-2, 1:-1]) + self.dt*(self.wx[self.disc[i]+1:, :-1])*(uuold[self.disc[i] +1:-1, 2:] -2*uuold[self.disc[i] +1:-1, 1:-1] + uuold[self.disc[i] +1:-1, :-2])
+                    # fir order - Accuracy 2
+                    uu[self.disc[i] +1:-1, 1:-1] = uuold[self.disc[i] +1:-1, 1:-1] + self.dt*(self.diffy[self.disc[i]+1: , :-1]/self.dy2[self.disc[i]+1: , :-1])*(uuold[self.disc[i] +2 :, 1:-1] -2*uuold[self.disc[i] +1:-1, 1:-1] + uuold[self.disc[i]:-2, 1:-1]) + self.dt*(self.wx[self.disc[i]+1:, :-1])*(uuold[self.disc[i] +1:-1, 2:] -2*uuold[self.disc[i] +1:-1, 1:-1] + uuold[self.disc[i] +1:-1, :-2]) + self.dt*self.Q[self.disc[i] +1:-1, 1:-1]/(self.rho[self.disc[i] +1:, :-1]*self.cp[self.disc[i] +1:, :-1])
+                    # second order (better accuracy) - Accuracy 4
+                    uu[self.disc[i] +1:-2, 1:-1] = uuold[self.disc[i] +1:-2, 1:-1]+ self.dt*(self.diffy[self.disc[i] +1:-1, :-1] /self.dy2[self.disc[i] +1:-1, :-1]  )*(-1/12*uuold[self.disc[i] -1:-4, 1:-1] +4/3*uuold[self.disc[i]:-3, 1:-1] -5/2* uuold[self.disc[i] +1:-2, 1:-1] +4/3*uuold[self.disc[i] + 2:-1, 1:-1] -1/12*uuold[self.disc[i] +3:, 1:-1]  ) + self.dt*(self.wx[self.disc[i] +1:-1, :-1])*(uuold[self.disc[i] +1:-2, 2:]-2*uuold[self.disc[i] +1:-2, 1:-1] + uuold[self.disc[i] +1:-2, :-2]) + self.dt*self.Q[self.disc[i] +1:-2, 1:-1]/(self.rho[self.disc[i] +1:-1, :-1]*self.cp[self.disc[i] +1:-1, :-1])
 
         uu_inter = (uu[0,:-1] + uu[0, 1:] + uu[1, :-1] + uu[1,1:])/4
+
         return uu, uu_inter
 
-        
+
 
     def do_timestep_viscosity(self, uu):
         eta = self.A * np.exp(self.Ea/uu)

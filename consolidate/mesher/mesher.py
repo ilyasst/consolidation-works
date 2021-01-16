@@ -24,14 +24,13 @@ class Mesher():
         
         
     def set_fields(self, local_mesh):
-        plates = local_mesh.plates
+        parts = local_mesh.parts
         interfaces = local_mesh.interfaces
-        # self.fields=[]
         self.fields = {}
-        for field_name in plates[0].local_fields:
-            if isinstance (plates[0].local_fields[field_name], dict):
+        for field_name in parts[0].local_fields:
+            if isinstance (parts[0].local_fields[field_name], dict):
                 aux ={}
-                for domain in plates:
+                for domain in parts:
                     for variable in domain.local_fields[field_name].keys():
                         if variable not in aux:
                             aux[variable] = domain.local_fields[field_name][variable]
@@ -40,7 +39,7 @@ class Mesher():
                 self.fields.update({field_name: aux})
             else:
                 aux=0
-                for domain in plates:
+                for domain in parts:
                     aux = aux + domain.local_fields[field_name]
                 self.fields.update({field_name: aux})
                 
